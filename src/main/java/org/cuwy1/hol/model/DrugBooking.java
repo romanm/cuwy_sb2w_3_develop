@@ -3,7 +3,7 @@ package org.cuwy1.hol.model;
 import java.util.List;
 
 public class DrugBooking extends Drug implements BookingSetting{
-	private int doseConcentrationNumber;
+	private float doseConcentrationNumber;
 	private String doseConcentrationUnit;
 	private int doseNumber;
 	private String doseUnit;
@@ -31,11 +31,11 @@ public class DrugBooking extends Drug implements BookingSetting{
 		this.numberUnits = numberUnits;
 	}
 
-	public int getDoseConcentrationNumber() {
+	public float getDoseConcentrationNumber() {
 		return doseConcentrationNumber;
 	}
 
-	public void setDoseConcentrationNumber(int doseConcentrationNumber) {
+	public void setDoseConcentrationNumber(float doseConcentrationNumber) {
 		this.doseConcentrationNumber = doseConcentrationNumber;
 	}
 

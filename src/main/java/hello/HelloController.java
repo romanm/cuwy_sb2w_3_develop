@@ -142,12 +142,48 @@ public class HelloController {
 		DrugBooking drugBooking = new DrugBooking();
 		drugBooking.setTrade("Дицинон");
 		drugBooking.setGeneric("Этамзилат");
-		drugBooking.setDoseConcentrationNumber(250);
+		drugBooking.setDoseConcentrationNumber(250.5f);
 		drugBooking.setDoseConcentrationUnit("мг/мл");
 		drugBooking.setDoseNumber(2);
 		drugBooking.setDoseUnit("мл");
 		drugBooking.setNumber(2);
 		drugBooking.setNumberUnits("амп");
+		drugsBooking.add(drugBooking);
+
+		drugBooking = new DrugBooking();
+		drugBooking.setTrade("Наропін");
+		drugBooking.setGeneric("Ропівакаін");
+		drugBooking.setDoseConcentrationNumber(7.5f);
+		drugBooking.setDoseConcentrationUnit("мг/мл");
+		drugBooking.setDoseNumber(5);
+		drugBooking.setDoseUnit("мл");
+		drugBooking.setNumber(2);
+		drugBooking.setNumberUnits("амп");
+		drugsBooking.add(drugBooking);
+		
+		drugBooking = new DrugBooking();
+		drugBooking.setTrade("Дексаметазон");
+		drugBooking.setGeneric("Дексаметазон");
+		drugBooking.setDoseConcentrationNumber(4);
+		drugBooking.setDoseConcentrationUnit("мг/мл");
+		drugBooking.setDoseNumber(1);
+		drugBooking.setDoseUnit("мл");
+		drugBooking.setNumber(2);
+		drugBooking.setNumberUnits("амп");
+		drugsBooking.add(drugBooking);
+		
+		drugBooking = new DrugBooking();
+		drugBooking.setTrade("Гелофузін");
+		drugBooking.setGeneric("Гелофузін");
+		drugBooking.setDoseNumber(400);
+		drugBooking.setDoseUnit("мл");
+		drugBooking.setNumber(1);
+		drugBooking.setNumberUnits("фл");
+		List<DrugBooking> replacement = new ArrayList<DrugBooking>();
+		DrugBooking drug2 = new DrugBooking();
+		drug2.setTrade("Гековен");
+		replacement.add(drug2);
+		drugBooking.setReplacement(replacement);
 		drugsBooking.add(drugBooking);
 		
 		procedureBooking.setDrugsBooking(drugsBooking);
@@ -165,6 +201,23 @@ public class HelloController {
 		consumptionMaterialBooking.setMaterialType("2, 5, 10, 20 мл");
 		consumptionMaterialBooking.setNumber(1);
 		consumptionMaterialBooking.setNumberUnits("шт");
+		consumptionMaterialsBooking.add(consumptionMaterialBooking);
+
+		consumptionMaterialBooking = new ConsumptionMaterialBooking();
+		consumptionMaterialBooking.setName("Марля 3м");
+		consumptionMaterialBooking.setNumberUnits("фл");
+		List<ConsumptionMaterialBooking> replacement2 = new ArrayList<ConsumptionMaterialBooking>();
+
+		ConsumptionMaterialBooking replacementMaterial = new ConsumptionMaterialBooking();
+		replacementMaterial.setName("бінт");
+		replacement2.add(replacementMaterial);
+
+		replacementMaterial = new ConsumptionMaterialBooking();
+		replacementMaterial.setName("спирт");
+		replacement2.add(replacementMaterial);
+		
+		consumptionMaterialBooking.setReplacement(replacement2);
+
 		consumptionMaterialsBooking.add(consumptionMaterialBooking);
 		
 		procedureBooking.setConsumptionMaterialsBooking(consumptionMaterialsBooking);
