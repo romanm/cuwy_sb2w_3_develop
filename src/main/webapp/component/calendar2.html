@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<title>Datepicker for Bootstrap, from Twitter</title>
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/css/datepicker.css" rel="stylesheet">
+</head>
+<body>
+
+	<input class="span2" value="09-24-1942" id="dp1" type="text">
+
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/bootstrap-datepicker.js"></script>
+	<script>
+		$(function() {
+			$('#dp1').datepicker({
+				format : 'dd-mm-yyyy'
+			});
+		});
+	</script>
+	<div>
+	http://www.eyecon.ro/bootstrap-datepicker/?utm_source=twitterfeed&utm_medium=twitter
+	</div>
+</body>
+</html>

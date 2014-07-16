@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html ng-app='test'>
+
+<head>
+	<style type="text/css">
+div.record {
+/*
+    height: 25px;
+    padding: 10px;
+    background-color: lightgray;
+    margin: 1px;
+    width: 200px;
+*/
+}
+div.record-highlight {
+/*
+    height: 50px;
+    padding: 10px;
+    margin: 1px;
+    width: 200px;
+*/
+    background-color: green;
+    color: #fff;
+}
+	</style>
+</head>
+
+<body key-trap>
+http://stackoverflow.com/questions/16859970/navigate-the-ui-using-keyboard
+http://stackoverflow.com/questions/17388021/navigate-the-ui-using-only-keyboard
+	<div ng-controller="testCtrl">
+		<label><input type="checkbox" ng-model="reverse" />reverse?</label><br>
+		focusIndex of shown records: {{ focusIndex }}
+		<li ng-repeat="record in (shownRecords = (records | orderBy: 'name':reverse))">
+			<div class="record" ng-class="{'record-highlight': $index == focusIndex }">{{record.name }}</div>
+		</li>
+	</div>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+	<script type="text/javascript">
+	var app = angular.module('test', []);
+
+	app.controller('testCtrl',function ($scope, $window, $http) {
+		$scope.console = $window.console;
+		console.log("testCtrl");
+
+		$scope.records = [];
+		$http({
+			method : "GET",
+			url : "/icd10/dummy"
+		}).success(function(data, status, headers, config) {
+			$scope.icd10 = data.icd10Classes;
+			var i = 1;
+			$scope.icd10.forEach(function(entry) {
+				var text = entry.code + ", " + entry.text;
+				$scope.records.push({ id: i, navIndex: i, name: text});
+				i++;
+			});
+			console.log($scope.records.length)
+		}).error(function(data, status, headers, config) {
+		});
+		/*
+		for (var i = 1; i <= 9; i++) {
+			$scope.records.push({ id: i, navIndex: i, name: 'record ' + i});
+		}
+		*/
+
+		$scope.focusIndex = 0;
+
+		$scope.open = function(index) {
+			var record = $scope.shownRecords[index]
+			console.log('opening : ', record);
+		};
+
+		$scope.keys = [];
+		$scope.keys.push({
+			code : 13,
+			action : function() {
+				console.log("code: 13");
+				$scope.open($scope.focusIndex);
+			}
+		});
+		$scope.keys.push({
+			code : 39,
+			action : function() {
+				console.log("RIGHTARROW");
+			}
+		});
+		$scope.keys.push({
+			code : 38,
+			action : function() {
+				if ($scope.focusIndex > 0)
+					$scope.focusIndex--;
+				else
+					$scope.focusIndex = $scope.records.length - 1;
+			}
+		});
+		$scope.keys.push({
+			code : 40,
+			action : function() {
+				if ($scope.focusIndex < $scope.records.length - 1 )
+					$scope.focusIndex++;
+				else
+					$scope.focusIndex = 0;
+			}
+		});
+
+		$scope.$on('keydown', function(msg, obj) {
+			var code = obj.code;
+			$scope.keys.forEach(function(o) {
+				if (o.code !== code) {
+					return;
+				}
+				o.action();
+				$scope.$apply();
+			});
+		});
+
+	});
+
+	app.directive('keyTrap', function() {
+		return function(scope, elem) {
+			elem.bind('keydown', function(event) {
+				scope.$broadcast('keydown', {
+					code : event.keyCode
+				});
+			});
+		};
+	});
+	</script>	
+</body>
+
+</html>

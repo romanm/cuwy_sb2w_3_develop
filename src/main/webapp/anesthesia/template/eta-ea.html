@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="BookingCtrl">
+<head>
+	<meta charset=utf-8>
+	<title>ХОЛ::Анестезія урологія::ЕТН ЕА - Ендотрахеальний наркоз - епідуральна анестезія</title>
+	<style type="text/css">
+		.row h2 { margin-top: 0px; }
+		.table > tbody > tr > td { padding: 1px !important; }
+	</style>
+	<link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+	<ol class="breadcrumb">
+		<li><a href="/i-dev.html">Головна</a></li>
+		<li><a href="/department.html">Реанімація</a></li>
+		<li class="active">ЕТН ЕА - Ендотрахеальний наркоз - епідуральна анестезія</li>
+	</ol>
+	<h2>ЕТН ЕА</h2>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<table class="table">
+					<tbody>
+					<tr ng-repeat="drug in booking.drugsBooking">
+						<td>
+					{{drug.trade}}
+						</td>
+						<td>
+					{{drug.doseConcentrationNumber}}
+					{{drug.doseConcentrationUnit}}
+					{{drug.doseNumber}}
+					{{drug.doseUnit}}
+						</td>
+						<td>
+					{{drug.number}}
+					{{drug.numberUnits}}
+						</td>
+					</tr>
+					</tbody>
+				</table>
+				<table class="table">
+				<tbody>
+					<tr ng-repeat="material in booking.consumptionMaterialsBooking">
+						<td>
+					{{material.name}}
+						</td>
+						<td>
+					{{material.materialType}}
+						</td>
+						<td>
+					{{material.number}}
+					{{material.numberUnits}}
+						</td>
+					</tr>
+				</tbody>
+				</table>
+			</div>
+			<div class="col-md-6">
+	<table>
+		<tbody>
+			<tr>
+				<td>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				Катетер в/в 1.2-1.4	 1 шт
+				</td>
+			</tr>
+			<tr>
+				<td>
+Санаційний катетер №16 1 шт
+				</td>
+			</tr>
+			<tr>
+				<td>
+Крапельниця		 2 шт
+				</td>
+			</tr>
+			<tr>
+				<td>
+Шприци 2.0, 5.0, 10.0, 20,0 п о 1 шт
+				</td>
+			</tr>
+			<tr>
+				<td>
+Наклейка на в/в катетер	 1 шт
+				</td>
+			</tr>
+			<tr>
+				<td>
+Рукавички №8.5, №7.0, № 6.5 по 1 пар
+				</td>
+			</tr>
+			<tr>
+				<td>
+Марля 3м/ бинт/спирт	 1 фл
+				</td>
+			</tr>
+			<tr>
+				<td>
+Повязка «медіпор»	6*10	1шт
+				</td>
+			</tr>
+			<tr>
+				<td>
+Стерофундін/Р-н Хартмана 400мл 4 фл
+				</td>
+			</tr>
+			<tr>
+				<td>
+Гелофузін / Гековен	1 фл
+				</td>
+			</tr>
+			<tr>
+				<td>
+Дицинон 250 мг/мл	2 ,0мл	2амп
+				</td>
+			</tr>
+			<tr>
+				<td>
+Гемаксам 50мг/мл	5,0  мл	4 амп
+				</td>
+			</tr>
+			<tr>
+				<td>
+Гідрокортизон   20мг/мл   2,0 мл       2 амп
+				</td>
+			</tr>
+			<tr>
+				<td>
+Дексаметазон    4мг/мл  1,0мл           2 амп
+				</td>
+			</tr>
+			<tr>
+				<td>
+Дексаметазон    4мг/мл  1,0мл           2 амп
+				</td>
+			</tr>
+			<tr>
+				<td>
+				<pre>
+Атропін 1мг/мл         1,0   мл                2 амп
+Прозерин  0.5 мг/мл    1,0 мл              2 амп 
+Кордіамін250 мг/мл  2,0 мл                2 амп 
+Еуфілін 20мг/мл   5,0   мл                    2 амп
+Фуросемід      1мг/мл     2,0 мл           1 амп
+Мезатон   10мг/мл      1,0 мл               1 амп
+Бензогексоній  25мг/мл    1,0 мл         1амп
+Лонгокаїн 2,5мг/мл          200,0 мл       1 фл
+Но-шпа 20 мг/мл            2,0мл              1 амп
+Корглікон 0,6 мг/мл    1,0 мл              1 амп
+Аміодарон 50 мг/мл    3,0мл                1 амп
+Осетрон 2 мг/мл    4,0 мл                     1 амп 
+Ебрантил  5 мг/мл   5,0 мл                   1 амп
+Наропін   7.5 мг/мл     5.0 мл                  2 фл
+				</pre>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+			</div>
+		</div>
+	</div>
+	<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="//getbootstrap.com/dist/js/bootstrap.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+	<script type="text/javascript">
+
+		var cuwyApp = angular.module('cuwyApp', []);
+		cuwyApp.controller('BookingCtrl', [ '$scope', '$http', function ($scope, $http) {
+
+			$http({
+				method : "GET",
+				url : "/db/url-ans-ETA-EA-ProcedureBooking.json"
+			}).success(function(data, status, headers, config) {
+				$scope.booking = data;
+			}).error(function(data, status, headers, config) {
+			});
+
+		} ] );
+
+	</script>
+</body>
+</html>

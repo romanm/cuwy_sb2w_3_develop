@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="HomeHolCtrl">
+<head>
+	<meta charset="UTF-8">
+	<title>ХОЛ</title>
+	<link href="//getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+</head>
+<body>
+	<a href="http://stfalcon.github.io/euromaidan/" class="em-ribbon" 
+	style="position: absolute; left:0; top:0; width: 90px; height: 90px; 
+	background: url('http://stfalcon.github.io/euromaidan/img/em-ribbon.png'); z-index: 2013; 
+	border: 0;" title="Розмісти стрічку з символікою України і ЄС на своєму сайті!" target="_blank"></a>
+	<div align="center">
+		<h1>Хмельницька обласна лікарня</h1>
+	</div> 
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3">
+	<h4 ng-repeat="departmentHol in departmentsHol.departmentsHol"
+	ng-if="departmentHol.department_profile_id == 4 "
+	>
+		<a href="hol/department.html?dep={{departmentHol.department_id}}">
+			{{departmentHol.department_name}}
+		</a>
+	</h4>
+	<h4 ng-repeat="departmentHol in departmentsHol.departmentsHol"
+	ng-if="departmentHol.department_profile_id == 3 "
+	>
+		<a href="hol/department.html?dep={{departmentHol.department_id}}">
+			{{departmentHol.department_name}}
+		</a>
+	</h4>
+			</div>
+			<div class="col-md-4">
+	<h4 ng-repeat="departmentHol in departmentsHol.departmentsHol"
+	ng-if="departmentHol.department_profile_id == 2 "
+	>
+		<a href="hol/department.html?dep={{departmentHol.department_id}}">
+			{{departmentHol.department_name}}
+		</a>
+	</h4>
+			</div>
+			<div class="col-md-4">
+	<h4 ng-repeat="departmentHol in departmentsHol.departmentsHol"
+	ng-if="departmentHol.department_profile_id == 1 "
+	>
+		<a href="hol/department.html?dep={{departmentHol.department_id}}">
+			{{departmentHol.department_name}}
+		</a>
+	</h4>
+			</div>
+		</div>
+	</div>
+
+	<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="//getbootstrap.com/dist/js/bootstrap.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+	<script type="text/javascript">
+
+		var cuwyApp = angular.module('cuwyApp', []);
+		cuwyApp.controller('HomeHolCtrl', [ '$scope', '$http', function ($scope, $http) {
+
+			$http({
+				method : "GET",
+				url : "/hol/department-list"
+			}).success(function(data, status, headers, config) {
+				$scope.departmentsHol = data;
+			}).error(function(data, status, headers, config) {
+			});
+
+		} ] );
+
+	</script>
+
+</body>
+</html>
