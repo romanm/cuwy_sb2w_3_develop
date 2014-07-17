@@ -188,7 +188,7 @@
     "doseConcentrationUnit" : null,
     "doseNumber" : 400,
     "doseUnit" : "мл",
-    "number" : 1,
+    "number" : 4,
     "numberUnits" : "фл",
     "replacement" : [ {
       "generic" : null,
@@ -254,7 +254,7 @@
     "replacement" : null
   }, {
     "name" : "Рукавички",
-    "materialType" : "№ 8, №7, № 6.5",
+    "materialType" : "№ 8.5, 8, №7, № 6.5",
     "number" : 1,
     "numberUnits" : "шт",
     "replacement" : null
