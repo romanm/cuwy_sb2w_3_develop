@@ -219,21 +219,41 @@
 			}).error(function(data, status, headers, config) {
 			});
 
+			moveUp = function(arrayToSort, index){
+				var el = arrayToSort.splice(index, 1);
+				arrayToSort.splice(index-1, 0, el[0]);
+			}
+
+			getArrayToSort = function($itemScope){
+				var arrayToSort = $itemScope.booking.drugsBooking;
+				if($itemScope.material)
+					arrayToSort = $itemScope.booking.consumptionMaterialsBooking;
+				return arrayToSort;
+			}
+
 			$scope.menuEditTaskList = [
 				['Edit', function ($itemScope) {
 					console.log('Edit');
-					console.log($itemScope.material);
-					console.log($itemScope.drug);
+					console.log($itemScope);
 				}],
 				['Add', function ($itemScope) {
 					console.log('Add');
 				}],
 				null,
 				['Up', function ($itemScope) {
-					console.log('Up');
+					var arrayToSort = getArrayToSort($itemScope);
+					var index = $itemScope.$index;
+					if(index > 0){
+						moveUp(arrayToSort, index);
+					}
 				}],
 				['Down', function ($itemScope) {
 					console.log('Down');
+					var index = $itemScope.$index + 1;
+					var arrayToSort = getArrayToSort($itemScope);
+					if(index < arrayToSort.length){
+						moveUp(arrayToSort, index);
+					}
 				}]
 			];
 
