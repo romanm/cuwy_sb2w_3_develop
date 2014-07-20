@@ -14,7 +14,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.cuwy1.hol.model.ConsumptionMaterialBooking;
 import org.cuwy1.hol.model.DepartmentHol;
 import org.cuwy1.hol.model.DrugBooking;
+import org.cuwy1.hol.model.PatientDepartmentMovement;
 import org.cuwy1.hol.model.PatientDiagnosisHol;
+import org.cuwy1.hol.model.PatientHistory;
 import org.cuwy1.hol.model.ProcedureBooking;
 import org.cuwy1.icd10.Icd10Class;
 import org.cuwy1.icd10.Icd10UaClass;
@@ -114,11 +116,22 @@ public class HelloController {
 		return icd10Class;
 	}
 
+	@RequestMapping(value = "/openShortPatienHistory", method = RequestMethod.POST)
+	public @ResponseBody PatientHistory openShortPatienHistory(@RequestBody PatientDiagnosisHol patientDiagnosisHol) {
+		logger.info("\n Start /openShortPatienHistory "+patientDiagnosisHol);
+		PatientHistory patientHistory = cuwyDbService1.getPatientHistory(patientDiagnosisHol.getHistory_no());
+		List<PatientDepartmentMovement> patientDepartmentMovements
+		= cuwyDbService1.getPatientDepartmentMovements(patientHistory.getHistory_id());
+		patientHistory.setPatientDepartmentMovements(patientDepartmentMovements);
+		return patientHistory;
+	}
+
 	@RequestMapping(value = "/hol/department_{departmentId}", method = RequestMethod.GET)
 	public @ResponseBody DepartmentHol getHolDepartment(@PathVariable Integer departmentId) throws IOException {
 		logger.info("\n Start /hol/department_"+departmentId);
 		DepartmentHol departmentHol = cuwyDbService1.getDepartmentsHol(departmentId);
-		List<PatientDiagnosisHol> departmentsHolPatientsDiagnose = cuwyDbService1.getDepartmentsHolPatientsDiagnose(departmentId);
+		List<PatientDiagnosisHol> departmentsHolPatientsDiagnose 
+		= cuwyDbService1.getDepartmentsHolPatientsDiagnose(departmentId);
 		departmentHol.setPatientesDiagnosisHol(departmentsHolPatientsDiagnose);
 		return departmentHol;
 	}

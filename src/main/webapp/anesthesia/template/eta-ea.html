@@ -12,7 +12,7 @@
 			}
 		}
 	</style>
-	<link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 	<ol class="breadcrumb">
@@ -201,16 +201,16 @@
 			</div>
 		</div>
 	</div>
-	<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-	<script src="//getbootstrap.com/dist/js/bootstrap.js"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
-	<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>
+	<script src="/js/jquery-2.1.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/angular.min.js"></script>
+	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
 	<script type="text/javascript">
 		var cuwyApp = angular.module('cuwyApp', ['ui.bootstrap']);
 
 		cuwyApp.controller('BookingCtrl', [ '$scope', '$http', function ($scope, $http) {
 			$scope.tooltipPopupDelay = 1000;//ms
-			$scope.rowsBrake = 8;
+			$scope.rowsBrake = 6;
 			$http({
 				method : "GET",
 				url : "/db/url-ans-ETA-EA-ProcedureBooking.json"
@@ -219,9 +219,13 @@
 			}).error(function(data, status, headers, config) {
 			});
 
+			moveTo = function(arrayToSort, indexFrom, indexTo){
+				var el = arrayToSort.splice(indexFrom, 1);
+				arrayToSort.splice(indexTo, 0, el[0]);
+			}
+
 			moveUp = function(arrayToSort, index){
-				var el = arrayToSort.splice(index, 1);
-				arrayToSort.splice(index-1, 0, el[0]);
+				moveTo(arrayToSort, index,index-1);
 			}
 
 			getArrayToSort = function($itemScope){
@@ -245,6 +249,8 @@
 					var index = $itemScope.$index;
 					if(index > 0){
 						moveUp(arrayToSort, index);
+					}else{
+						moveTo(arrayToSort, 0, arrayToSort.length-1);
 					}
 				}],
 				['Down', function ($itemScope) {
@@ -253,6 +259,8 @@
 					var arrayToSort = getArrayToSort($itemScope);
 					if(index < arrayToSort.length){
 						moveUp(arrayToSort, index);
+					}else{
+						moveTo(arrayToSort, index-1,0);
 					}
 				}]
 			];

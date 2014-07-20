@@ -1,21 +1,33 @@
 package org.cuwy1.hol.model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
+
 
 public class PatientDiagnosisHol {
-	private String name, icd_name,icd_code;
+	private String name, icd_name, icd_code;
 	private int patient_id;
-	private int diagnos_id;
-	private Date history_in;
+	private int history_no;
+	private int history_id;
+	private short diagnos_id;
+	private boolean collapsed = true;
+	private Timestamp history_in;
+	private PatientHistory patientHistory;
 
-	public PatientDiagnosisHol(String name, Date history_in,
-			String icd_code, String icd_name, int patient_id, short diagnos_id) {
-		this.name = name;
-		this.history_in = history_in;
-		this.icd_code = icd_code;
-		this.icd_name = icd_name;
-		this.patient_id = patient_id;
-		this.diagnos_id = diagnos_id;
+
+	@Override
+	public String toString() {
+		return "PatientDiagnosisHol [name=" + name + "\n, icd_name=" + icd_name 
+				+ ", icd_code=" + icd_code 
+				+ "\n, patient_id=" + patient_id 
+				+ ", history_no=" + getHistory_no() 
+				+ ", history_no=" + getHistory_id() 
+				+ ", diagnos_id=" + diagnos_id 
+				+ ", collapsed=" + collapsed 
+				+ ", history_in=" + history_in 
+				+ "]";
+	}
+	
+	public PatientDiagnosisHol(){
 	}
 
 	public String getName() {
@@ -51,11 +63,11 @@ public class PatientDiagnosisHol {
 	}
 
 
-	public Date getHistory_in() {
+	public Timestamp getHistory_in() {
 		return history_in;
 	}
 
-	public void setHistory_in(Date history_in) {
+	public void setHistory_in(Timestamp history_in) {
 		this.history_in = history_in;
 	}
 
@@ -63,8 +75,40 @@ public class PatientDiagnosisHol {
 		return diagnos_id;
 	}
 
-	public void setDiagnos_id(int diagnos_id) {
+	public void setDiagnos_id(short diagnos_id) {
 		this.diagnos_id = diagnos_id;
+	}
+
+	public boolean isCollapsed() {
+		return collapsed;
+	}
+
+	public void setCollapsed(boolean collapsed) {
+		this.collapsed = collapsed;
+	}
+
+	public int getHistory_no() {
+		return history_no;
+	}
+
+	public void setHistory_no(int history_no) {
+		this.history_no = history_no;
+	}
+
+	public PatientHistory getPatientHistory() {
+		return patientHistory;
+	}
+
+	public void setPatientHistory(PatientHistory patientHistory) {
+		this.patientHistory = patientHistory;
+	}
+
+	public int getHistory_id() {
+		return history_id;
+	}
+
+	public void setHistory_id(int history_id) {
+		this.history_id = history_id;
 	}
 
 }

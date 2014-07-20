@@ -1,6 +1,5 @@
 package org.cuwy1.hol.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DepartmentHol {
