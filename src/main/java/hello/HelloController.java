@@ -13,7 +13,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.cuwy1.hol.model.ConsumptionMaterialBooking;
 import org.cuwy1.hol.model.DepartmentHol;
+import org.cuwy1.hol.model.DiagnosisOnAdmission;
 import org.cuwy1.hol.model.DrugBooking;
+import org.cuwy1.hol.model.HistoryTreatmentAnalysis;
 import org.cuwy1.hol.model.PatientDepartmentMovement;
 import org.cuwy1.hol.model.PatientDiagnosisHol;
 import org.cuwy1.hol.model.PatientHistory;
@@ -123,6 +125,12 @@ public class HelloController {
 		List<PatientDepartmentMovement> patientDepartmentMovements
 		= cuwyDbService1.getPatientDepartmentMovements(patientHistory.getHistory_id());
 		patientHistory.setPatientDepartmentMovements(patientDepartmentMovements);
+		List<HistoryTreatmentAnalysis> historyTreatmentAnalysises
+		= cuwyDbService1.getHistoryTreatmentAnalysises(patientHistory.getHistory_id());
+		patientHistory.setHistoryTreatmentAnalysises(historyTreatmentAnalysises);
+		DiagnosisOnAdmission diagnosisOnAdmission
+		= cuwyDbService1.getDiagnosisOnAdmission(patientHistory.getHistory_id());
+		patientHistory.setDiagnosisOnAdmission(diagnosisOnAdmission);
 		return patientHistory;
 	}
 

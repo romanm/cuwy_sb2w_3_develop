@@ -23,6 +23,8 @@ public class PatientHistory {
 	private String patient_flat;
 	private String patient_job;
 	private List<PatientDepartmentMovement> patientDepartmentMovements;
+	private List<HistoryTreatmentAnalysis> HistoryTreatmentAnalysises;
+	private DiagnosisOnAdmission diagnosisOnAdmission;
 
 	public boolean isPatient_gender() {
 		return patient_gender;
@@ -134,5 +136,18 @@ public class PatientHistory {
 	}
 	public void setHistory_id(int history_id) {
 		this.history_id = history_id;
+	}
+	public List<HistoryTreatmentAnalysis> getHistoryTreatmentAnalysises() {
+		return HistoryTreatmentAnalysises;
+	}
+	public void setHistoryTreatmentAnalysises(
+			List<HistoryTreatmentAnalysis> historyTreatmentAnalysises) {
+		HistoryTreatmentAnalysises = historyTreatmentAnalysises;
+	}
+	public DiagnosisOnAdmission getDiagnosisOnAdmission() {
+		return diagnosisOnAdmission;
+	}
+	public void setDiagnosisOnAdmission(DiagnosisOnAdmission diagnosisOnAdmission) {
+		this.diagnosisOnAdmission = diagnosisOnAdmission;
 	}
 }

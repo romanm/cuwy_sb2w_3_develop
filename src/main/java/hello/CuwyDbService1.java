@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.cuwy1.hol.model.DepartmentHol;
+import org.cuwy1.hol.model.DiagnosisOnAdmission;
+import org.cuwy1.hol.model.HistoryTreatmentAnalysis;
 import org.cuwy1.hol.model.PatientDepartmentMovement;
 import org.cuwy1.hol.model.PatientDiagnosisHol;
 import org.cuwy1.hol.model.PatientHistory;
@@ -99,7 +101,7 @@ public class CuwyDbService1 {
 		+ " and i.icd_id = hd.icd_id "
 		+ " and h.history_id=dh.history_id and dh.department_history_out is null "
 		+ " and dh.department_id = ? ";
-		logger.info(sql);
+		logger.info("\n"+sql+departmentId);
 		return jdbcTemplate.query(
 				sql, new Object[] { departmentId }, 
 				new RowMapper<PatientDiagnosisHol>(){
@@ -120,13 +122,13 @@ public class CuwyDbService1 {
 				});
 	}
 
-	public PatientHistory getPatientHistory(int history_no) {
+	public PatientHistory getPatientHistory(int historyNo) {
 		String sql ="SELECT * FROM patient p, history h"
 		+ " WHERE h.history_out IS NULL AND h.patient_id=p.patient_id"
 		+ " AND h.history_no= ? ";
-		logger.info(sql+history_no);
+		logger.info(sql+historyNo);
 		return jdbcTemplate.queryForObject(
-			sql, new Object[] { history_no }, 
+			sql, new Object[] { historyNo }, 
 			new RowMapper<PatientHistory>(){
 				@Override
 				public PatientHistory mapRow(ResultSet rs, int rowNum)
@@ -173,6 +175,7 @@ public class CuwyDbService1 {
 				+ " WHERE p.personal_id=pd.personal_id ) ppd"
 				+ " ON ddh.personal_department_id_out = ppd.personal_department_id"
 				+ " WHERE ddh.history_id = ?";
+		logger.info("\n"+sql+historyId);
 		return jdbcTemplate.query(
 				sql, new Object[] { historyId }, 
 				new RowMapper<PatientDepartmentMovement>(){
@@ -187,6 +190,42 @@ public class CuwyDbService1 {
 						patientDepartmentMovement.setDepartmentHistoryIn(rs.getTimestamp("department_history_in"));
 						patientDepartmentMovement.setDepartmentHistoryOut(rs.getTimestamp("department_history_out"));
 						return patientDepartmentMovement;
+					}
+				});
+	}
+
+	public List<HistoryTreatmentAnalysis> getHistoryTreatmentAnalysises(int historyId) {
+		String sql ="select * from history_treatment_analysis where history_id=?";
+		logger.info("\n"+sql+historyId);
+		return jdbcTemplate.query(
+				sql, new Object[] { historyId }, 
+				new RowMapper<HistoryTreatmentAnalysis>(){
+					@Override
+					public HistoryTreatmentAnalysis mapRow(ResultSet rs, int rowNum)
+							throws SQLException {
+						HistoryTreatmentAnalysis historyTreatmentAnalysis = new HistoryTreatmentAnalysis();
+						historyTreatmentAnalysis.setHistoryTreatmentAnalysisText(rs.getString("history_treatment_analysis_text"));
+						historyTreatmentAnalysis.setHistoryTreatmentAnalysisDatetime(rs.getTimestamp("history_treatment_analysis_datetime"));
+						return historyTreatmentAnalysis;
+					}
+				});
+	}
+
+	public DiagnosisOnAdmission getDiagnosisOnAdmission(int historyId) {
+		String sql = "select * from history_diagnos hd, icd i"
+				+ " where 2 = hd.diagnos_id and i.icd_id = hd.icd_id and history_id=?";
+		logger.info("\n"+sql+historyId);
+		return jdbcTemplate.queryForObject(
+				sql, new Object[] { historyId }, 
+				new RowMapper<DiagnosisOnAdmission>(){
+					@Override
+					public DiagnosisOnAdmission mapRow(ResultSet rs, int rowNum)
+							throws SQLException {
+						DiagnosisOnAdmission diagnosisOnAdmission = new DiagnosisOnAdmission();
+						diagnosisOnAdmission.setHistoryDiagnosDate(rs.getTimestamp("history_diagnos_date"));
+						diagnosisOnAdmission.setIcdCode(rs.getString("icd_code"));
+						diagnosisOnAdmission.setIcdName(rs.getString("icd_name"));
+						return diagnosisOnAdmission;
 					}
 				});
 	}
