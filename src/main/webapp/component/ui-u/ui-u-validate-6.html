@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp">
+<head>
+	<meta charset=utf-8>
+	<title>BootstrapValidator demo</title>
+	<link href="/css/bootstrap.css" rel="stylesheet">
+	<link href="/css/datepicker.css" rel="stylesheet">
+	<style type="text/css">
+		.required-tooltip {font-size:150%;color: red;}
+		.required:after {
+			content: "*"; position:absolute; 
+			color: red;
+		}
+		/*
+		.required:after {
+			content: "*"; position:absolute; 
+			top:-14px;right:-12px;
+			color: red;font-size:200%;
+		}
+		.col-xs-3 { width: 20%; }
+		.col-xs-2 { width: 12%; }
+		.radio-inline { padding-left: 9px; }
+		*/
+	</style>
+</head>
+<body>
+	<div class="container">
+	<form name="newPatientForm" role="form">
+		<h4>Створити історію хвороби №</h4>
+		<hr/>
+		<div ng-controller="NewPatientCtrl">
+			<fieldset><legend>Особиста інформація:</legend>
+			<div class="row">
+			<div class="col-xs-3">
+				<div class="form-group has-success has-feedback required">
+					<label class="control-label sr-only" for="surname"></label>
+					<input type="text" class="form-control input-sm" placeholder="Прізвище" auto-focus
+					id="surname" name="surname" ng-model="user.name" required
+					tooltip-html-unsafe="Прізвище <b class='required-tooltip'>*</b>" />
+					<span class="glyphicon form-control-feedback"></span>
+					<span class="control-label" ng-show="isRequired(newPatientForm.surname)">
+					Прізвище є обов'язковим і не може бути порожнім!</span>
+				</div>
+			</div>
+			<div class="col-xs-3">
+				<div class="form-group has-success has-feedback required">
+					<label class="control-label sr-only" for="surname"></label>
+					<input type="text" class="form-control input-sm" placeholder="Ім’я" 
+					id="lastName" name="lastName" ng-model="user.last" required ng-minlength="2" ng-maxlength="10"
+					tooltip-html-unsafe="Ім’я <b class='required-tooltip'>*</b>" />
+					<span class="glyphicon form-control-feedback"></span>
+					<span class="control-label" ng-show="isLastNameValid(newPatientForm.lastName,'minlength')">
+					Занадто коротке!</span>
+					<span class="control-label" ng-show="isLastNameValid(newPatientForm.lastName,'maxlength')">
+					Занадто довге!</span>
+					<span class="control-label" ng-show="isLastNameValid(newPatientForm.lastName)">
+					Ім’я є обов'язковим і не може бути порожнім!</span>
+				</div>
+				<div class="form-group-xs has-success has-feedback required"
+				tooltip-html-unsafe="Стать <b class='required-tooltip'>*</b>"
+				>
+					<label class="radio-inline"> 
+						<input type="radio" name="sex" ng-model="user.sex" value="m">
+						Чол
+					</label>
+					<label class="radio-inline"> 
+						<input type="radio" name="sex" ng-model="user.sex" value="f">
+						Жін
+					</label>
+				</div>
+			</div>
+			<div class="col-xs-3">
+				<div class="form-group has-success has-feedback required">
+					<label class="control-label sr-only" for="surname"></label>
+					<input type="text" class="form-control input-sm" placeholder="По батькові" 
+					id="patronymic" name="patronymic" ng-model="user.patronymic" required
+					tooltip-html-unsafe="По батькові <b class='required-tooltip'>*</b>"
+					/>
+					<span class="glyphicon form-control-feedback"></span>
+					<span class="control-label" ng-show="isRequired(newPatientForm.patronymic)">
+					По батькові є обов'язковим і не може бути порожнім!</span>
+				</div>
+			</div>
+			<div class="col-xs-3">
+				<div class="form-group-xs has-success has-feedback required"
+				tooltip-html-unsafe="Дата народження <b class='required-tooltip'>*</b>"
+				>
+				<div class="input-group">
+					<div class="input-group-addon">д.н.</div>
+					<input id="bod" class="form-control input-sm" type="text" placeholder="дд-мм-рррр">
+				</div>
+				</div>
+			</div>
+			</div>
+			</fieldset>
+			<fieldset><legend>ПОСТУПЛЕННЯ В СТАЦІОНАР</legend>
+			</fieldset>
+			<fieldset><legend>Медична інформація</legend>
+			</fieldset>
+		</div>
+	</form>
+	<hr/>
+	</div>
+	<div>
+		<tt>user = {{user}}</tt>
+		<tt>user = {{user.name}}</tt>
+		<br />
+		<tt>newPatientForm.surname.$valid = {{newPatientForm.surname.$valid}}</tt>
+		<br>
+		<tt>newPatientForm.surname.$error = {{newPatientForm.surname.$error}}</tt>
+		<tt>newPatientForm.surname.$dirty = {{newPatientForm.surname.$dirty}}</tt>
+		<br>
+		<tt>newPatientForm.lastName.$valid = {{newPatientForm.lastName.$valid}}</tt>
+		<br>
+		<tt>newPatientForm.lastName.$error = {{newPatientForm.lastName.$error}}</tt>
+		<tt>newPatientForm.lastName.$dirty = {{newPatientForm.lastName.$dirty}}</tt>
+		<br>
+		<tt>newPatientForm.$valid = {{newPatientForm.$valid}}</tt>
+		<br>
+		<tt>newPatientForm.$error.required = {{!!newPatientForm.$error.required}}</tt>
+		<br>
+		<tt>newPatientForm.$error.minlength = {{!!newPatientForm.$error.minlength}}</tt>
+		<br>
+		<tt>newPatientForm.$error.maxlength = {{!!newPatientForm.$error.maxlength}}</tt>
+		<br>
+	</div>
+
+	<script src="/js/jquery-2.1.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/angular.min.js"></script>
+	<script src="/js/angular-sanitize.min.js"></script>
+	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
+	<script src="/js/ui-utils-1.js"></script>
+	<script src="/js/bootstrap-datepicker.js"></script>
+	<script type="text/javascript">
+		var cuwyApp = angular.module('cuwyApp', ['ui.bootstrap']);
+		
+		cuwyApp.controller('NewPatientCtrl', [ '$scope', '$http', function ($scope, $http) {
+
+			$scope.user = {name: '', last: '', patronymic: '', sex: '',
+				firstEdit: true
+			};
+
+			$scope.isWarning = function(field, art){
+				var isShowWarning = field.$error.maxlength || field.$error.minlength;
+				checkShowEditField(field, isShowWarning, "warning", "warning-sign");
+				return field.$error[art] && field.$dirty;
+			}
+
+			$scope.isLastNameValid = function(field, art){
+				var isRequired = field.$error.required && field.$dirty;
+				if(isRequired){
+					checkShowEditField(field, isRequired, "error", "remove");
+					if(!art)
+						return isRequired;
+				}
+				var isShowWarning = field.$error.maxlength || field.$error.minlength;
+				checkShowEditField(field, isShowWarning, "warning", "warning-sign");
+				return field.$error[art] && field.$dirty;
+			}
+
+			$scope.isRequired = function(field){
+				var isRequired = field.$error.required && field.$dirty;
+				checkShowEditField(field, isRequired, "error", "remove");
+				return isRequired;
+			}
+
+			checkShowEditField = function(field, isOk, groupValidClass, iconValidClass){
+				var fieldEl = $("#"+field.$name);
+				var fieldIconEl = $(fieldEl[0].nextElementSibling);
+				if(fieldIconEl.hasClass("glyphicon")){
+					var formGroupEl = fieldIconEl.parent();
+					formGroupEl.removeClass("has-success has-warning has-error");
+					fieldIconEl.removeClass("glyphicon-remove glyphicon-ok glyphicon-warning-sign");
+					if(isOk){
+						formGroupEl.addClass("has-"+groupValidClass);
+						fieldIconEl.addClass("glyphicon-"+iconValidClass);
+					}else{
+						formGroupEl.addClass("has-success");
+						if(field.$dirty){
+							fieldIconEl.addClass("glyphicon-ok");
+						}
+					}
+				}
+			}
+
+		} ] );
+		
+		cuwyApp.directive('autoFocus', function($timeout) {
+			return {
+				restrict: 'AC',
+				link: function(_scope, _element) {
+					$timeout(function(){
+						_element[0].focus();
+					}, 0);
+				}
+			};
+		});
+		$(function() {
+			$('#bod').datepicker({
+				format : 'dd-mm-yyyy'
+			});
+		});
+	</script>
+</body>
+</html>
