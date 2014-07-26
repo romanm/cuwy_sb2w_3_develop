@@ -7,6 +7,7 @@ public class PatientHistory {
 	public PatientHistory(){}
 
 	private int history_id;
+	private int patientId;
 	private boolean patient_gender;
 	private boolean patient_rh;
 	private boolean patient_bj;
@@ -17,6 +18,7 @@ public class PatientHistory {
 	private boolean patient_rw;
 	private Date patient_rw_date;
 	private Date patient_dob;
+	private String patientName;
 	private String patient_blood;
 	private String patient_street;
 	private String patient_house;
@@ -149,5 +151,17 @@ public class PatientHistory {
 	}
 	public void setDiagnosisOnAdmission(DiagnosisOnAdmission diagnosisOnAdmission) {
 		this.diagnosisOnAdmission = diagnosisOnAdmission;
+	}
+	public int getPatientId() {
+		return patientId;
+	}
+	public void setPatientId(int patientId) {
+		this.patientId = patientId;
+	}
+	public String getPatientName() {
+		return patientName;
+	}
+	public void setPatientName(String patientName) {
+		this.patientName = patientName;
 	}
 }

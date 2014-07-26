@@ -292,13 +292,15 @@ public class HelloController {
 	String innerDbFolderPfad = "src/main/webapp/db/";
 	//surgical intensive care unit (SICU)
 	String departmentFileName = "departmentSICU.json";
-	String addressesFileName = "addresses.json";
+	String addressesJsonFileName = "addresses.json";
+	String addressesJsFileName = "addresses.json.js";
 	String icd10FileName = "icd102010en.xml";
 
 	@RequestMapping(value = "/address/create_file", method = RequestMethod.GET)
 	public @ResponseBody List<CountryHol> createAddressFile() {
 		List<CountryHol> readCountries = cuwyDbService1.readCountries();
-		writeToJsonDbFile(readCountries, addressesFileName);
+//		writeToJsonDbFile(readCountries, addressesJsonFileName);
+		writeToJsDbFile("var addresses = ", readCountries, addressesJsFileName);
 		return readCountries;
 	}
 
@@ -310,6 +312,17 @@ public class HelloController {
 		return department;
 	}
 
+	private void writeToJsDbFile(String variable, Object objectForJson, String fileName) {
+		File file = new File(applicationFolderPfad + innerDbFolderPfad + fileName);
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			FileOutputStream fileOutputStream = new FileOutputStream(file);
+			fileOutputStream.write(variable.getBytes());
+			mapper.writeValue(fileOutputStream, objectForJson);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	private void writeToJsonDbFile(Object department, String fileName) {
 		File file = new File(applicationFolderPfad + innerDbFolderPfad + fileName);
 		ObjectMapper mapper = new ObjectMapper();

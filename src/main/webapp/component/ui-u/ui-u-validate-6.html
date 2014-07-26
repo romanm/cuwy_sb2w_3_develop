@@ -50,9 +50,9 @@
 					tooltip-html-unsafe="Ім’я <b class='required-tooltip'>*</b>" />
 					<span class="glyphicon form-control-feedback"></span>
 					<span class="control-label" ng-show="isLastNameValid(newPatientForm.lastName,'minlength')">
-					Занадто коротке!</span>
+					Занадто коротке?!</span>
 					<span class="control-label" ng-show="isLastNameValid(newPatientForm.lastName,'maxlength')">
-					Занадто довге!</span>
+					Занадто довге?!</span>
 					<span class="control-label" ng-show="isLastNameValid(newPatientForm.lastName)">
 					Ім’я є обов'язковим і не може бути порожнім!</span>
 				</div>
@@ -89,6 +89,53 @@
 					<div class="input-group-addon">д.н.</div>
 					<input id="bod" class="form-control input-sm" type="text" placeholder="дд-мм-рррр">
 				</div>
+				</div>
+			</div>
+			</div>
+			<div class="row">
+			<div class="col-xs-4">
+				Країна: <a ng-click="openCountryFormGroup()">Україна </a>
+				<div collapse="user.countryCollapsed" class="form-group has-success has-feedback required">
+					<label class="control-label sr-only" for="country"></label>
+					<input type="text" class="form-control input-sm" placeholder="Країна"
+					id="country" name="country" ng-model="user.country" required
+					tooltip-html-unsafe="Країна <b class='required-tooltip'>*</b>"
+					/>
+					<span class="glyphicon form-control-feedback"></span>
+					<span class="control-label" ng-show="isRequired(newPatientForm.country)">
+					Країна є обов'язковим і не може бути порожнім!</span>
+				<div>
+				text
+				</div>
+				</div>
+			</div>
+			</div>
+			<div class="row">
+			<div class="col-xs-4">
+				<div class="form-group has-success has-feedback required">
+					<label class="control-label sr-only" for="district"></label>
+					<input type="text" class="form-control input-sm" placeholder="Область" 
+					id="district" name="district" ng-model="user.district" required
+					tooltip-html-unsafe="Область <b class='required-tooltip'>*</b>"
+					/>
+					<span class="glyphicon form-control-feedback"></span>
+					<span class="control-label" ng-show="isRequired(newPatientForm.district)">
+					Область є обов'язковим і не може бути порожнім!</span>
+				</div>
+			</div>
+			<div class="col-xs-4">
+				<div class="form-group has-success has-feedback required">
+					<label class="control-label sr-only" for="region"></label>
+					<input type="text" class="form-control input-sm" placeholder="Район" 
+					id="region" name="region" ng-model="user.region" required
+					tooltip-html-unsafe="Район <b class='required-tooltip'>*</b>"
+					/>
+					<span class="glyphicon form-control-feedback"></span>
+					<span class="control-label" ng-show="isRequired(newPatientForm.region)">
+					Район є обов'язковим і не може бути порожнім!</span>
+				</div>
+				<div collapse="supportRegionField()">
+					Region liste
 				</div>
 			</div>
 			</div>
@@ -132,75 +179,109 @@
 	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
 	<script src="/js/ui-utils-1.js"></script>
 	<script src="/js/bootstrap-datepicker.js"></script>
+	<script src="/db/addresses.json.js"></script>
 	<script type="text/javascript">
-		var cuwyApp = angular.module('cuwyApp', ['ui.bootstrap']);
-		
-		cuwyApp.controller('NewPatientCtrl', [ '$scope', '$http', function ($scope, $http) {
+	console.log(addresses);
+var cuwyApp = angular.module('cuwyApp', ['ui.bootstrap']);
 
-			$scope.user = {name: '', last: '', patronymic: '', sex: '',
-				firstEdit: true
-			};
+cuwyApp.controller('NewPatientCtrl', [ '$scope', '$http', function ($scope, $http) {
 
-			$scope.isWarning = function(field, art){
-				var isShowWarning = field.$error.maxlength || field.$error.minlength;
-				checkShowEditField(field, isShowWarning, "warning", "warning-sign");
-				return field.$error[art] && field.$dirty;
+	$scope.addresses = addresses;
+	$scope.user = {name: '', last: '', patronymic: '', sex: '',
+		country: '',
+		countryCollapsed: true,
+		district: '',
+		region: '',
+		x: null
+	};
+
+	$scope.supportRegionField = function(){
+		var collapseRegionListe = true;
+		if($scope.user.region){
+			console.log("supportRegionField");
+			collapseRegionListe = !($scope.user.region.length > 0);
+			if(!$scope.user.regions){
+				$http({
+					method : 'GET',
+					url : "/hol/regions_1"
+				}).success(function(data, status, headers, config) {
+					$scope.user.regions = data;
+					console.log($scope.user.regions);
+				}).error(function(data, status, headers, config) {
+				});
 			}
 
-			$scope.isLastNameValid = function(field, art){
-				var isRequired = field.$error.required && field.$dirty;
-				if(isRequired){
-					checkShowEditField(field, isRequired, "error", "remove");
-					if(!art)
-						return isRequired;
-				}
-				var isShowWarning = field.$error.maxlength || field.$error.minlength;
-				checkShowEditField(field, isShowWarning, "warning", "warning-sign");
-				return field.$error[art] && field.$dirty;
-			}
+		}
+		return collapseRegionListe;
+	}
 
-			$scope.isRequired = function(field){
-				var isRequired = field.$error.required && field.$dirty;
-				checkShowEditField(field, isRequired, "error", "remove");
-				return isRequired;
-			}
-
-			checkShowEditField = function(field, isOk, groupValidClass, iconValidClass){
-				var fieldEl = $("#"+field.$name);
-				var fieldIconEl = $(fieldEl[0].nextElementSibling);
-				if(fieldIconEl.hasClass("glyphicon")){
-					var formGroupEl = fieldIconEl.parent();
-					formGroupEl.removeClass("has-success has-warning has-error");
-					fieldIconEl.removeClass("glyphicon-remove glyphicon-ok glyphicon-warning-sign");
-					if(isOk){
-						formGroupEl.addClass("has-"+groupValidClass);
-						fieldIconEl.addClass("glyphicon-"+iconValidClass);
-					}else{
-						formGroupEl.addClass("has-success");
-						if(field.$dirty){
-							fieldIconEl.addClass("glyphicon-ok");
-						}
-					}
-				}
-			}
-
-		} ] );
-		
-		cuwyApp.directive('autoFocus', function($timeout) {
-			return {
-				restrict: 'AC',
-				link: function(_scope, _element) {
-					$timeout(function(){
-						_element[0].focus();
-					}, 0);
-				}
-			};
-		});
-		$(function() {
-			$('#bod').datepicker({
-				format : 'dd-mm-yyyy'
+	$scope.openCountryFormGroup = function(){
+		console.log($scope.user.country);
+		$scope.user.countryCollapsed = !$scope.user.countryCollapsed;
+		if(false && !$scope.user.countryCollapsed){
+			$http({
+				method : 'POST',
+				data : patient,
+				url : '/openShortPatienHistory'
+			}).success(function(data, status, headers, config){
+				patient.patientHistory = data;
+			}).error(function(data, status, headers, config) {
 			});
-		});
+		}
+	}
+
+	$scope.isWarning = function(field, art){
+		var isShowWarning = field.$error.maxlength || field.$error.minlength;
+		checkShowEditField(field, isShowWarning, "warning", "warning-sign");
+		return field.$error[art] && field.$dirty;
+	}
+
+	$scope.isLastNameValid = function(field, art){
+		var isRequired = field.$error.required && field.$dirty;
+		if(isRequired){
+			checkShowEditField(field, isRequired, "error", "remove");
+			if(!art)
+				return isRequired;
+		}
+		var isShowWarning = field.$error.maxlength || field.$error.minlength;
+		checkShowEditField(field, isShowWarning, "warning", "warning-sign");
+		return field.$error[art] && field.$dirty;
+	}
+
+	$scope.isRequired = function(field){
+		var isRequired = field.$error.required && field.$dirty;
+		checkShowEditField(field, isRequired, "error", "remove");
+		return isRequired;
+	}
+
+	checkShowEditField = function(field, isOk, groupValidClass, iconValidClass){
+		var fieldEl = $("#"+field.$name);
+		var fieldIconEl = $(fieldEl[0].nextElementSibling);
+		if(fieldIconEl.hasClass("glyphicon")){
+			var formGroupEl = fieldIconEl.parent();
+			formGroupEl.removeClass("has-success has-warning has-error");
+			fieldIconEl.removeClass("glyphicon-remove glyphicon-ok glyphicon-warning-sign");
+			if(isOk){
+				formGroupEl.addClass("has-"+groupValidClass);
+				fieldIconEl.addClass("glyphicon-"+iconValidClass);
+			}else{
+				formGroupEl.addClass("has-success");
+				if(field.$dirty){
+					fieldIconEl.addClass("glyphicon-ok");
+				}
+			}
+		}
+	}
+
+} ] );
+
+$(function() {
+	$('#bod').datepicker({
+		format : 'dd-mm-yyyy'
+	});
+});
+
 	</script>
+	<script src="/js/cuwy1.directives.js"></script>
 </body>
 </html>
