@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.cuwy1.hol.model.ConsumptionMaterialBooking;
+import org.cuwy1.hol.model.CountryHol;
 import org.cuwy1.hol.model.DepartmentHol;
 import org.cuwy1.hol.model.DiagnosisOnAdmission;
 import org.cuwy1.hol.model.DrugBooking;
@@ -20,6 +21,7 @@ import org.cuwy1.hol.model.PatientDepartmentMovement;
 import org.cuwy1.hol.model.PatientDiagnosisHol;
 import org.cuwy1.hol.model.PatientHistory;
 import org.cuwy1.hol.model.ProcedureBooking;
+import org.cuwy1.hol.model.RegionHol;
 import org.cuwy1.icd10.Icd10Class;
 import org.cuwy1.icd10.Icd10UaClass;
 import org.cuwy1.model1.Department;
@@ -62,13 +64,7 @@ public class HelloController {
 		return article;
 	}
 
-	@RequestMapping(value = "/addDepartmentNewPatien", method = RequestMethod.POST)
-	public @ResponseBody Department addDepartmentNewPatien(@RequestBody Department department) {
-		logger.info("Start addDepartmentNewPatien.");
-		logger.warn("\n department = "+department);
-		writeTofile(department, departmentFileName);
-		return department;
-	}
+	
 
 	@RequestMapping(value = "/readIcd10Childs", method = RequestMethod.POST)
 	public @ResponseBody Icd10Class readIcd10Childs(@RequestBody Icd10Class icd10Class) {
@@ -118,10 +114,8 @@ public class HelloController {
 		return icd10Class;
 	}
 
-	@RequestMapping(value = "/openShortPatienHistory", method = RequestMethod.POST)
-	public @ResponseBody PatientHistory openShortPatienHistory(@RequestBody PatientDiagnosisHol patientDiagnosisHol) {
-		logger.info("\n Start /openShortPatienHistory "+patientDiagnosisHol);
-		PatientHistory patientHistory = cuwyDbService1.getPatientHistory(patientDiagnosisHol.getHistory_no());
+	private PatientHistory getShortPatientHistory(int history_no) {
+		PatientHistory patientHistory = cuwyDbService1.getPatientHistory(history_no);
 		List<PatientDepartmentMovement> patientDepartmentMovements
 		= cuwyDbService1.getPatientDepartmentMovements(patientHistory.getHistory_id());
 		patientHistory.setPatientDepartmentMovements(patientDepartmentMovements);
@@ -134,6 +128,27 @@ public class HelloController {
 		return patientHistory;
 	}
 
+	@RequestMapping(value = "/openShortPatienHistory", method = RequestMethod.POST)
+	public @ResponseBody PatientHistory openShortPatienHistory(@RequestBody PatientDiagnosisHol patientDiagnosisHol) {
+		logger.info("\n Start /openShortPatienHistory "+patientDiagnosisHol);
+		int history_no = patientDiagnosisHol.getHistory_no();
+		PatientHistory patientHistory = getShortPatientHistory(history_no);
+		return patientHistory;
+	}
+
+	@RequestMapping(value = "/hol/history_no_{historyNo}", method = RequestMethod.GET)
+	public @ResponseBody PatientHistory getHolPatientHistory(@PathVariable Integer historyNo) throws IOException {
+		logger.info("\n Start /hol/history_no_"+historyNo);
+		PatientHistory patientHistory = getShortPatientHistory(historyNo);
+		cuwyDbService1.setPatientName(patientHistory);
+		return patientHistory;
+	}
+
+	@RequestMapping(value = "/hol/regions_{districtId}", method = RequestMethod.GET)
+	public @ResponseBody List<RegionHol> getRegions(@PathVariable Integer districtId) throws IOException {
+		List<RegionHol> regions = cuwyDbService1.getRegions(districtId);
+		return regions;
+	}
 	@RequestMapping(value = "/hol/department_{departmentId}", method = RequestMethod.GET)
 	public @ResponseBody DepartmentHol getHolDepartment(@PathVariable Integer departmentId) throws IOException {
 		logger.info("\n Start /hol/department_"+departmentId);
@@ -243,7 +258,7 @@ public class HelloController {
 		
 		procedureBooking.setConsumptionMaterialsBooking(consumptionMaterialsBooking);
 		
-		writeTofile(procedureBooking, "dummyProcedureBooking.json");
+		writeToJsonDbFile(procedureBooking, "dummyProcedureBooking.json");
 		
 		return procedureBooking;
 	}
@@ -268,19 +283,35 @@ public class HelloController {
 		patientDiagnose.setName("Сидорчук");
 		patientesDiagnoses.add(patientDiagnose);
 		department.setPatientesDiagnoses(patientesDiagnoses);
-		writeTofile(department, departmentFileName);
+		writeToJsonDbFile(department, departmentFileName);
 		return department;
 	}
 
-	String applicationFolderPfad = "/home/roman/Documents/01_curepathway/work1/cuwy_sb2w_template_3--1/";
+//	String applicationFolderPfad = "/home/roman/Documents/01_curepathway/work1/cuwy_sb2w_template_3--1/";
+	String applicationFolderPfad = "/home/roman/Documents/01_curepathway/work2/cuwy_sb2w_3_develop-w2/";
 	String innerDbFolderPfad = "src/main/webapp/db/";
 	//surgical intensive care unit (SICU)
 	String departmentFileName = "departmentSICU.json";
+	String addressesFileName = "addresses.json";
 	String icd10FileName = "icd102010en.xml";
 
-//	private void writeTofile(Department department, String departmentFileName) {
-	private void writeTofile(Object department, String departmentFileName) {
-		File file = new File(applicationFolderPfad + innerDbFolderPfad + departmentFileName);
+	@RequestMapping(value = "/address/create_file", method = RequestMethod.GET)
+	public @ResponseBody List<CountryHol> createAddressFile() {
+		List<CountryHol> readCountries = cuwyDbService1.readCountries();
+		writeToJsonDbFile(readCountries, addressesFileName);
+		return readCountries;
+	}
+
+	@RequestMapping(value = "/addDepartmentNewPatien", method = RequestMethod.POST)
+	public @ResponseBody Department addDepartmentNewPatien(@RequestBody Department department) {
+		logger.info("Start addDepartmentNewPatien.");
+		logger.warn("\n department = "+department);
+		writeToJsonDbFile(department, departmentFileName);
+		return department;
+	}
+
+	private void writeToJsonDbFile(Object department, String fileName) {
+		File file = new File(applicationFolderPfad + innerDbFolderPfad + fileName);
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectWriter writerWithDefaultPrettyPrinter = mapper.writerWithDefaultPrettyPrinter();
 		try {

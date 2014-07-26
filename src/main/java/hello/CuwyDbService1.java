@@ -2,14 +2,20 @@ package hello;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.cuwy1.hol.model.CountryHol;
 import org.cuwy1.hol.model.DepartmentHol;
 import org.cuwy1.hol.model.DiagnosisOnAdmission;
+import org.cuwy1.hol.model.DistrictHol;
 import org.cuwy1.hol.model.HistoryTreatmentAnalysis;
 import org.cuwy1.hol.model.PatientDepartmentMovement;
 import org.cuwy1.hol.model.PatientDiagnosisHol;
 import org.cuwy1.hol.model.PatientHistory;
+import org.cuwy1.hol.model.RegionHol;
 import org.cuwy1.icd10.Icd10UaClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +34,7 @@ public class CuwyDbService1 {
 	public CuwyDbService1(){
 		SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
 		dataSource.setDriverClass(com.mysql.jdbc.Driver.class);
-		dataSource.setUrl("jdbc:mysql://localhost/hol");
+		dataSource.setUrl("jdbc:mysql://localhost/hol?useUnicode=true&characterEncoding=utf-8");
 		dataSource.setUsername("hol");
 		dataSource.setPassword("hol");
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -39,10 +45,8 @@ public class CuwyDbService1 {
 	}
 
 	public List<Icd10UaClass> getIcd10UaChilds() {
-		System.out.println("Querying for customer records where first_name = 'Josh':");
 		List<Icd10UaClass> icd10Classes = jdbcTemplate.query(
 				"SELECT * from icd WHERE icd_left_key = ?", new Object[] { 1 },
-//				"select * from customers where first_name = ?", new Object[] { "Josh" },
 				new RowMapper<Icd10UaClass>() {
 					@Override
 					public Icd10UaClass mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -87,7 +91,7 @@ public class CuwyDbService1 {
 	}
 
 	public List<PatientDiagnosisHol> getDepartmentsHolPatientsDiagnose(Integer departmentId) {
-		String sql = "select concat(p.patient_surname,' ',p.patient_name,' ',p.patient_patronnymic) name"
+		String sql = "SELECT concat(p.patient_surname,' ',p.patient_name,' ',p.patient_patronnymic) name"
 		+ ", dh.department_history_in"
 		+ ", h.history_in"
 		+ ", h.history_no"
@@ -95,12 +99,12 @@ public class CuwyDbService1 {
 		+ ", h.patient_id"
 		+ ", hd.max_diagnosis_id"
 		+ ", icd_code, icd_name"
-		+ " from department_history dh, history h, patient p, icd i,"
-		+ "(SELECT history_id,diagnos_id,max(diagnos_id) max_diagnosis_id, icd_id FROM history_diagnos group by history_id) hd"
-		+ " where h.patient_id = p.patient_id and h.history_id=hd.history_id "
-		+ " and i.icd_id = hd.icd_id "
-		+ " and h.history_id=dh.history_id and dh.department_history_out is null "
-		+ " and dh.department_id = ? ";
+		+ " FROM department_history dh, history h, patient p, icd i,"
+		+ "(SELECT history_id,diagnos_id,max(diagnos_id) max_diagnosis_id, icd_id FROM history_diagnos GROUP BY history_id) hd"
+		+ " WHERE h.patient_id = p.patient_id AND h.history_id=hd.history_id "
+		+ " AND i.icd_id = hd.icd_id "
+		+ " AND h.history_id=dh.history_id AND dh.department_history_out IS NULL "
+		+ " AND dh.department_id = ? ";
 		logger.info("\n"+sql+departmentId);
 		return jdbcTemplate.query(
 				sql, new Object[] { departmentId }, 
@@ -126,7 +130,7 @@ public class CuwyDbService1 {
 		String sql ="SELECT * FROM patient p, history h"
 		+ " WHERE h.history_out IS NULL AND h.patient_id=p.patient_id"
 		+ " AND h.history_no= ? ";
-		logger.info(sql+historyNo);
+		logger.info("\n"+sql+historyNo);
 		return jdbcTemplate.queryForObject(
 			sql, new Object[] { historyNo }, 
 			new RowMapper<PatientHistory>(){
@@ -135,6 +139,7 @@ public class CuwyDbService1 {
 						throws SQLException {
 					PatientHistory patientHistory = new PatientHistory();
 					patientHistory.setHistory_id(rs.getInt("history_id"));
+					patientHistory.setPatientId(rs.getInt("patient_id"));
 					patientHistory.setPatient_gender(rs.getBoolean("patient_gender"));
 					patientHistory.setPatient_dob(rs.getDate("patient_dob"));
 					patientHistory.setPatient_blood(rs.getString("patient_blood"));
@@ -195,25 +200,25 @@ public class CuwyDbService1 {
 	}
 
 	public List<HistoryTreatmentAnalysis> getHistoryTreatmentAnalysises(int historyId) {
-		String sql ="select * from history_treatment_analysis where history_id=?";
+		String sql ="SELECT * FROM history_treatment_analysis WHERE history_id=?";
 		logger.info("\n"+sql+historyId);
 		return jdbcTemplate.query(
-				sql, new Object[] { historyId }, 
-				new RowMapper<HistoryTreatmentAnalysis>(){
-					@Override
-					public HistoryTreatmentAnalysis mapRow(ResultSet rs, int rowNum)
-							throws SQLException {
-						HistoryTreatmentAnalysis historyTreatmentAnalysis = new HistoryTreatmentAnalysis();
-						historyTreatmentAnalysis.setHistoryTreatmentAnalysisText(rs.getString("history_treatment_analysis_text"));
-						historyTreatmentAnalysis.setHistoryTreatmentAnalysisDatetime(rs.getTimestamp("history_treatment_analysis_datetime"));
-						return historyTreatmentAnalysis;
-					}
-				});
+			sql, new Object[] { historyId }, 
+			new RowMapper<HistoryTreatmentAnalysis>(){
+				@Override
+				public HistoryTreatmentAnalysis mapRow(ResultSet rs, int rowNum)
+						throws SQLException {
+					HistoryTreatmentAnalysis historyTreatmentAnalysis = new HistoryTreatmentAnalysis();
+					historyTreatmentAnalysis.setHistoryTreatmentAnalysisText(rs.getString("history_treatment_analysis_text"));
+					historyTreatmentAnalysis.setHistoryTreatmentAnalysisDatetime(rs.getTimestamp("history_treatment_analysis_datetime"));
+					return historyTreatmentAnalysis;
+				}
+			});
 	}
 
 	public DiagnosisOnAdmission getDiagnosisOnAdmission(int historyId) {
-		String sql = "select * from history_diagnos hd, icd i"
-				+ " where 2 = hd.diagnos_id and i.icd_id = hd.icd_id and history_id=?";
+		String sql = "SELECT * FROM history_diagnos hd, icd i"
+				+ " WHERE 2 = hd.diagnos_id AND i.icd_id = hd.icd_id AND history_id=?";
 		logger.info("\n"+sql+historyId);
 		return jdbcTemplate.queryForObject(
 				sql, new Object[] { historyId }, 
@@ -230,4 +235,121 @@ public class CuwyDbService1 {
 				});
 	}
 
+	public List<RegionHol> getRegions(Integer districtId) {
+		String like = "%хм%";
+		String sql = "SELECT * FROM region where district_id = ? and region_name like ?";
+		logger.info("\n"+sql+districtId);
+		return jdbcTemplate.query(
+			sql, new Object[] { districtId, like }, 
+			new RowMapper<RegionHol>(){
+				@Override
+				public RegionHol mapRow(ResultSet rs, int rowNum)
+						throws SQLException {
+					RegionHol regionHol = new RegionHol();
+					regionHol.setRegionId(rs.getInt("region_id"));
+					regionHol.setDistrictId(rs.getInt("district_id"));
+					regionHol.setRegionName(rs.getString("region_name"));
+					return regionHol;
+				}
+			});
+	}
+
+	public void setPatientName(PatientHistory patientHistory) {
+		int patientId = patientHistory.getPatientId();
+		String sql = "SELECT concat(p.patient_surname,' ',p.patient_name,' ',p.patient_patronnymic) name"
+				+ " from patient p where patient_id= ?";
+		logger.info("\n"+sql+patientId);
+		PatientHistory patientHistoryDb = jdbcTemplate.queryForObject(
+				sql, new Object[] { patientId }, 
+				new RowMapper<PatientHistory>(){
+					@Override
+					public PatientHistory mapRow(ResultSet rs, int rowNum)
+							throws SQLException {
+						PatientHistory patientHistoryDb = new PatientHistory();
+						patientHistoryDb.setPatientName(rs.getString("name"));
+						return patientHistoryDb;
+					}
+				});
+		patientHistory.setPatientName(patientHistoryDb.getPatientName());
+	}
+
+	public List<CountryHol> readCountries() {
+		logger.info("\n"+sqlCountry);
+		Map<Integer, CountryHol> mapCountryHol = new HashMap<Integer, CountryHol>();
+		List<CountryHol> countries = jdbcTemplate.query(
+				sqlCountry, new Object[] {}, 
+				new CountryRowMapper(mapCountryHol)
+				);
+		Map<Integer, DistrictHol> mapDistrictHol = new HashMap<Integer, DistrictHol>();
+		jdbcTemplate.query(
+				sqlDistrict, new Object[] {}, 
+				new DestrictRowMapper(mapCountryHol, mapDistrictHol)
+				);
+		jdbcTemplate.query(
+				sqlRegion, new Object[] {}, 
+				new RegionRowMapper(mapDistrictHol)
+				);
+		logger.info("\n"+sqlDistrict);
+		return countries;
+	}
+
+	String sqlCountry	= "SELECT * FROM country";
+	String sqlDistrict	= "SELECT * FROM district";
+	String sqlRegion	= "SELECT * FROM region";
+
+	private class RegionRowMapper<T> implements RowMapper<T>{
+		private Map<Integer, DistrictHol> mapDistrictHol;
+		public RegionRowMapper(Map<Integer, DistrictHol> mapDistrictHol) {
+			this.mapDistrictHol = mapDistrictHol;
+		}
+		@Override
+		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+			RegionHol regionHol = new RegionHol();
+			regionHol.setRegionId(rs.getInt("region_id"));
+			regionHol.setDistrictId(rs.getInt("district_id"));
+			regionHol.setRegionName(rs.getString("region_name"));
+			DistrictHol districtHol = mapDistrictHol.get(regionHol.getDistrictId());
+			if(districtHol.getRegionsHol() == null)
+				districtHol.setRegionsHol(new ArrayList<RegionHol>());
+			districtHol.getRegionsHol().add(regionHol);
+			return (T) regionHol;
+		}
+	}
+	private class DestrictRowMapper<T> implements RowMapper<T>{
+		private Map<Integer, CountryHol>	mapCountryHol;
+		private Map<Integer, DistrictHol>	mapDistrictHol;
+		public DestrictRowMapper(Map<Integer, CountryHol> mapCountryHol, Map<Integer, DistrictHol> mapDistrictHol) {
+			this.mapCountryHol	= mapCountryHol;
+			this.mapDistrictHol	= mapDistrictHol;
+		}
+		@Override
+		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+			DistrictHol districtHol = new DistrictHol();
+			districtHol.setCountryId(rs.getInt("country_id"));
+			districtHol.setDistrictId(rs.getInt("district_id"));
+			districtHol.setDistrictName(rs.getString("district_name"));
+			mapDistrictHol.put(districtHol.getDistrictId(), districtHol);
+			CountryHol countryHol = mapCountryHol.get(districtHol.getCountryId());
+			if(countryHol.getDistrictsHol() == null)
+				countryHol.setDistrictsHol(new ArrayList<DistrictHol>());
+			countryHol.getDistrictsHol().add(districtHol);
+			return (T) districtHol;
+		}
+		
+	}
+	private class CountryRowMapper<T> implements RowMapper<T>{
+		private Map<Integer, CountryHol> mapCountryHol;
+		public CountryRowMapper(Map<Integer, CountryHol> mapCountryHol) {
+			this.mapCountryHol=mapCountryHol;
+		}
+		@Override
+		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+			CountryHol countryHol = new CountryHol();
+			countryHol.setCountryId(rs.getInt("country_id"));
+			countryHol.setCountryName(rs.getString("country_name"));
+			mapCountryHol.put(countryHol.getCountryId(), countryHol);
+			return (T) countryHol;
+		}
+		
+	}
 }
