@@ -356,16 +356,6 @@
 				<input type="checkbox" name="patientArmy" ng-model="user.patientArmy">
 				Призовник
 				</label> 
-				<!-- 
-				<label class="radio-inline" > 
-					<input type="radio" name="patientArmy" ng-model="user.patientArmy" value="true">
-					Так
-				</label>
-				<label class="radio-inline"> 
-					<input type="radio" name="patientArmy" ng-model="user.patientArmy" value="false">
-					Ні
-				</label>
-				 -->
 			</div>
 			<div class="col-xs-4">
 			<div class="form-group">
@@ -413,6 +403,116 @@
 			</div>
 			</fieldset>
 			<fieldset><legend>ПОСТУПЛЕННЯ В СТАЦІОНАР</legend>
+			<div class="row">
+				<div class="col-xs-5">
+					<div class="form-group has-success has-feedback required">
+						<label class="control-label sr-only" for="direct">Направляючий заклад</label>
+						<input type="text" class="form-control input-sm" placeholder="Направляючий заклад" 
+						id="direct" name="direct" ng-model="user.direct" required
+						tooltip-html-unsafe="Направляючий заклад <b class='required-tooltip'>*</b>"
+						/>
+						<span class="glyphicon form-control-feedback"></span>
+						<span class="control-label" ng-show="isRequired(newPatientForm.direct)">
+						Направляючий заклад є обов'язковим і не може бути порожнім!</span>
+					</div>
+				</div>
+				<div class="col-xs-1">
+					<button ng-click="getCountryDistricts()" type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+						<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" role="menu">
+					d----d
+					</div>
+				</div>
+				<div class="col-xs-5">
+					<div class="form-group has-success has-feedback required">
+						<label class="control-label sr-only" for="direct">Відділення госпіталізації</label>
+						<input type="text" class="form-control input-sm" placeholder="Відділення госпіталізації" 
+						id="department" name="department" ng-model="user.department" required
+						tooltip-html-unsafe="Відділення госпіталізації <b class='required-tooltip'>*</b>"
+						/>
+						<span class="glyphicon form-control-feedback"></span>
+						<span class="control-label" ng-show="isRequired(newPatientForm.department)">
+						Відділення госпіталізації є обов'язковим і не може бути порожнім!</span>
+					</div>
+				</div>
+				<div class="col-xs-1">
+					<button ng-click="getCountryDistricts()" type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+						<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" role="menu">
+					d----d
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-1">Діагноз:</div>
+				<div class="col-xs-5">
+					<div class="form-group has-success has-feedback required">
+						<label class="control-label sr-only" for="direct">Діагноз</label>
+						<input type="text" class="form-control input-sm" placeholder="Діагноз МКБ" 
+						id="historyDiagnos" name="historyDiagnos" ng-model="user.historyDiagnos" required
+						ng-change="changeDiagnose()"
+						tooltip-html-unsafe="Діагноз <b class='required-tooltip'>*</b>"
+						/>
+						<span class="glyphicon form-control-feedback"></span>
+						<span class="control-label" ng-show="isRequired(newPatientForm.historyDiagnos)">
+						Діагноз є обов'язковим і не може бути порожнім!</span>
+					</div>
+				</div>
+				<div class="col-xs-1">
+					<button ng-click="getCountryDistricts()" type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+						<span class="glyphicon glyphicon-th-list"></span>
+						<span class="caret"></span>
+					</button>
+					<div class="dropdown-menu" role="menu">
+					d----d
+					</div>
+				</div>
+				<div class="col-xs-5">
+					<div class="form-group has-feedback ">
+						<label class="control-label sr-only" for="direct">Діагноз додаток</label>
+						<input type="text" class="form-control input-sm" placeholder="Діагноз додаток" 
+						id="historyDiagnosAdditional" name="historyDiagnosAdditional" ng-model="user.historyDiagnosAdditional"
+						ng-change="changeDiagnoseAdditional()"
+						tooltip-html-unsafe="Діагноз  додаток <b class='required-tooltip'>*</b>"
+						/>
+						<span class="glyphicon form-control-feedback"></span>
+						<span class="control-label" ng-show="isRequired(newPatientForm.historyDiagnos)">
+						Діагноз додаток є обов'язковим і не може бути порожнім!</span>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-3">Стан при госпіталізації</div>
+				<div class="col-xs-4">
+					<div class="form-group has-success has-feedback required">
+						<label class="control-label sr-only" for="direct">Направляючий заклад</label>
+						<input type="text" class="form-control input-sm" placeholder="Стан при госпіталізації" 
+						id="stan" name="stan" ng-model="user.stan" required
+						tooltip-html-unsafe="Стан при госпіталізації <b class='required-tooltip'>*</b>"
+						/>
+						<span class="glyphicon form-control-feedback"></span>
+						<span class="control-label" ng-show="isRequired(newPatientForm.stan)">
+						Стан при госпіталізації є обов'язковим і не може бути порожнім!</span>
+					</div>
+				</div>
+				<div class="col-xs-4">
+				
+					<div class="form-group-xs has-success has-feedback required-simple"
+					tooltip-html-unsafe="Ургентно / Планово <b class='required-tooltip'>*</b>"
+					>
+						<label class="radio-inline"> 
+							<input type="radio" name="urgentPlan" ng-model="user.urgentPlan" value="plan">
+							Ургентно
+						</label>
+						<label class="radio-inline"> 
+							<input type="radio" name="urgentPlan" ng-model="user.urgentPlan" value="urgent">
+							Планово
+						</label>
+					</div>
+				</div>
+			</div>
 			</fieldset>
 			<fieldset><legend>Медична інформація</legend>
 			</fieldset>
@@ -444,9 +544,13 @@ cuwyApp.controller('NewPatientCtrl', [ '$scope', '$http', function ($scope, $htt
 		localityType: '',
 		localityName: '',
 		pilgy: '',
+		urgentPlan: '',
 		x: null
 	};
 
+	$scope.changeDiagnose = function(){
+		console.log("changeDiagnose");
+	}
 	$scope.getCountryDistricts = function(){
 		$($scope.addresses).each(function () {
 			if(this.countryName == $scope.user.country){
