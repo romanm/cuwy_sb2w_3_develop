@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="AdmissionCtrl">
+<head>
+	<meta charset=utf-8>
+	<title>ХОЛ::Приймальне</title>
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/css/bootstrapValidator.min.css" rel="stylesheet">
+</head>
+<body>
+	<ol class="breadcrumb">
+		<li><a href="/home.html">ХОЛ</a></li>
+		<li class="active">Приймальне</li>
+	</ol>
+
+	<h3>Нова історія хвороби</h3>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-10">
+			
+				<form id="new-patient-form">
+					<fieldset><legend>Особиста інформація:</legend>
+					
+					<div class="controls form-inline form-group">
+							<label class="col-lg-3 control-label">Full name</label>
+								<input type="text" class="form-control" name="firstName"
+									placeholder="First name" /> <span class="help-block"
+									id="firstNameMessage" />
+								<input type="text" class="form-control" name="lastName"
+									placeholder="Last name" /> <span
+									class="help-block lastNameMessage" />
+						</div>
+					
+						Name: <input type="text"><br> Email: <input
+							type="text"><br> Date of birth: <input type="text">
+					</fieldset>
+					<button type="submit" class="btn btn-primary">Sign up</button>
+				</form>
+			</div>
+			<div class="col-md-2">
+					<h3>Відділення</h3>
+			</div>
+		</div>
+	</div>
+	<script src="/js/jquery-2.1.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/bootstrapValidator.min.js"></script>
+	<script src="/js/angular.min.js"></script>
+	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
+	<script src="/js/cuwy1.directives.js"></script>
+	<script src="/js/angular-sanitize.min.js"></script>
+	<script type="text/javascript">
+	cuwyApp.controller('AdmissionCtrl', [ '$scope', '$http', function ($scope, $http) {
+
+		$http({
+			method : "GET",
+			url : "/hol/department-list"
+		}).success(function(data, status, headers, config) {
+			$scope.departmentsHol = data;
+		}).error(function(data, status, headers, config) {
+		});
+
+	} ] );
+
+	$(document).ready(function() {
+		$('#new-patient-form').bootstrapValidator({
+			message: 'This value is not valid',
+			feedbackIcons: {
+				valid: 'glyphicon glyphicon-ok',
+				invalid: 'glyphicon glyphicon-remove',
+				validating: 'glyphicon glyphicon-refresh'
+			},
+			fields: {
+				firstName: {
+					container: '#firstNameMessage',
+					validators: {
+						notEmpty: {
+							message: 'The first name is required and cannot be empty'
+						}
+					}
+				},
+				lastName: {
+					container: '.lastNameMessage',
+					validators: {
+						notEmpty: {
+							message: 'The last name is required and cannot be empty'
+						}
+					}
+				},
+				username: {
+					message: 'The username is not valid',
+					validators: {
+						notEmpty: {
+							message: 'The username is required and cannot be empty'
+						},
+						stringLength: {
+							min: 6,
+							max: 30,
+							message: 'The username must be more than 6 and less than 30 characters long'
+						}
+					}
+				}
+			}
+		});
+	});
+	</script>
+</body>
+</html>

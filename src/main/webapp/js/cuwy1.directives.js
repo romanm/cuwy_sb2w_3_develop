@@ -1,3 +1,13 @@
+parameters = {};
+if(window.location.search){
+	$.each(window.location.search.split("?")[1].split("&"), function(index, value){
+		var par = value.split("=");
+		parameters[par[0]] = par[1];
+	});
+}
+
+var cuwyApp = angular.module('cuwyApp', ['ui.bootstrap', 'ngSanitize']);
+
 cuwyApp.directive('autoFocus', function($timeout) {
 	return {
 		restrict: 'AC',

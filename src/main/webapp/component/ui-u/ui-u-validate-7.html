@@ -203,13 +203,14 @@
 					<label class="control-label sr-only" for="region"></label>
 					<input type="text" class="form-control input-sm" placeholder="Район" 
 					id="region" name="region" ng-model="user.region" required
+					ng-change="supportRegionField()"
 					tooltip-html-unsafe="Район <b class='required-tooltip'>*</b>"
 					/>
 					<span class="glyphicon form-control-feedback"></span>
 					<span class="control-label" ng-show="isRequired(newPatientForm.region)">
 					Район є обов'язковим і не може бути порожнім!</span>
 				</div>
-				<div collapse="supportRegionField()">
+				<div collapse="collapseRegionListe">
 					<b>Пошук району</b>:
 					<ul>
 						<li ng-repeat="region in regions | filter:user.region">
@@ -530,8 +531,8 @@
 	<script src="/js/ui-utils-1.js"></script>
 	<script src="/js/bootstrap-datepicker.js"></script>
 	<script src="/db/addresses.json.js"></script>
+	<script src="/js/cuwy1.directives.js"></script>
 	<script type="text/javascript">
-var cuwyApp = angular.module('cuwyApp', ['ui.bootstrap']);
 
 cuwyApp.controller('NewPatientCtrl', [ '$scope', '$http', function ($scope, $http) {
 
@@ -594,21 +595,21 @@ cuwyApp.controller('NewPatientCtrl', [ '$scope', '$http', function ($scope, $htt
 		}
 		return collapseDistrictListe;
 	}
+	$scope.collapseRegionListe = true;
 	$scope.supportRegionField = function(){
-		var collapseRegionListe = true;
+		$scope.collapseRegionListe = true;
 		if($scope.user.region ){
-			collapseRegionListe = !($scope.user.region.length > 1);
+			$scope.collapseRegionListe = !($scope.user.region.length > 0);
 			if(!$scope.regions){
 				//seek all regions
 			}else{
 				$($scope.regions).each(function(){
 					if(this.regionName == $scope.user.region){
-						collapseRegionListe = true;
+						$scope.collapseRegionListe = true;
 					}
 				});
 			}
 		}
-		return collapseRegionListe;
 	}
 
 	$scope.openCountryFormGroup = function(){
@@ -693,6 +694,6 @@ $(function() {
 	});
 });
 	</script>
-	<script src="/js/cuwy1.directives.js"></script>
+	
 </body>
 </html>

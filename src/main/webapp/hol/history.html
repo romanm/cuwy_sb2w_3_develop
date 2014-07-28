@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="HistoryCtrl">
+<head>
+	<meta charset=utf-8>
+	<title>ХОЛ::{{department.department_name}}</title>
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<style type="text/css">
+		.row h2 { margin-top: 0px; }
+		hr.shortPatienHistory { margin: 0px; border-width: 3px 0 0;}
+		@media print {
+			.breadcrumb, .no-print {
+				display: none !important;
+			}
+		}
+	</style>
+</head>
+<body>
+<div>
+	<h4>№: {{patient.history_no}} {{patient.name}}</h4>
+	<div>Хвора: {{patient.name}} 
+	<span ng-bind="calculateAge(patient.patientHistory.patient_dob)"></span>
+	р.
+	(*{{patient.patientHistory.patient_dob | date:'dd.MM.yyyy'}})</div>
+	<div>Адреса: 
+		<span ng-if="patient.patientHistory.patient_street">
+			вул.{{patient.patientHistory.patient_street}},
+			буд.{{patient.patientHistory.patient_house}},
+			кв.{{patient.patientHistory.patient_flat}}
+		</span>
+		<span ng-if="!patient.patientHistory.patient_street">?</span>
+	</div>
+	<div>Місце роботи: 
+		<span ng-if="patient.patientHistory.patient_job">
+			{{patient.patientHistory.patient_job}}
+		</span>
+		<span ng-if="!patient.patientHistory.patient_job">?</span>
+	</div>
+	<div>Медична інформація: 
+		<span>гр.кр.
+			<span ng-if="'I' == patient.patientHistory.patient_blood">{{patient.patientHistory.patient_blood}}(O),</span>
+			<span ng-if="'II' == patient.patientHistory.patient_blood">{{patient.patientHistory.patient_blood}}(A),</span>
+			<span ng-if="'III' == patient.patientHistory.patient_blood">{{patient.patientHistory.patient_blood}}(B),</span>
+			<span ng-if="'IV' == patient.patientHistory.patient_blood">{{patient.patientHistory.patient_blood}}(AB),</span>
+		</span>
+		<span ng-if="patient.patientHistory.patient_rh">Rh(+),</span>
+		<span ng-if="!patient.patientHistory.patient_rh">Rh(-),</span>
+		<span ng-if="patient.patientHistory.patient_rh == null">Rh(?),</span>
+		
+		<span ng-if="patient.patientHistory.patient_bj">Bj(+),</span>
+		<span ng-if="!patient.patientHistory.patient_bj">Bj(-),</span>
+		<span ng-if="patient.patientHistory.patient_bj == null">Bj(?),</span>
+		
+		<span ng-if="patient.patientHistory.patient_sc">Sc(+),</span>
+		<span ng-if="!patient.patientHistory.patient_sc">Sc(-),</span>
+		<span ng-if="patient.patientHistory.patient_sc == null">Sc(?),</span>
+		
+		<span ng-if="patient.patientHistory.patient_tbc">tbc(+),</span>
+		<span ng-if="!patient.patientHistory.patient_tbc">tbc(-),</span>
+		<span ng-if="patient.patientHistory.patient_tbc == null">tbc(?),</span>
+
+		<span ng-if="patient.patientHistory.patient_t">T(+),</span>
+		<span ng-if="!patient.patientHistory.patient_t">T(-),</span>
+		<span ng-if="patient.patientHistory.patient_t == null">T(?),</span>
+
+		<span ng-if="patient.patientHistory.patient_hbs">ВІЛ(+),</span>
+		<span ng-if="!patient.patientHistory.patient_hbs">ВІЛ(-),</span>
+		<span ng-if="patient.patientHistory.patient_hbs == null">ВІЛ(?),</span>
+
+		<span ng-if="patient.patientHistory.patient_rw">RW(+) -</span>
+		<span ng-if="!patient.patientHistory.patient_rw">RW(-) -</span>
+		<span ng-if="patient.patientHistory.patient_rw == null">RW(?) -</span>
+		({{patient.patientHistory.patient_rw_date | date:'dd.MM.yyyy'}})
+	</div>
+	<div>Побічна дія медикаментів:
+	</div>
+	<hr class="shortPatienHistory">
+	<div><u><b>Рух хворого</b></u>:
+		<span ng-repeat="patientDepartmentMovement in patient.patientHistory.patientDepartmentMovements">
+			{{patientDepartmentMovement.departmentName}}:
+			{{$index==0?'↓↓':'↓'
+			}}{{patientDepartmentMovement.departmentHistoryIn | date:'dd.MM.yyyy HH:mm'
+			}}{{patientDepartmentMovement.departmentHistoryOut?';':''}}
+			<span ng-if="patientDepartmentMovement.departmentHistoryOut">
+				↑{{patientDepartmentMovement.departmentHistoryOut | date:'dd.MM.yyyy HH:mm'
+				}};
+				<small>
+				{{patientDepartmentMovement.personalSurname}}
+				{{patientDepartmentMovement.personalName}}
+				{{patientDepartmentMovement.personalPatronymic}}
+				</small>
+				<br>
+			</span>
+		</span>
+	</div>
+	<hr class="shortPatienHistory">
+	<div>Діагноз при госпіталізації: 
+	<b tooltip-html-unsafe="Дата встановлення: <b>{{patient.patientHistory.diagnosisOnAdmission.historyDiagnosDate | date:'dd.MM.yyyy HH:mm'}}</b>">
+		{{patient.patientHistory.diagnosisOnAdmission.icdCode}},
+		{{patient.patientHistory.diagnosisOnAdmission.icdName}}
+	</b>
+	</div>
+	<hr class="shortPatienHistory">
+	<div><u><b>Перебіг хвороби</b></u>:
+		<div ng-repeat="historyTreatmentAnalysis in patient.patientHistory.historyTreatmentAnalysises "
+			ng-if="'' != historyTreatmentAnalysis.historyTreatmentAnalysisText"
+			ng-show="historyTreatmentAnalysis.historyTreatmentAnalysisText.indexOf('table') < 0"
+		>
+			<div ng-bind-html="historyTreatmentAnalysis.historyTreatmentAnalysisText"></div>
+		</div>
+	</div>
+</div>
+	<script src="/js/jquery-2.1.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/angular.min.js"></script>
+	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
+	<script src="/js/angular-sanitize.min.js"></script>
+	<script src="/js/cuwy1.directives.js"></script>
+	<script type="text/javascript">
+	historyFile = "/hol/history_no_"+parameters.hno;
+
+	cuwyApp.controller('HistoryCtrl', [ '$scope', '$http', function ($scope, $http) {
+
+		$scope.patient = {
+			name: 'Patient name',
+			history_no: parameters.hno,
+			patientHistory: null
+		};
+
+		$http({
+			method : 'GET',
+			url : historyFile
+		}).success(function(data, status, headers, config) {
+			$scope.patient.patientHistory = data;
+			$scope.patient.name = data.patientName;
+		}).error(function(data, status, headers, config) {
+		});
+
+	} ] );
+
+	</script>
+
+</body>
+</html>
