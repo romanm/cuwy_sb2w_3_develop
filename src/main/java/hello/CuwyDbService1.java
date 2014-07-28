@@ -16,6 +16,7 @@ import org.cuwy1.hol.model.PatientDepartmentMovement;
 import org.cuwy1.hol.model.PatientDiagnosisHol;
 import org.cuwy1.hol.model.PatientHistory;
 import org.cuwy1.hol.model.RegionHol;
+import org.cuwy1.holDb.model.PatientHolDb;
 import org.cuwy1.icd10.Icd10UaClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -254,6 +255,30 @@ public class CuwyDbService1 {
 			});
 	}
 
+	public void setPatientHolDb(PatientHistory patientHistory) {
+		int patientId = patientHistory.getPatientId();
+		String sql = "SELECT * FROM patient p WHERE patient_id = ?";
+		logger.info("\n"+sql+patientId);
+		PatientHolDb patientHolDb = jdbcTemplate.queryForObject(
+			sql, new Object[] { patientId }, 
+			new RowMapper<PatientHolDb>(){
+				@Override
+				public PatientHolDb mapRow(ResultSet rs, int rowNum)
+						throws SQLException {
+					PatientHolDb patientHolDb = new PatientHolDb();
+					patientHolDb.setPatientSurname(rs.getString("patient_surname"));
+					patientHolDb.setPatientPersonalName(rs.getString("patient_name"));
+					patientHolDb.setPatientPatronymic(rs.getString("patient_patronnymic"));
+					patientHolDb.setPatientGender(rs.getBoolean("patient_gender"));
+					patientHolDb.setPatientId(rs.getInt("patient_id"));
+					patientHolDb.setPatientStreet(rs.getString("patient_street"));
+					patientHolDb.setPatientHouse(rs.getInt("patient_house"));
+					patientHolDb.setPatientFlat(rs.getInt("patient_flat"));
+					return patientHolDb;
+				}
+			});
+		patientHistory.setPatientHolDb(patientHolDb);
+	}
 	public void setPatientName(PatientHistory patientHistory) {
 		int patientId = patientHistory.getPatientId();
 		String sql = "SELECT concat(p.patient_surname,' ',p.patient_name,' ',p.patient_patronnymic) name"
@@ -295,7 +320,7 @@ public class CuwyDbService1 {
 
 	String sqlCountry	= "SELECT * FROM country";
 	String sqlDistrict	= "SELECT * FROM district";
-	String sqlRegion	= "SELECT * FROM region";
+	String sqlRegion	= "SELECT * FROM region WHERE region_active ORDER BY region_name";
 
 	private class RegionRowMapper<T> implements RowMapper<T>{
 		private Map<Integer, DistrictHol> mapDistrictHol;
@@ -352,4 +377,5 @@ public class CuwyDbService1 {
 		}
 		
 	}
+	
 }

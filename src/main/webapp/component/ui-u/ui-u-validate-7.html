@@ -533,8 +533,28 @@
 	<script src="/db/addresses.json.js"></script>
 	<script src="/js/cuwy1.directives.js"></script>
 	<script type="text/javascript">
-
+	var historyFile = "/hol/history_no_"+parameters.hno;
+	
+	console.log("historyFile = "+historyFile);
+	
 cuwyApp.controller('NewPatientCtrl', [ '$scope', '$http', function ($scope, $http) {
+
+	$scope.patient = {
+		name: 'Patient name',
+		history_no: parameters.hno,
+		patientHistory: null
+	};
+
+	if(parameters.hno){
+		$http({
+			method : 'GET',
+			url : historyFile
+		}).success(function(data, status, headers, config) {
+			$scope.patient.patientHistory = data;
+			$scope.patient.name = data.patientName;
+		}).error(function(data, status, headers, config) {
+		});
+	}
 
 	$scope.addresses = addresses;
 	$scope.user = {name: '', last: '', patronymic: '', sex: '',

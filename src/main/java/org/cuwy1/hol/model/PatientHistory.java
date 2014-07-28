@@ -3,9 +3,12 @@ package org.cuwy1.hol.model;
 import java.util.Date;
 import java.util.List;
 
-public class PatientHistory {
-	public PatientHistory(){}
+import org.cuwy1.holDb.model.PatientHolDb;
 
+public class PatientHistory {
+
+	public PatientHistory(){}
+	private PatientHolDb patientHolDb;
 	private int history_id;
 	private int patientId;
 	private boolean patient_gender;
@@ -163,5 +166,11 @@ public class PatientHistory {
 	}
 	public void setPatientName(String patientName) {
 		this.patientName = patientName;
+	}
+	public PatientHolDb getPatientHolDb() {
+		return patientHolDb;
+	}
+	public void setPatientHolDb(PatientHolDb patientHolDb) {
+		this.patientHolDb = patientHolDb;
 	}
 }

@@ -141,6 +141,7 @@ public class HelloController {
 		logger.info("\n Start /hol/history_no_"+historyNo);
 		PatientHistory patientHistory = getShortPatientHistory(historyNo);
 		cuwyDbService1.setPatientName(patientHistory);
+		cuwyDbService1.setPatientHolDb(patientHistory);
 		return patientHistory;
 	}
 
