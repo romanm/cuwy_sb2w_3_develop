@@ -22,6 +22,8 @@ import org.cuwy1.hol.model.PatientDiagnosisHol;
 import org.cuwy1.hol.model.PatientHistory;
 import org.cuwy1.hol.model.ProcedureBooking;
 import org.cuwy1.hol.model.RegionHol;
+import org.cuwy1.holDb.model.HistoryHolDb;
+import org.cuwy1.holDb.model.PatientHolDb;
 import org.cuwy1.icd10.Icd10Class;
 import org.cuwy1.icd10.Icd10UaClass;
 import org.cuwy1.model1.Department;
@@ -63,8 +65,6 @@ public class HelloController {
 		logger.warn("\n article = "+article);
 		return article;
 	}
-
-	
 
 	@RequestMapping(value = "/readIcd10Childs", method = RequestMethod.POST)
 	public @ResponseBody Icd10Class readIcd10Childs(@RequestBody Icd10Class icd10Class) {
@@ -114,8 +114,24 @@ public class HelloController {
 		return icd10Class;
 	}
 
-	private PatientHistory getShortPatientHistory(int history_no) {
-		PatientHistory patientHistory = cuwyDbService1.getPatientHistory(history_no);
+	private HistoryHolDb getShortPatientHistory(int historyNo) {
+		HistoryHolDb historyHolDb = cuwyDbService1.getHistoryHolDbByNo(historyNo);
+		List<PatientDepartmentMovement> patientDepartmentMovements
+		= cuwyDbService1.getPatientDepartmentMovements(historyHolDb.getHistoryId());
+		historyHolDb.setPatientDepartmentMovements(patientDepartmentMovements);
+		List<HistoryTreatmentAnalysis> historyTreatmentAnalysises
+		= cuwyDbService1.getHistoryTreatmentAnalysises(historyHolDb.getHistoryId());
+		historyHolDb.setHistoryTreatmentAnalysises(historyTreatmentAnalysises);
+		DiagnosisOnAdmission diagnosisOnAdmission
+		= cuwyDbService1.getDiagnosisOnAdmission(historyHolDb.getHistoryId());
+		historyHolDb.setDiagnosisOnAdmission(diagnosisOnAdmission);
+		PatientHolDb patientHolDb = cuwyDbService1.getPatientHolDb(historyHolDb.getPatientId());
+		historyHolDb.setPatientHolDb(patientHolDb);
+		return historyHolDb;
+	}
+
+	private PatientHistory getShortPatientHistory_old(int history_no) {
+		PatientHistory patientHistory = cuwyDbService1.getPatientHistoryByNo(history_no);
 		List<PatientDepartmentMovement> patientDepartmentMovements
 		= cuwyDbService1.getPatientDepartmentMovements(patientHistory.getHistory_id());
 		patientHistory.setPatientDepartmentMovements(patientDepartmentMovements);
@@ -125,24 +141,45 @@ public class HelloController {
 		DiagnosisOnAdmission diagnosisOnAdmission
 		= cuwyDbService1.getDiagnosisOnAdmission(patientHistory.getHistory_id());
 		patientHistory.setDiagnosisOnAdmission(diagnosisOnAdmission);
+		cuwyDbService1.setPatientName(patientHistory);
+		int patientId = patientHistory.getPatientId();
+		PatientHolDb patientHolDb = cuwyDbService1.getPatientHolDb(patientId);
+		patientHistory.setPatientHolDb(patientHolDb);
 		return patientHistory;
 	}
 
 	@RequestMapping(value = "/openShortPatienHistory", method = RequestMethod.POST)
-	public @ResponseBody PatientHistory openShortPatienHistory(@RequestBody PatientDiagnosisHol patientDiagnosisHol) {
+	public @ResponseBody HistoryHolDb openShortPatienHistory(@RequestBody PatientDiagnosisHol patientDiagnosisHol) {
 		logger.info("\n Start /openShortPatienHistory "+patientDiagnosisHol);
 		int history_no = patientDiagnosisHol.getHistory_no();
-		PatientHistory patientHistory = getShortPatientHistory(history_no);
+		HistoryHolDb patientHistory = getShortPatientHistory(history_no);
+//		PatientHistory patientHistory = getShortPatientHistory(history_no);
 		return patientHistory;
 	}
 
-	@RequestMapping(value = "/hol/history_no_{historyNo}", method = RequestMethod.GET)
-	public @ResponseBody PatientHistory getHolPatientHistory(@PathVariable Integer historyNo) throws IOException {
+	@RequestMapping(value = "/savePatientHistory", method = RequestMethod.POST)
+	public @ResponseBody HistoryHolDb savePatientHistory(@RequestBody HistoryHolDb historyHolDb) {
+		logger.info("\n savePatientHistory patientHistory = "+historyHolDb);
+		String patientPhoneHome = historyHolDb.getPatientHolDb().getPatientPhoneHome();
+		cuwyDbService1.savePatientHolDb(historyHolDb.getPatientHolDb());
+		logger.info("\n patientPhoneHome = "+patientPhoneHome);
+		String patientPhoneMobil = historyHolDb.getPatientHolDb().getPatientPhoneMobil();
+		logger.info("\n patientPhoneMobil = "+patientPhoneMobil);
+		return historyHolDb;
+	}
+
+	@RequestMapping(value = "/hol/history_old_no_{historyNo}", method = RequestMethod.GET)
+	public @ResponseBody PatientHistory getHolPatientHistoryOld(@PathVariable Integer historyNo) throws IOException {
 		logger.info("\n Start /hol/history_no_"+historyNo);
-		PatientHistory patientHistory = getShortPatientHistory(historyNo);
-		cuwyDbService1.setPatientName(patientHistory);
-		cuwyDbService1.setPatientHolDb(patientHistory);
-		return patientHistory;
+		return getShortPatientHistory_old(historyNo);
+	}
+
+	@RequestMapping(value = "/hol/history_no_{historyNo}", method = RequestMethod.GET)
+	public @ResponseBody HistoryHolDb getHolPatientHistory(@PathVariable Integer historyNo) throws IOException {
+		logger.info("\n Start /hol/history_no_"+historyNo);
+//		PatientHistory patientHistory = getShortPatientHistory(historyNo);
+		HistoryHolDb shortPatientHistory = getShortPatientHistory(historyNo);
+		return shortPatientHistory;
 	}
 
 	@RequestMapping(value = "/hol/regions_{districtId}", method = RequestMethod.GET)

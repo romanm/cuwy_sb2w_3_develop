@@ -1,5 +1,6 @@
 package hello;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,11 +17,13 @@ import org.cuwy1.hol.model.PatientDepartmentMovement;
 import org.cuwy1.hol.model.PatientDiagnosisHol;
 import org.cuwy1.hol.model.PatientHistory;
 import org.cuwy1.hol.model.RegionHol;
+import org.cuwy1.holDb.model.HistoryHolDb;
 import org.cuwy1.holDb.model.PatientHolDb;
 import org.cuwy1.icd10.Icd10UaClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.stereotype.Component;
@@ -126,8 +129,27 @@ public class CuwyDbService1 {
 					}
 				});
 	}
-
-	public PatientHistory getPatientHistory(int historyNo) {
+	class HistoryHolDbRowMapper<T> implements RowMapper<T>{
+		@Override
+		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+			System.out.println(1);
+			HistoryHolDb historyHolDb = new HistoryHolDb();
+			historyHolDb.setHistoryId(rs.getInt("history_id"));
+			historyHolDb.setHistoryNo(rs.getInt("history_no"));
+			historyHolDb.setPatientId(rs.getInt("patient_id"));
+			return (T) historyHolDb;
+		}
+		
+	}
+	public HistoryHolDb getHistoryHolDbByNo(int historyNo) {
+		String sql = "SELECT * FROM history WHERE history_out IS NULL AND history_no = ? ";
+		logger.info("\n"+sql+historyNo);
+		return jdbcTemplate.queryForObject(
+				sql, new Object[] { historyNo }, 
+				new HistoryHolDbRowMapper()
+				);
+	}
+	public PatientHistory getPatientHistoryByNo(int historyNo) {
 		String sql ="SELECT * FROM patient p, history h"
 		+ " WHERE h.history_out IS NULL AND h.patient_id=p.patient_id"
 		+ " AND h.history_no= ? ";
@@ -255,29 +277,87 @@ public class CuwyDbService1 {
 			});
 	}
 
-	public void setPatientHolDb(PatientHistory patientHistory) {
-		int patientId = patientHistory.getPatientId();
+	private class PatientHolDbRowMapper<T> implements RowMapper<T>{
+		@Override
+		public T mapRow(ResultSet arg0, int arg1) throws SQLException {
+			return null;
+		}
+	}
+
+	public void savePatientHolDb(final PatientHolDb patientHolDb) {
+		String sql = "UPDATE patient "
+				+ "SET patient_phone_1 = ?"
+				+ ", patient_phone_2 = ? "
+				+ ", patient_surname = ? "
+				+ ", patient_name = ? "
+				+ ", patient_patronnymic = ? "
+				+ ", patient_gender = ? "
+				+ ", patient_street = ? "
+				+ ", patient_house = ? "
+				+ ", patient_flat = ? "
+				+ ", patient_job = ? "
+				+ ", patient_blood = ? "
+				+ ", patient_rh = ? "
+				+ ", patient_bj = ? "
+				+ " WHERE patient_id = ?";
+		logger.info("\n"+sql+patientHolDb.getPatientId());
+		jdbcTemplate.update(sql, new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, patientHolDb.getPatientPhoneHome());
+				ps.setString(2, patientHolDb.getPatientPhoneMobil());
+				ps.setString(3, patientHolDb.getPatientSurname());
+				ps.setString(4, patientHolDb.getPatientPersonalName());
+				ps.setString(5, patientHolDb.getPatientPatronymic());
+				ps.setBoolean(6, patientHolDb.getPatientGender()==1?true:false);
+				ps.setString(7, patientHolDb.getPatientStreet());
+				ps.setString(8, patientHolDb.getPatientHouse());
+				ps.setInt(9, patientHolDb.getPatientFlat());
+				ps.setString(10, patientHolDb.getPatientJob());
+				ps.setString(11, patientHolDb.getPatientBlood());
+				patientHolDb.setPatientRh(patientHolDb.getPatientRh2() == 1 ? true : false);
+				ps.setBoolean(12, patientHolDb.getPatientRh());
+				String patientBj = patientHolDb.getPatientBj();
+				ps.setString(13, patientBj.equals("")?null:patientBj);
+				ps.setInt(14, patientHolDb.getPatientId());
+			}
+		});
+	}
+
+	public PatientHolDb getPatientHolDb(int patientId) {
 		String sql = "SELECT * FROM patient p WHERE patient_id = ?";
 		logger.info("\n"+sql+patientId);
-		PatientHolDb patientHolDb = jdbcTemplate.queryForObject(
+		return jdbcTemplate.queryForObject(
 			sql, new Object[] { patientId }, 
 			new RowMapper<PatientHolDb>(){
 				@Override
 				public PatientHolDb mapRow(ResultSet rs, int rowNum)
 						throws SQLException {
 					PatientHolDb patientHolDb = new PatientHolDb();
+					patientHolDb.setPatientId(rs.getInt("patient_id"));
 					patientHolDb.setPatientSurname(rs.getString("patient_surname"));
 					patientHolDb.setPatientPersonalName(rs.getString("patient_name"));
+					patientHolDb.setPatientGender(rs.getBoolean("patient_gender")?1:0);
 					patientHolDb.setPatientPatronymic(rs.getString("patient_patronnymic"));
-					patientHolDb.setPatientGender(rs.getBoolean("patient_gender"));
-					patientHolDb.setPatientId(rs.getInt("patient_id"));
+					patientHolDb.setPatientDob(rs.getDate("patient_dob"));
 					patientHolDb.setPatientStreet(rs.getString("patient_street"));
-					patientHolDb.setPatientHouse(rs.getInt("patient_house"));
+					patientHolDb.setPatientHouse(rs.getString("patient_house"));
 					patientHolDb.setPatientFlat(rs.getInt("patient_flat"));
+					patientHolDb.setPatientJob(rs.getString("patient_job"));
+					patientHolDb.setPatientPhoneHome(rs.getString("patient_phone_1"));
+					patientHolDb.setPatientPhoneMobil(rs.getString("patient_phone_2"));
+					patientHolDb.setPatientBlood(rs.getString("patient_blood"));
+					patientHolDb.setPatientRh(rs.getBoolean("patient_rh"));
+					patientHolDb.setPatientRh2FromBoolean(patientHolDb.getPatientRh());
+					String patient_bj = rs.getString("patient_bj");
+					patientHolDb.setPatientBj(patient_bj==null?"":patient_bj);
+					patientHolDb.setPatientHivFromBoolean(rs.getBoolean("patient_aid"));
+					patientHolDb.setPatientHbsFromBoolean(rs.getBoolean("patient_hbs"));
+					patientHolDb.setPatientRwFromBoolean(rs.getBoolean("patient_rw"));
+					patientHolDb.setPatientRwDate(rs.getDate("patient_rw_date"));
 					return patientHolDb;
 				}
 			});
-		patientHistory.setPatientHolDb(patientHolDb);
 	}
 	public void setPatientName(PatientHistory patientHistory) {
 		int patientId = patientHistory.getPatientId();
@@ -377,5 +457,6 @@ public class CuwyDbService1 {
 		}
 		
 	}
+	
 	
 }

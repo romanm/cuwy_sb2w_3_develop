@@ -16,66 +16,75 @@
 </head>
 <body>
 <div>
-	<h4>№: {{patient.history_no}} {{patient.name}}</h4>
-	<div>Хвора: {{patient.name}} 
-	<span ng-bind="calculateAge(patient.patientHistory.patient_dob)"></span>
+	<h4>№: {{patientHistory.historyNo}} 
+	{{patientHistory.patientHolDb.patientSurname}} 
+	{{patientHistory.patientHolDb.patientPersonalName}} 
+	{{patientHistory.patientHolDb.patientPatronymic}} 
+	</h4>
+	<div>Хвора: 
+	{{patientHistory.patientHolDb.patientSurname}} 
+	{{patientHistory.patientHolDb.patientPersonalName}} 
+	{{patientHistory.patientHolDb.patientPatronymic}} 
+
+	<span ng-bind="calculateAge(patientHistory.patientHolDb.patientDob)"></span>
 	р.
-	(*{{patient.patientHistory.patient_dob | date:'dd.MM.yyyy'}})</div>
+	(*{{patientHistory.patientHolDb.patientDob | date:'dd.MM.yyyy'}})
+	</div>
 	<div>Адреса: 
-		<span ng-if="patient.patientHistory.patient_street">
-			вул.{{patient.patientHistory.patient_street}},
-			буд.{{patient.patientHistory.patient_house}},
-			кв.{{patient.patientHistory.patient_flat}}
+		<span ng-if="patientHistory.patientHolDb.patientStreet">
+			вул.{{patientHistory.patientHolDb.patientStreet}},
+			буд.{{patientHistory.patientHolDb.patientHouse}},
+			кв.{{patientHistory.patientHolDb.patientFlat}}
 		</span>
-		<span ng-if="!patient.patientHistory.patient_street">?</span>
+		<span ng-if="!patientHistory.patientHolDb.patientStreet">?</span>
 	</div>
 	<div>Місце роботи: 
-		<span ng-if="patient.patientHistory.patient_job">
-			{{patient.patientHistory.patient_job}}
+		<span ng-if="patientHistory.patientHolDb.patientJob">
+			{{patientHistory.patientHolDb.patientJob}}
 		</span>
-		<span ng-if="!patient.patientHistory.patient_job">?</span>
+		<span ng-if="!patientHistory.patientHolDb.patientJob">?</span>
 	</div>
 	<div>Медична інформація: 
 		<span>гр.кр.
-			<span ng-if="'I' == patient.patientHistory.patient_blood">{{patient.patientHistory.patient_blood}}(O),</span>
-			<span ng-if="'II' == patient.patientHistory.patient_blood">{{patient.patientHistory.patient_blood}}(A),</span>
-			<span ng-if="'III' == patient.patientHistory.patient_blood">{{patient.patientHistory.patient_blood}}(B),</span>
-			<span ng-if="'IV' == patient.patientHistory.patient_blood">{{patient.patientHistory.patient_blood}}(AB),</span>
+			<span ng-if="'I' == patientHistory.patientHolDb.patientBlood">{{patientHistory.patientHolDb.patientBlood}}(O),</span>
+			<span ng-if="'II' == patientHistory.patientHolDb.patientBlood">{{patientHistory.patientHolDb.patientBlood}}(A),</span>
+			<span ng-if="'III' == patientHistory.patientHolDb.patientBlood">{{patientHistory.patientHolDb.patientBlood}}(B),</span>
+			<span ng-if="'IV' == patientHistory.patientHolDb.patientBlood">{{patientHistory.patientHolDb.patientBlood}}(AB),</span>
 		</span>
-		<span ng-if="patient.patientHistory.patient_rh">Rh(+),</span>
-		<span ng-if="!patient.patientHistory.patient_rh">Rh(-),</span>
-		<span ng-if="patient.patientHistory.patient_rh == null">Rh(?),</span>
+		<span ng-if="1 == patientHistory.patientHolDb.patientRh2">Rh(+),</span>
+		<span ng-if="0 == patientHistory.patientHolDb.patientRh2">Rh(-),</span>
+		<span ng-if="!(1 == patientHistory.patientHolDb.patientRh2 || 0 == patientHistory.patientHolDb.patientRh2)">Rh(?),</span>
 		
-		<span ng-if="patient.patientHistory.patient_bj">Bj(+),</span>
-		<span ng-if="!patient.patientHistory.patient_bj">Bj(-),</span>
-		<span ng-if="patient.patientHistory.patient_bj == null">Bj(?),</span>
+		<span ng-if="1 == patientHistory.patientHolDb.patientBj">Bj(+),</span>
+		<span ng-if="0 == patientHistory.patientHolDb.patientBj">Bj(-),</span>
+		<span ng-if="!(1 == patientHistory.patientHolDb.patientBj || 0 == patientHistory.patientHolDb.patientBj)">Bj(?),</span>
 		
-		<span ng-if="patient.patientHistory.patient_sc">Sc(+),</span>
-		<span ng-if="!patient.patientHistory.patient_sc">Sc(-),</span>
-		<span ng-if="patient.patientHistory.patient_sc == null">Sc(?),</span>
+		<span ng-if="1 == patientHistory.patientHolDb.patientSc">Sc(+),</span>
+		<span ng-if="0 == patientHistory.patientHolDb.patientSc">Sc(-),</span>
+		<span ng-if="!(1 == patientHistory.patientHolDb.patientSc || 0 == patientHistory.patientHolDb.patientSc)">Sc(?),</span>
 		
-		<span ng-if="patient.patientHistory.patient_tbc">tbc(+),</span>
-		<span ng-if="!patient.patientHistory.patient_tbc">tbc(-),</span>
-		<span ng-if="patient.patientHistory.patient_tbc == null">tbc(?),</span>
+		<span ng-if="1 == patientHistory.patientHolDb.patientTbc">tbc(+),</span>
+		<span ng-if="0 == patientHistory.patientHolDb.patientTbc">tbc(-),</span>
+		<span ng-if="!(1 == patientHistory.patientHolDb.patientTbc || 0 == patientHistory.patientHolDb.patientTbc)">tbc(?),</span>
 
-		<span ng-if="patient.patientHistory.patient_t">T(+),</span>
-		<span ng-if="!patient.patientHistory.patient_t">T(-),</span>
-		<span ng-if="patient.patientHistory.patient_t == null">T(?),</span>
+		<span ng-if="1 == patientHistory.patientHolDb.patientT">T(+),</span>
+		<span ng-if="0 == patientHistory.patientHolDb.patientT">T(-),</span>
+		<span ng-if="!(1 == patientHistory.patientHolDb.patientT || 0 == patientHistory.patientHolDb.patientT)">T(?),</span>
 
-		<span ng-if="patient.patientHistory.patient_hbs">ВІЛ(+),</span>
-		<span ng-if="!patient.patientHistory.patient_hbs">ВІЛ(-),</span>
-		<span ng-if="patient.patientHistory.patient_hbs == null">ВІЛ(?),</span>
+		<span ng-if="1 == patientHistory.patientHolDb.patientHbs">ВІЛ(+),</span>
+		<span ng-if="0 == patientHistory.patientHolDb.patientHbs">ВІЛ(-),</span>
+		<span ng-if="!(1 == patientHistory.patientHolDb.patientHbs || 0 == patientHistory.patientHolDb.patientHbs)">ВІЛ(?),</span>
 
-		<span ng-if="patient.patientHistory.patient_rw">RW(+) -</span>
-		<span ng-if="!patient.patientHistory.patient_rw">RW(-) -</span>
-		<span ng-if="patient.patientHistory.patient_rw == null">RW(?) -</span>
-		({{patient.patientHistory.patient_rw_date | date:'dd.MM.yyyy'}})
+		<span ng-if="1 == patientHistory.patientHolDb.patientRw">RW(+) -</span>
+		<span ng-if="0 == patientHistory.patientHolDb.patientRw">RW(-) -</span>
+		<span ng-if="!(1 == patientHistory.patientHolDb.patientRw || 0 == patientHistory.patientHolDb.patientRw)">RW(?) -</span>
+		({{patientHistory.patientHolDb.patientRwDate | date:'dd.MM.yyyy'}})
 	</div>
 	<div>Побічна дія медикаментів:
 	</div>
 	<hr class="shortPatienHistory">
 	<div><u><b>Рух хворого</b></u>:
-		<span ng-repeat="patientDepartmentMovement in patient.patientHistory.patientDepartmentMovements">
+		<span ng-repeat="patientDepartmentMovement in patientHistory.patientDepartmentMovements">
 			{{patientDepartmentMovement.departmentName}}:
 			{{$index==0?'↓↓':'↓'
 			}}{{patientDepartmentMovement.departmentHistoryIn | date:'dd.MM.yyyy HH:mm'
@@ -94,14 +103,14 @@
 	</div>
 	<hr class="shortPatienHistory">
 	<div>Діагноз при госпіталізації: 
-	<b tooltip-html-unsafe="Дата встановлення: <b>{{patient.patientHistory.diagnosisOnAdmission.historyDiagnosDate | date:'dd.MM.yyyy HH:mm'}}</b>">
-		{{patient.patientHistory.diagnosisOnAdmission.icdCode}},
-		{{patient.patientHistory.diagnosisOnAdmission.icdName}}
+	<b tooltip-html-unsafe="Дата встановлення: <b>{{patientHistory.diagnosisOnAdmission.historyDiagnosDate | date:'dd.MM.yyyy HH:mm'}}</b>">
+		{{patientHistory.diagnosisOnAdmission.icdCode}},
+		{{patientHistory.diagnosisOnAdmission.icdName}}
 	</b>
 	</div>
 	<hr class="shortPatienHistory">
 	<div><u><b>Перебіг хвороби</b></u>:
-		<div ng-repeat="historyTreatmentAnalysis in patient.patientHistory.historyTreatmentAnalysises "
+		<div ng-repeat="historyTreatmentAnalysis in patientHistory.historyTreatmentAnalysises "
 			ng-if="'' != historyTreatmentAnalysis.historyTreatmentAnalysisText"
 			ng-show="historyTreatmentAnalysis.historyTreatmentAnalysisText.indexOf('table') < 0"
 		>
@@ -126,14 +135,49 @@
 			patientHistory: null
 		};
 
-		$http({
-			method : 'GET',
-			url : historyFile
-		}).success(function(data, status, headers, config) {
-			$scope.patient.patientHistory = data;
-			$scope.patient.name = data.patientName;
-		}).error(function(data, status, headers, config) {
-		});
+		if(parameters.hno){
+			$http({
+				method : 'GET',
+				url : historyFile
+			}).success(function(data, status, headers, config) {
+				$scope.patientHistory = data;
+			}).error(function(data, status, headers, config) {
+			});
+		}else if(parameters.hnoold){
+			$http({
+				method : 'GET',
+				url : "/hol/history_old_no_"+parameters.hnoold
+			}).success(function(data, status, headers, config) {
+				$scope.patient.patientHistory = data;
+				$scope.patientHistory = data;
+				$scope.patient.name = data.patientName;
+			}).error(function(data, status, headers, config) {
+			});
+			
+		}
+
+		$scope.calculateAge = function(birthDateStr) {
+			if(!birthDateStr)
+				return 0;
+			var birthDate = new Date(birthDateStr)
+				birthYear = birthDate.getFullYear(),
+				birthMonth = birthDate.getMonth(),
+				birthDay = birthDate.getDate();
+			var todayDate = new Date(),
+				todayYear = todayDate.getFullYear(),
+				todayMonth = todayDate.getMonth(),
+				todayDay = todayDate.getDate(),
+				age = todayYear - birthYear; 
+
+			if (todayMonth < birthMonth)
+			{
+				age--;
+			}else if (birthMonth === todayMonth && todayDay < birthDay)
+			{
+				age--;
+			}
+			return age;
+		};
 
 	} ] );
 

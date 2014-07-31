@@ -177,6 +177,7 @@
 	<script src="/js/angular.min.js"></script>
 	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
 	<script src="/js/angular-sanitize.min.js"></script>
+	<script src="/js/cuwy1.directives.js"></script>
 	<script type="text/javascript">
 
 	parameters = {};
@@ -188,7 +189,6 @@
 	}
 
 	departmentFile = "/hol/department_"+parameters.dep;
-	var cuwyApp = angular.module('cuwyApp', ['ui.bootstrap', 'ngSanitize']);
 
 	cuwyApp.controller('DepartmentCtrl', [ '$scope', '$http', function ($scope, $http) {
 
@@ -211,7 +211,6 @@
 		}
 
 		$scope.openPatientInfo = function(patient){
-			console.log(patient);
 			patient.collapsed = !patient.collapsed;
 			if(!patient.collapsed){
 				$http({
@@ -230,12 +229,10 @@
 			url : departmentFile
 		}).success(function(data, status, headers, config) {
 			$scope.department = data;
-			console.log($scope.department);
 		}).error(function(data, status, headers, config) {
 		});
 
 	} ] );
 
 	</script>
-	<script src="/js/cuwy1.directives.js"></script>
 </body>

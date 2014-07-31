@@ -28,7 +28,7 @@ public class PatientHistory {
 	private String patient_flat;
 	private String patient_job;
 	private List<PatientDepartmentMovement> patientDepartmentMovements;
-	private List<HistoryTreatmentAnalysis> HistoryTreatmentAnalysises;
+	private List<HistoryTreatmentAnalysis> historyTreatmentAnalysises;
 	private DiagnosisOnAdmission diagnosisOnAdmission;
 
 	public boolean isPatient_gender() {
@@ -143,11 +143,11 @@ public class PatientHistory {
 		this.history_id = history_id;
 	}
 	public List<HistoryTreatmentAnalysis> getHistoryTreatmentAnalysises() {
-		return HistoryTreatmentAnalysises;
+		return historyTreatmentAnalysises;
 	}
 	public void setHistoryTreatmentAnalysises(
 			List<HistoryTreatmentAnalysis> historyTreatmentAnalysises) {
-		HistoryTreatmentAnalysises = historyTreatmentAnalysises;
+		this.historyTreatmentAnalysises = historyTreatmentAnalysises;
 	}
 	public DiagnosisOnAdmission getDiagnosisOnAdmission() {
 		return diagnosisOnAdmission;
