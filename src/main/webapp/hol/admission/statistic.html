@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp">
+<head>
+	<meta charset=utf-8>
+	<link href="/css/bootstrap.css" rel="stylesheet">
+	<title>Журнал обліку хворих</title>
+	<style type="text/css">
+		body {
+			padding-top: 60px;
+			padding-bottom: 60px;
+		}
+	</style>
+</head>
+<body ng-controller="AdmissionStatisticCtrl">
+
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<div class="container">
+	<div class="navbar-header">
+		<ol class="breadcrumb">
+			<li><a href="/home.html">ХОЛ</a></li>
+			<li class="active">Приймальне</li>
+		</ol>
+	</div>
+	<div class="collapse navbar-collapse">
+		<ul class="nav navbar-nav navbar-right">
+			<li class="dropdown"><a href="#" class="dropdown-toggle"
+				data-toggle="dropdown"
+				title="Premium Bootstrap Themes &amp; Templates"><i
+					class="fa fa-star text-yellow"></i> меню <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a href="/hol/admission.html">Завести історію хвороби</a></li>
+					<li><a href="/hol/admission/statistic.html">Статистика по приймальному відділенню</a></li>
+					<li class="divider"></li>
+					<li><a
+						href="http://startbootstrap.com/bootstrap-design-services">Custom
+							Bootstrap Design Services</a></li>
+				</ul></li>
+		</ul>
+	</div>
+</div>
+</nav>
+
+	<h4>Журнал обліку хворих</h4>
+	<div class="container">
+		Сьогодні
+		{{today | date:'dd.MM.yyyy'}},
+		{{today.getWeekOfYear()}} неділя року
+		<h3>Кількість пацієнтів</h3>
+		<div class="row">
+			<div class="col-xs-3">
+				<fieldset><legend>по неділях 
+				{{today.getMonthUa(monthNr - 1 )}} 
+				{{year}}</legend>
+				<table class="table table-striped">
+					<thead>
+						<tr><th>Кількість пацієнтів</th><th>Неділя</th></tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="countPatientsProWeek in countPatientsProWeeks"
+							class="{{countPatientsProWeek.weekNr == weekOfYear ? 'success':''}}"
+						>
+							<td ng-if="$index !=0 && !($index == countPatientsProWeeks.length - 1)">
+							{{countPatientsProWeek.weekPatientCount}}
+							</td>
+							<td ng-if="$index == countPatientsProWeeks.length - 1">
+								{{countPatientsPro2Weeks[1].weekPatientCount}}
+								<span ng-if="countPatientsProWeek.weekPatientCount != countPatientsPro2Weeks[1].weekPatientCount">
+								({{countPatientsProWeek.weekPatientCount}})
+								</span>
+							</td>
+							<td ng-if="$index == 0">
+								{{countPatientsPro2Weeks[0].weekPatientCount}}
+								<span ng-if="countPatientsProWeek.weekPatientCount != countPatientsPro2Weeks[0].weekPatientCount">
+								({{countPatientsProWeek.weekPatientCount}})
+								</span>
+							</td>
+							<td ng-click="setWeekOfYear(countPatientsProWeek.weekNr)">{{countPatientsProWeek.weekNr}}</td>
+							<td></td>
+						</tr>
+					</tbody>
+					
+				</table>
+				</fieldset>
+			</div>
+			<div class="col-xs-3">
+				<fieldset><legend>по місяцях {{year}} року</legend>
+					<table class="table table-striped">
+					<thead>
+						<tr><th>Кількість пацієнтів</th><th>Місяць</th></tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="countPatientProMonth in countPatientsProMonth"
+							class="{{countPatientProMonth.monthNr == monthNr ? 'success':''}}"
+						>
+							<td>
+								{{countPatientProMonth.monthPatientCount}}
+							</td>
+							<td ng-click="setMonthNr(countPatientProMonth.monthNr)">{{today.getMonthUa(countPatientProMonth.monthNr-1)}}</td>
+						</tr>
+					</tbody>
+					<thead>
+						<tr>
+							<td>Всього:
+							{{countAllMonthsPatients()}}</td>
+						</tr>
+					</thead>
+					</table>
+				</fieldset>
+			</div>
+			<div class="col-xs-3">
+				<fieldset><legend>по роках</legend>
+					<table class="table table-striped">
+					<thead>
+						<tr><th>Кількість пацієнтів</th><th>Рік</th></tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="countPatientProYear in countPatientsProYear"
+							class="{{countPatientProYear.year == year ? 'success':''}}"
+						>
+							<td>{{countPatientProYear.yearPatientCount}}</td>
+							<td ng-click="setYear(countPatientProYear.year)">{{countPatientProYear.year}}</td>
+						</tr>
+					</tbody>
+					</table>
+				</fieldset>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Nr</th>
+							<th>Поступив</th>
+							<th>Хворий</th>
+							<th>д.н.</th>
+							<th>Адреса</th>
+							<th>Від. госп.</th>
+							<th>ІХ Nr</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="history in patientsAdmission.historysYearWeek">
+							<td>{{history.historyNo}}</td>
+							<td>{{history.historyIn | date:'dd.MM.yyyy HH:mm'}}</td>
+							<td>
+								{{history.patientHolDb.patientSurname}}
+								{{history.patientHolDb.patientPersonalName}}
+								{{history.patientHolDb.patientPatronymic}}
+							</td>
+							<td>{{history.patientHolDb.patientDob | date:'dd.MM.yyyy'}}</td>
+							<td>
+							{{history.patientHolDb.patientStreet}}
+							{{history.patientHolDb.patientHouse}}
+							<span ng-if="history.patientHolDb.patientFlat">
+								кв.{{history.patientHolDb.patientFlat}}
+							</span>
+							</td>
+							<td>
+								<span ng-repeat="patientDepartmentMovement in patientHistory.patientDepartmentMovements">
+			{{patientDepartmentMovement.departmentName}}
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<script src="/js/jquery-2.1.1.min.js"></script>
+	<script src="/js/angular.min.js"></script>
+	<script src="/js/angular-sanitize.min.js"></script>
+	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
+	<script src="/js/cuwy1.directives.js"></script>
+	<script type="text/javascript">
+	cuwyApp.controller('AdmissionStatisticCtrl', [ '$scope', '$http', function ($scope, $http) {
+		$scope.today = new Date();
+		console.log($scope.today.getMonthUa(1));
+		$scope.year = $scope.today.getFullYear();
+		console.log($scope.year);
+
+		$scope.setWeekOfYear = function(weekOfYear){
+			$scope.weekOfYear = weekOfYear;
+			$http({
+				method : 'GET',
+				url : '/patients_year_'+$scope.year+'_week_'+$scope.weekOfYear
+			}).success(function(data, status, headers, config) {
+				$scope.patientsAdmission = data;
+			}).error(function(data, status, headers, config) {
+			});
+		}
+
+		$scope.setMonthNr = function(monthNr){
+			$scope.monthNr = monthNr;
+			var mdf = new Date($scope.year, $scope.monthNr - 1, 1);
+			var mdl = new Date(mdf).addMonths(1).addDays(-1);
+			$scope.weekOfYearBegin = mdf.getWeekOfYear();
+			$scope.weekOfYearEnd = mdl.getWeekOfYear();
+			$http({
+				method : 'GET',
+				url : '/countPatientsProWeeks_'+$scope.year+'_'+$scope.monthNr
+			}).success(function(data, status, headers, config) {
+				$scope.countPatientsProWeeks = data;
+				var minWeek = $scope.countPatientsProWeeks[0].weekNr;
+				var maxWeek = $scope.countPatientsProWeeks[$scope.countPatientsProWeeks.length - 1].weekNr;
+				$http({
+					method : 'GET',
+					url : '/countPatientsPro2Weeks_'+$scope.year+'_'+minWeek+'_'+maxWeek
+				}).success(function(data, status, headers, config) {
+					$scope.countPatientsPro2Weeks = data;
+				}).error(function(data, status, headers, config) {
+				});
+			}).error(function(data, status, headers, config) {
+			});
+		}
+
+		$scope.setYear = function(year){
+			$scope.year = year;
+			$scope.getCountPatientsProMonth();
+		}
+
+		$scope.countAllMonthsPatients = function(){
+			var countAllMonthsPatients = 0;
+			$($scope.countPatientsProMonth).each(function () {
+				countAllMonthsPatients += this.monthPatientCount;
+			} );
+			return countAllMonthsPatients;
+		}
+
+		$http({
+			method : 'GET',
+			url : '/countPatientsProYear'
+		}).success(function(data, status, headers, config) {
+			$scope.countPatientsProYear = data;
+		}).error(function(data, status, headers, config) {
+		});
+
+		$scope.getCountPatientsProMonth = function(){
+			$http({
+				method : 'GET',
+				url : '/countPatientsProMonth_'+$scope.year
+			}).success(function(data, status, headers, config) {
+				$scope.countPatientsProMonth = data;
+				$scope.setMonthNr($scope.countPatientsProMonth[0].monthNr);
+			}).error(function(data, status, headers, config) {
+			});
+		}
+		$scope.getCountPatientsProMonth();
+
+	} ] );
+	</script>
+</body>
+</html>

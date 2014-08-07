@@ -1,5 +1,6 @@
 package org.cuwy1.holDb.model;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.cuwy1.hol.model.PatientDepartmentMovement;
 public class HistoryHolDb {
 	private PatientHolDb patientHolDb;
 	private int historyId,historyNo, patientId;
+	private Timestamp historyIn;
 	private List<PatientDepartmentMovement> patientDepartmentMovements;
 	private List<HistoryTreatmentAnalysis> historyTreatmentAnalysises;
 	private DiagnosisOnAdmission diagnosisOnAdmission;
@@ -68,6 +70,14 @@ public class HistoryHolDb {
 
 	public void setPatientHolDb(PatientHolDb patientHolDb) {
 		this.patientHolDb = patientHolDb;
+	}
+
+	public Timestamp getHistoryIn() {
+		return historyIn;
+	}
+
+	public void setHistoryIn(Timestamp historyIn) {
+		this.historyIn = historyIn;
 	}
 
 }
