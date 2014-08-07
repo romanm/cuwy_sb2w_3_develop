@@ -18,7 +18,7 @@ public class PatientHolDb {
 	private String patientBlood;
 	private boolean patientRh;
 	private int patientRh2;
-	private int patientFlat;
+	private String patientFlat;
 	private String patientBj;
 	private int patientSc;
 	private int patientTbc;
@@ -68,11 +68,11 @@ public class PatientHolDb {
 		this.patientStreet = patientStreet;
 	}
 
-	public int getPatientFlat() {
+	public String getPatientFlat() {
 		return patientFlat;
 	}
 
-	public void setPatientFlat(int patientFlat) {
+	public void setPatientFlat(String patientFlat) {
 		this.patientFlat = patientFlat;
 	}
 

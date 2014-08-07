@@ -6,6 +6,74 @@ if(window.location.search){
 	});
 }
 
+Date.prototype.getMonthUa = function (month){
+	var monthsUa = ["Січень", "Лютий"
+		, "Березень", "Квітень", "Травень"
+		, "Червень", "Липень", "Серпень"
+		, "Вересень", "Жовтень", "Листопад"
+		, "Грудень"];
+	return monthsUa[month];
+}
+Date.prototype.getDayOfYear = function (){
+	var onejan = new Date(this.getFullYear(),0,1);
+	return Math.ceil((this - onejan)/86400000 + 1);
+}
+Date.prototype.getWeekOfYear = function (){
+	var onejan = new Date(this.getFullYear(),0,1);
+	return Math.ceil((this.getDayOfYear() + onejan.getDay())/7);
+//	return Math.ceil((((this - onejan)/86400000 + 1 + onejan.getDay()))/7);
+}
+Date.prototype.addMonths = function(months){
+	this.setMonth(this.getMonth() + 1);
+	return this;
+}
+Date.prototype.addDays = function(days){
+	this.setDate(this.getDate() + days);
+	return this;
+}
+Date.prototype.addDays = function (num) {
+    var value = this.valueOf();
+    value += 86400000 * num;
+    return new Date(value);
+}
+
+Date.prototype.addSeconds = function (num) {
+    var value = this.valueOf();
+    value += 1000 * num;
+    return new Date(value);
+}
+
+Date.prototype.addMinutes = function (num) {
+    var value = this.valueOf();
+    value += 60000 * num;
+    return new Date(value);
+}
+
+Date.prototype.addHours = function (num) {
+    var value = this.valueOf();
+    value += 3600000 * num;
+    return new Date(value);
+}
+
+Date.prototype.addMonths2 = function (num) {
+    var value = new Date(this.valueOf());
+
+    var mo = this.getMonth();
+    var yr = this.getYear();
+
+    mo = (mo + num) % 12;
+    if (0 > mo) {
+        yr += (this.getMonth() + num - mo - 12) / 12;
+        mo += 12;
+    }
+    else
+        yr += ((this.getMonth() + num - mo) / 12);
+
+    value.setMonth(mo);
+    value.setYear(yr);
+    return value;
+}
+
 var cuwyApp = angular.module('cuwyApp', ['ui.bootstrap', 'ngSanitize']);
 
 cuwyApp.directive('autoFocus', function($timeout) {

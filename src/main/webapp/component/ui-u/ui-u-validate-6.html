@@ -201,14 +201,7 @@ cuwyApp.controller('NewPatientCtrl', [ '$scope', '$http', function ($scope, $htt
 			console.log("supportRegionField");
 			collapseRegionListe = !($scope.user.region.length > 0);
 			if(!$scope.user.regions){
-				$http({
-					method : 'GET',
-					url : "/hol/regions_1"
-				}).success(function(data, status, headers, config) {
-					$scope.user.regions = data;
-					console.log($scope.user.regions);
-				}).error(function(data, status, headers, config) {
-				});
+				console.log("$scope.user.regions = "+$scope.user.regions);
 			}
 
 		}

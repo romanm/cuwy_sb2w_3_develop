@@ -50,7 +50,7 @@ public class CuwyDbService1 {
 
 	public List<Icd10UaClass> getIcd10UaChilds() {
 		List<Icd10UaClass> icd10Classes = jdbcTemplate.query(
-				"SELECT * from icd WHERE icd_left_key = ?", new Object[] { 1 },
+				"SELECT * FROM icd WHERE icd_left_key = ?", new Object[] { 1 },
 				new RowMapper<Icd10UaClass>() {
 					@Override
 					public Icd10UaClass mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -127,20 +127,57 @@ public class CuwyDbService1 {
 						patientDiagnosisHol.setDiagnos_id(rs.getShort("max_diagnosis_id"));
 						return patientDiagnosisHol;
 					}
+
 				});
 	}
+
+	String sqlPatientsYearWeek = "SELECT * FROM history h "
+		+ " WHERE YEAR(h.history_in)= ? AND WEEKOFYEAR(h.history_in) = ? ";
+
+	public List<HistoryHolDb> getHistorysYearWeek(Integer year, Integer week) {
+		logger.info("\n"+sqlPatientsYearWeek.replaceFirst("\\?", ""+year).replaceFirst("\\?", ""+week));
+		Map<Integer, HistoryHolDb> mapHistoryOfPatient = new HashMap<Integer, HistoryHolDb>();
+		List patientsYearWeek = jdbcTemplate.query(
+				sqlPatientsYearWeek, new Object[] { year, week }, 
+				new HistoryHolDbRowMapper(mapHistoryOfPatient)
+				);
+		jdbcTemplate.query(
+				"SELECT p.* FROM patient p, (" + sqlPatientsYearWeek
+				+ ") h WHERE p.patient_id = h.patient_id", new Object[] { year, week }, 
+				new PatientHolDbRowMapper(mapHistoryOfPatient)
+				);
+		jdbcTemplate.query(
+				sqlPatientDepartmentMovement.replaceFirst("\\?", 
+					"SELECT h.history_id FROM (" + sqlPatientsYearWeek + ") h"), new Object[] { year, week }, 
+				new PatientDepartmentMovementRowMapper(mapHistoryOfPatient)
+				);
+		return patientsYearWeek;
+	}
+
 	class HistoryHolDbRowMapper<T> implements RowMapper<T>{
+		private Map<Integer, HistoryHolDb> mapHistoryOfPatient;
+
+		public HistoryHolDbRowMapper() { }
+
+		public HistoryHolDbRowMapper(
+				Map<Integer, HistoryHolDb> mapHistoryOfPatient) {
+			this.mapHistoryOfPatient = mapHistoryOfPatient;
+		}
+
 		@Override
 		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
-			System.out.println(1);
 			HistoryHolDb historyHolDb = new HistoryHolDb();
 			historyHolDb.setHistoryId(rs.getInt("history_id"));
 			historyHolDb.setHistoryNo(rs.getInt("history_no"));
 			historyHolDb.setPatientId(rs.getInt("patient_id"));
+			historyHolDb.setHistoryIn(rs.getTimestamp("history_in"));
+			if(mapHistoryOfPatient != null)
+				mapHistoryOfPatient.put(historyHolDb.getPatientId(), historyHolDb);
 			return (T) historyHolDb;
 		}
 		
 	}
+
 	public HistoryHolDb getHistoryHolDbByNo(int historyNo) {
 		String sql = "SELECT * FROM history WHERE history_out IS NULL AND history_no = ? ";
 		logger.info("\n"+sql+historyNo);
@@ -183,43 +220,57 @@ public class CuwyDbService1 {
 			});
 	}
 
+	String sqlPatientDepartmentMovement ="SELECT * FROM ( SELECT "
+			+ " h.patient_id, dh.history_id, d.department_id, d.department_name,"
+			+ " dh.personal_department_id_in, dh.personal_department_id_out,"
+			+ " dh.department_history_in, dh.department_history_out"
+			+ " FROM department d, department_history dh, history h"
+			+ " WHERE h.history_id = dh.history_id AND d.department_id=dh.department_id) ddh LEFT JOIN (SELECT "
+			+ " pd.personal_department_id,"
+			+ " p.personal_id,"
+			+ " p.personal_surname,"
+			+ " p.personal_name ,"
+			+ " p.personal_patronymic"
+			+ " FROM personal p, personal_department pd "
+			+ " WHERE p.personal_id=pd.personal_id ) ppd"
+			+ " ON ddh.personal_department_id_out = ppd.personal_department_id"
+			+ " WHERE ddh.history_id IN ( ? )";
 	public List<PatientDepartmentMovement> getPatientDepartmentMovements(int historyId) {
-		String sql ="SELECT * FROM (SELECT "
-				+ " d.department_id,"
-				+ " d.department_name,"
-				+ " dh.personal_department_id_in,"
-				+ " dh.personal_department_id_out,"
-				+ " dh.history_id,"
-				+ " dh.department_history_in,"
-				+ " dh.department_history_out"
-				+ " FROM department d, department_history dh"
-				+ " WHERE  d.department_id=dh.department_id) ddh LEFT JOIN (SELECT "
-				+ " pd.personal_department_id,"
-				+ " p.personal_id,"
-				+ " p.personal_surname,"
-				+ " p.personal_name ,"
-				+ " p.personal_patronymic"
-				+ " FROM personal p, personal_department pd "
-				+ " WHERE p.personal_id=pd.personal_id ) ppd"
-				+ " ON ddh.personal_department_id_out = ppd.personal_department_id"
-				+ " WHERE ddh.history_id = ?";
-		logger.info("\n"+sql+historyId);
+		logger.info("\n"+sqlPatientDepartmentMovement.replaceFirst("\\?", ""+historyId));
 		return jdbcTemplate.query(
-				sql, new Object[] { historyId }, 
-				new RowMapper<PatientDepartmentMovement>(){
-					@Override
-					public PatientDepartmentMovement mapRow(ResultSet rs, int rowNum)
-							throws SQLException {
-						PatientDepartmentMovement patientDepartmentMovement = new PatientDepartmentMovement();
-						patientDepartmentMovement.setDepartmentName(rs.getString("department_name"));
-						patientDepartmentMovement.setPersonalSurname(rs.getString("personal_surname"));
-						patientDepartmentMovement.setPersonalName(rs.getString("personal_name"));
-						patientDepartmentMovement.setPersonalPatronymic(rs.getString("personal_patronymic"));
-						patientDepartmentMovement.setDepartmentHistoryIn(rs.getTimestamp("department_history_in"));
-						patientDepartmentMovement.setDepartmentHistoryOut(rs.getTimestamp("department_history_out"));
-						return patientDepartmentMovement;
-					}
-				});
+				sqlPatientDepartmentMovement, new Object[] { historyId }, 
+				new PatientDepartmentMovementRowMapper()
+				);
+	}
+	private class PatientDepartmentMovementRowMapper<T> implements RowMapper<T>{
+		private Map<Integer, HistoryHolDb> mapHistoryOfPatient;
+		public PatientDepartmentMovementRowMapper(
+				Map<Integer, HistoryHolDb> mapHistoryOfPatient) {
+			this.mapHistoryOfPatient = mapHistoryOfPatient;
+		}
+
+		public PatientDepartmentMovementRowMapper() { }
+
+		@Override
+		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+			PatientDepartmentMovement patientDepartmentMovement = new PatientDepartmentMovement();
+			patientDepartmentMovement.setHistoryId(rs.getInt("history_id"));
+			patientDepartmentMovement.setPatientId(rs.getInt("patient_id"));
+			patientDepartmentMovement.setDepartmentName(rs.getString("department_name"));
+			patientDepartmentMovement.setPersonalSurname(rs.getString("personal_surname"));
+			patientDepartmentMovement.setPersonalName(rs.getString("personal_name"));
+			patientDepartmentMovement.setPersonalPatronymic(rs.getString("personal_patronymic"));
+			patientDepartmentMovement.setDepartmentHistoryIn(rs.getTimestamp("department_history_in"));
+			patientDepartmentMovement.setDepartmentHistoryOut(rs.getTimestamp("department_history_out"));
+			if(mapHistoryOfPatient != null){
+				int patientId = patientDepartmentMovement.getPatientId();
+				HistoryHolDb historyHolDb = mapHistoryOfPatient.get(patientId);
+				if(historyHolDb.getPatientDepartmentMovements() == null)
+					historyHolDb.setPatientDepartmentMovements(new ArrayList<PatientDepartmentMovement>());
+				historyHolDb.getPatientDepartmentMovements().add(patientDepartmentMovement);
+			}
+			return (T) patientDepartmentMovement;
+		}
 	}
 
 	public List<HistoryTreatmentAnalysis> getHistoryTreatmentAnalysises(int historyId) {
@@ -260,7 +311,7 @@ public class CuwyDbService1 {
 
 	public List<RegionHol> getRegions(Integer districtId) {
 		String like = "%хм%";
-		String sql = "SELECT * FROM region where district_id = ? and region_name like ?";
+		String sql = "SELECT * FROM region where district_id = ? AND region_name like ?";
 		logger.info("\n"+sql+districtId);
 		return jdbcTemplate.query(
 			sql, new Object[] { districtId, like }, 
@@ -275,13 +326,6 @@ public class CuwyDbService1 {
 					return regionHol;
 				}
 			});
-	}
-
-	private class PatientHolDbRowMapper<T> implements RowMapper<T>{
-		@Override
-		public T mapRow(ResultSet arg0, int arg1) throws SQLException {
-			return null;
-		}
 	}
 
 	public void savePatientHolDb(final PatientHolDb patientHolDb) {
@@ -312,7 +356,7 @@ public class CuwyDbService1 {
 				ps.setBoolean(6, patientHolDb.getPatientGender()==1?true:false);
 				ps.setString(7, patientHolDb.getPatientStreet());
 				ps.setString(8, patientHolDb.getPatientHouse());
-				ps.setInt(9, patientHolDb.getPatientFlat());
+				ps.setString(9, patientHolDb.getPatientFlat());
 				ps.setString(10, patientHolDb.getPatientJob());
 				ps.setString(11, patientHolDb.getPatientBlood());
 				patientHolDb.setPatientRh(patientHolDb.getPatientRh2() == 1 ? true : false);
@@ -324,45 +368,58 @@ public class CuwyDbService1 {
 		});
 	}
 
+	private class PatientHolDbRowMapper<T> implements RowMapper<T>{
+		private Map<Integer, HistoryHolDb> mapHistoryOfPatient;
+		public PatientHolDbRowMapper(){ }
+		public PatientHolDbRowMapper(
+				Map<Integer, HistoryHolDb> mapHistoryOfPatient) {
+			this.mapHistoryOfPatient = mapHistoryOfPatient;
+		}
+		@Override
+		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+			PatientHolDb patientHolDb = new PatientHolDb();
+			patientHolDb.setPatientId(rs.getInt("patient_id"));
+			patientHolDb.setPatientSurname(rs.getString("patient_surname"));
+			patientHolDb.setPatientPersonalName(rs.getString("patient_name"));
+			patientHolDb.setPatientGender(rs.getBoolean("patient_gender")?1:0);
+			patientHolDb.setPatientPatronymic(rs.getString("patient_patronnymic"));
+			patientHolDb.setPatientDob(rs.getDate("patient_dob"));
+			patientHolDb.setPatientStreet(rs.getString("patient_street"));
+			patientHolDb.setPatientHouse(rs.getString("patient_house"));
+			patientHolDb.setPatientFlat(rs.getString("patient_flat"));
+			patientHolDb.setPatientJob(rs.getString("patient_job"));
+			patientHolDb.setPatientPhoneHome(rs.getString("patient_phone_1"));
+			patientHolDb.setPatientPhoneMobil(rs.getString("patient_phone_2"));
+			patientHolDb.setPatientBlood(rs.getString("patient_blood"));
+			patientHolDb.setPatientRh(rs.getBoolean("patient_rh"));
+			patientHolDb.setPatientRh2FromBoolean(patientHolDb.getPatientRh());
+			String patient_bj = rs.getString("patient_bj");
+			patientHolDb.setPatientBj(patient_bj==null?"":patient_bj);
+			patientHolDb.setPatientHivFromBoolean(rs.getBoolean("patient_aid"));
+			patientHolDb.setPatientHbsFromBoolean(rs.getBoolean("patient_hbs"));
+			patientHolDb.setPatientRwFromBoolean(rs.getBoolean("patient_rw"));
+			patientHolDb.setPatientRwDate(rs.getDate("patient_rw_date"));
+			if(mapHistoryOfPatient != null){
+				HistoryHolDb historyHolDb = mapHistoryOfPatient.get(patientHolDb.getPatientId());
+				historyHolDb.setPatientHolDb(patientHolDb);
+			}
+			return (T) patientHolDb;
+		}
+	}
+
 	public PatientHolDb getPatientHolDb(int patientId) {
 		String sql = "SELECT * FROM patient p WHERE patient_id = ?";
 		logger.info("\n"+sql+patientId);
 		return jdbcTemplate.queryForObject(
 			sql, new Object[] { patientId }, 
-			new RowMapper<PatientHolDb>(){
-				@Override
-				public PatientHolDb mapRow(ResultSet rs, int rowNum)
-						throws SQLException {
-					PatientHolDb patientHolDb = new PatientHolDb();
-					patientHolDb.setPatientId(rs.getInt("patient_id"));
-					patientHolDb.setPatientSurname(rs.getString("patient_surname"));
-					patientHolDb.setPatientPersonalName(rs.getString("patient_name"));
-					patientHolDb.setPatientGender(rs.getBoolean("patient_gender")?1:0);
-					patientHolDb.setPatientPatronymic(rs.getString("patient_patronnymic"));
-					patientHolDb.setPatientDob(rs.getDate("patient_dob"));
-					patientHolDb.setPatientStreet(rs.getString("patient_street"));
-					patientHolDb.setPatientHouse(rs.getString("patient_house"));
-					patientHolDb.setPatientFlat(rs.getInt("patient_flat"));
-					patientHolDb.setPatientJob(rs.getString("patient_job"));
-					patientHolDb.setPatientPhoneHome(rs.getString("patient_phone_1"));
-					patientHolDb.setPatientPhoneMobil(rs.getString("patient_phone_2"));
-					patientHolDb.setPatientBlood(rs.getString("patient_blood"));
-					patientHolDb.setPatientRh(rs.getBoolean("patient_rh"));
-					patientHolDb.setPatientRh2FromBoolean(patientHolDb.getPatientRh());
-					String patient_bj = rs.getString("patient_bj");
-					patientHolDb.setPatientBj(patient_bj==null?"":patient_bj);
-					patientHolDb.setPatientHivFromBoolean(rs.getBoolean("patient_aid"));
-					patientHolDb.setPatientHbsFromBoolean(rs.getBoolean("patient_hbs"));
-					patientHolDb.setPatientRwFromBoolean(rs.getBoolean("patient_rw"));
-					patientHolDb.setPatientRwDate(rs.getDate("patient_rw_date"));
-					return patientHolDb;
-				}
-			});
+			new PatientHolDbRowMapper()
+			);
 	}
+
 	public void setPatientName(PatientHistory patientHistory) {
 		int patientId = patientHistory.getPatientId();
-		String sql = "SELECT concat(p.patient_surname,' ',p.patient_name,' ',p.patient_patronnymic) name"
-				+ " from patient p where patient_id= ?";
+		String sql = "SELECT CONCAT(p.patient_surname,' ',p.patient_name,' ',p.patient_patronnymic) name"
+				+ " FROM patient p WHERE patient_id= ?";
 		logger.info("\n"+sql+patientId);
 		PatientHistory patientHistoryDb = jdbcTemplate.queryForObject(
 				sql, new Object[] { patientId }, 
@@ -457,6 +514,55 @@ public class CuwyDbService1 {
 		}
 		
 	}
-	
-	
+
+	public List<Map<String, Object>> countPatientsProYear() {
+		String sql = "SELECT YEAR(h.history_in) year, COUNT(year(h.history_in)) yearPatientCount "
+				+ " FROM history h GROUP BY YEAR(h.history_in) "
+				+ " ORDER BY YEAR(h.history_in) DESC";
+		logger.info("\n"+sql);
+		List<Map<String, Object>> countPatientProYear = jdbcTemplate.queryForList(sql);
+		return countPatientProYear;
+	}
+
+	public List<Map<String, Object>> countPatientsProWeeks(Integer year,
+			Integer minWeek, Integer maxWeek) {
+		String sql = "SELECT WEEKOFYEAR(h.history_in) weekNr, COUNT(WEEKOFYEAR(h.history_in)) weekPatientCount "
+				+ " FROM history h "
+				+ " WHERE YEAR(h.history_in) = ? AND (WEEKOFYEAR(h.history_in) = ? OR WEEKOFYEAR(h.history_in) = ?) "
+				+ " GROUP BY WEEKOFYEAR(h.history_in) ORDER BY WEEKOFYEAR(h.history_in) DESC";
+		logger.info("\n"+sql+" "+year+" "+minWeek+" "+maxWeek);
+		List<Map<String, Object>> countPatientsProWeek 
+		= jdbcTemplate.queryForList(sql, new Object[] { year, minWeek, maxWeek });
+		return countPatientsProWeek;
+	}
+
+	public List<Map<String, Object>> countPatientsProWeeks(Integer year, Integer monthNr) {
+		String sql = "SELECT WEEKOFYEAR(h.history_in) weekNr"
+				+ ", COUNT(WEEKOFYEAR(h.history_in)) weekPatientCount "
+				+ " FROM history h "
+				+ " WHERE YEAR(h.history_in) = ? AND MONTH(h.history_in) = ? "
+				+ " GROUP BY WEEKOFYEAR(h.history_in) ORDER BY WEEKOFYEAR(h.history_in) DESC";
+		logger.info("\n"+sql+" "+year+" "+monthNr);
+		List<Map<String, Object>> countPatientsProWeek 
+		= jdbcTemplate.queryForList(sql, new Object[] { year, monthNr });
+		return countPatientsProWeek;
+	}
+
+	public List<Map<String, Object>> countPatientsProMonth(Integer year) {
+		String sql = "SELECT MONTH(h.history_in) monthNr, COUNT(MONTH(h.history_in)) monthPatientCount "
+				+ " FROM history h "
+				+ " WHERE YEAR(h.history_in)= ? GROUP BY MONTH(h.history_in) ORDER BY MONTH(h.history_in) DESC";
+		logger.info("\n"+sql);
+		List<Map<String, Object>> countPatientsProMonth 
+		= jdbcTemplate.queryForList(sql, new Object[] { year });
+		return countPatientsProMonth;
+	}
+
+	public List<Map<String, Object>> patientsYearWeekRsList(Integer year, Integer week) {
+		logger.info("\n"+sqlPatientsYearWeek+" "+year+" "+week);
+		List<Map<String, Object>> countPatientsProWeek 
+		= jdbcTemplate.queryForList(sqlPatientsYearWeek, new Object[] { year, week });
+		return countPatientsProWeek;
+	}
+
 }

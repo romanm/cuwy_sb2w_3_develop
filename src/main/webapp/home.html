@@ -19,14 +19,14 @@
 	<h3 ng-repeat="departmentHol in departmentsHol.departmentsHol"
 	ng-if="departmentHol.department_profile_id == 3 "
 	>
-		<a href="hol/admission2.html">
+		<a href="hol/admission.html">
 			{{departmentHol.department_name}}
 		</a>
 	</h3>
 	<h4 ng-repeat="departmentHol in departmentsHol.departmentsHol"
 	ng-if="departmentHol.department_profile_id == 4 "
 	>
-		<a href="hol/department2.html?dep={{departmentHol.department_id}}">
+		<a href="hol/department.html?dep={{departmentHol.department_id}}">
 			{{departmentHol.department_name}}
 		</a>
 	</h4>
@@ -35,7 +35,7 @@
 	<h4 ng-repeat="departmentHol in departmentsHol.departmentsHol"
 	ng-if="departmentHol.department_profile_id == 2 "
 	>
-		<a href="hol/department2.html?dep={{departmentHol.department_id}}">
+		<a href="hol/department.html?dep={{departmentHol.department_id}}">
 			{{departmentHol.department_name}}
 		</a>
 	</h4>
@@ -44,7 +44,7 @@
 	<h4 ng-repeat="departmentHol in departmentsHol.departmentsHol"
 	ng-if="departmentHol.department_profile_id == 1 "
 	>
-		<a href="hol/department2.html?dep={{departmentHol.department_id}}">
+		<a href="hol/department.html?dep={{departmentHol.department_id}}">
 			{{departmentHol.department_name}}
 		</a>
 	</h4>

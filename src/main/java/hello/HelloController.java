@@ -22,6 +22,7 @@ import org.cuwy1.hol.model.PatientDiagnosisHol;
 import org.cuwy1.hol.model.PatientHistory;
 import org.cuwy1.hol.model.ProcedureBooking;
 import org.cuwy1.hol.model.RegionHol;
+import org.cuwy1.hol.report.PatientsAdmission;
 import org.cuwy1.holDb.model.HistoryHolDb;
 import org.cuwy1.holDb.model.PatientHolDb;
 import org.cuwy1.icd10.Icd10Class;
@@ -116,8 +117,10 @@ public class HelloController {
 
 	private HistoryHolDb getShortPatientHistory(int historyNo) {
 		HistoryHolDb historyHolDb = cuwyDbService1.getHistoryHolDbByNo(historyNo);
+		System.out.println(1);
 		List<PatientDepartmentMovement> patientDepartmentMovements
 		= cuwyDbService1.getPatientDepartmentMovements(historyHolDb.getHistoryId());
+		System.out.println(2);
 		historyHolDb.setPatientDepartmentMovements(patientDepartmentMovements);
 		List<HistoryTreatmentAnalysis> historyTreatmentAnalysises
 		= cuwyDbService1.getHistoryTreatmentAnalysises(historyHolDb.getHistoryId());
@@ -395,6 +398,43 @@ public class HelloController {
 		emp.setCreatedDate(new Date());
 		empData.put(id, emp);
 		return emp;
+	}
+
+	@RequestMapping(value = "/patients_year_{year}_week_{week}", method = RequestMethod.GET)
+	public @ResponseBody PatientsAdmission patientsYearWeek(
+			@PathVariable Integer year, @PathVariable Integer week) {
+//		List<Map<String, Object>> historysYearWeek111 
+//		= cuwyDbService1.patientsYearWeekRsList(year,week);
+		PatientsAdmission patientsAdmission = new PatientsAdmission();
+		List<HistoryHolDb> historysYearWeek = cuwyDbService1.getHistorysYearWeek(year, week);
+		patientsAdmission.setHistorysYearWeek(historysYearWeek);
+		return patientsAdmission;
+	}
+
+	@RequestMapping(value = "/countPatientsPro2Weeks_{year}_{minWeek}_{maxWeek}", method = RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> countPatientsProWeeks(
+			@PathVariable Integer year, @PathVariable Integer minWeek, @PathVariable Integer maxWeek) {
+		List<Map<String, Object>> countPatientsProWeeks = cuwyDbService1.countPatientsProWeeks(year,minWeek,maxWeek);
+		return countPatientsProWeeks;
+	}
+
+	@RequestMapping(value = "/countPatientsProWeeks_{year}_{monthNr}", method = RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> countPatientsProWeeks(
+			@PathVariable Integer year, @PathVariable Integer monthNr) {
+		List<Map<String, Object>> countPatientsProWeeks = cuwyDbService1.countPatientsProWeeks(year,monthNr);
+		return countPatientsProWeeks;
+	}
+
+	@RequestMapping(value = "/countPatientsProMonth_{year}", method = RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> countPatientsProMonth(@PathVariable Integer year) {
+		List<Map<String, Object>> countPatientsProMonth = cuwyDbService1.countPatientsProMonth(year);
+		return countPatientsProMonth;
+	}
+
+	@RequestMapping(value = "/countPatientsProYear", method = RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> countPatientsProYear() {
+		List<Map<String, Object>> countPatientsProYear = cuwyDbService1.countPatientsProYear();
+		return countPatientsProYear;
 	}
 
 	@RequestMapping(value = "/emps", method = RequestMethod.GET)
