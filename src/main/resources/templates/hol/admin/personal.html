@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="AdminAtoCtrl">
+<head>
+<title>{{title}}</title>
+<div th:replace="hol1 :: header" />
+</head>
+<body>
+	<nav th:replace="hol1 :: navbar-top-admin" />
+	<div class="container">
+		<h1>{{title}}</h1>
+		<div class="input-group">
+				<span class="input-group-addon">Пошук:</span>
+				<input ng-model="query" type="text" class="form-control" 
+				placeholder="Перші букви/цифри пошуку" auto-focus=""/>
+			</div>
+		<ul>
+			<li ng-repeat="person in personalList | filter:query">
+				{{person.personal_id}},
+				{{person.personal_surname}}
+				{{person.personal_name}}
+				{{person.personal_patronymic}},
+				{{person.department_name}}
+			</li>
+		</ul>
+	</div>
+	<div th:replace="hol1 :: js-lib" />
+	<script src="/db/addresses.json.js"></script>
+	<script type="text/javascript">
+	cuwyApp.controller('AdminAtoCtrl', [ '$scope', '$http', function ($scope, $http) {
+		$scope.title = "Працівники";
+		$scope.addresses = addresses;
+
+		$scope.openCountry = function(country)	{ country.openCountry = !country.openCountry; }
+		$scope.openDistrict = function(district){ district.openDistrict = !district.openDistrict; }
+
+		$http({
+			method : 'GET',
+			url : '/hol/personal-list'
+		}).success(function(data, status, headers, config) {
+			$scope.personalList = data;
+		}).error(function(data, status, headers, config) {
+		});
+
+	} ] );
+	</script>
+</body>
+</html>

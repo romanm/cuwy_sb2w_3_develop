@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="AdminAtoCtrl">
+<head>
+<title>{{title}}</title>
+<div th:replace="hol1 :: header" />
+</head>
+<body>
+	<nav th:replace="hol1 :: navbar-top-admin" />
+	<div class="container">
+		<h1>{{title}}</h1>
+		<ul>
+			<li ng-repeat="country in addresses">
+				<a ng-click="openCountry(country)"> {{country.countryName}} </a>
+				<ul ng-if="country.openCountry">
+					<li ng-repeat="district in country.districtsHol">
+						<a ng-click="openDistrict(district)"> {{district.districtName}} </a>
+						<ul ng-if="district.openDistrict">
+							<li ng-repeat="region in district.regionsHol">
+						{{region.regionName}}
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+	<div th:replace="hol1 :: js-lib" />
+	<script src="/db/addresses.json.js"></script>
+	<script type="text/javascript">
+	cuwyApp.controller('AdminAtoCtrl', [ '$scope', '$http', function ($scope, $http) {
+		$scope.title = "Адміністративно-територіальні одиниці";
+		$scope.addresses = addresses;
+
+		$scope.openCountry = function(country)	{ country.openCountry = !country.openCountry; }
+		$scope.openDistrict = function(district){ district.openDistrict = !district.openDistrict; }
+
+	} ] );
+	</script>
+</body>
+</html>

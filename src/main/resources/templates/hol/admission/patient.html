@@ -1,69 +1,24 @@
 <!DOCTYPE html>
-<html ng-app="cuwyApp">
+<html ng-app="cuwyApp" ng-controller="AdmissionPatientCtrl">
 <head>
-	<meta charset=utf-8>
-	<title>Створити історію хвороби</title>
-	<link href="/css/bootstrap.css" rel="stylesheet">
-	<link href="/css/datepicker.css" rel="stylesheet">
-	<style type="text/css">
-		body {
-			padding-top: 60px;
-			padding-bottom: 60px;
-		}
-		.required-tooltip {font-size:150%;color: red;}
-		.required:after {
-			content: "*"; position:absolute; color: red;
-			top:-4px;right:-8px;
-		}
-		.required-simple:after {
-			content: "*"; position:absolute; color: red;
-		}
-	</style>
+<title>{{title}}</title>
+<div th:replace="hol1 :: header" />
 </head>
-<body ng-controller="NewPatientCtrl">
-
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-<div class="container">
-	<div class="navbar-header">
-		<ol class="breadcrumb">
-			<li><a href="/home.html">ХОЛ</a></li>
-			<li class="active">Приймальне: Створити історію хвороби</li>
-		</ol>
-	</div>
-	<div class="collapse navbar-collapse">
-		<ul class="nav navbar-nav navbar-right">
-			<li class="dropdown"><a href="#" class="dropdown-toggle"
-				data-toggle="dropdown"
-				title="Premium Bootstrap Themes &amp; Templates"><i
-					class="fa fa-star text-yellow"></i> меню <b class="caret"></b></a>
-				<ul class="dropdown-menu">
-					<li><a href="/hol/admission.html">Завести історію хвороби</a></li>
-					<li><a href="/hol/admission/statistic.html">Журнал обліку хворих</a></li>
-					<li class="divider"></li>
-					<li><a href="/hol/operation/add-op.html">
-							Заявка на додавання операції до словника</a></li>
-					<li><a href="/hol/operation/liste-op.html">
-							Список операцій</a></li>
-					<li><a href="/hol/operation/liste-complication.html">
-							Список післяопераційних ускладнень</a></li>
-				</ul></li>
-		</ul>
-	</div>
-</div>
-</nav>
+<body>
+	<nav th:replace="hol1 :: navbar-top" />
 	<div class="container">
-	<form name="newPatientForm" role="form">
-	<h4>Створити історію хвороби №</h4>
-	<hr/>
-		<div>
+		<form name="newPatientForm" role="form">
+			<h4>{{title}} №</h4>
+			<hr/>
+			<div>
 			<fieldset><legend>Особиста інформація</legend>
 			<div class="row">
 			<div class="col-xs-3">
 				<div class="form-group has-success has-feedback required">
 					<label class="control-label sr-only" for="patientSurname"></label>
-					<input type="text" class="form-control input-sm" placeholder="Прізвище" auto-focus
-					id="patientSurname" name="patientSurname" ng-model="patientHistory.patientHolDb.patientSurname" required
-					tooltip-html-unsafe="Прізвище <b class='required-tooltip'>*</b>" />
+					<input type="text" class="form-control input-sm" placeholder="Прізвище" auto-focus=""
+					id="patientSurname" name="patientSurname" ng-model="patientHistory.patientHolDb.patientSurname" required=""
+					tooltip-html-unsafe="Прізвище &lt;b class='required-tooltip'>*&lt;/b>" />
 					<span class="glyphicon form-control-feedback"></span>
 					<span class="control-label" ng-show="isRequired(newPatientForm.patientSurname)">
 					Прізвище є обов'язковим і не може бути порожнім!</span>
@@ -74,8 +29,8 @@
 					<label class="control-label sr-only" for="patientPersonalName"></label>
 					<input type="text" class="form-control input-sm" placeholder="Ім’я" 
 					id="patientPersonalName" name="patientPersonalName" ng-model="patientHistory.patientHolDb.patientPersonalName" 
-					required ng-minlength="2" ng-maxlength="10"
-					tooltip-html-unsafe="Ім’я <b class='required-tooltip'>*</b>" />
+					required="" ng-minlength="2" ng-maxlength="10"
+					tooltip-html-unsafe="Ім’я &lt;b class='required-tooltip'>*&lt;/b>" />
 					<span class="glyphicon form-control-feedback"></span>
 					<span class="control-label" ng-show="isLastNameValid(newPatientForm.patientPersonalName,'minlength')">
 					Занадто коротке?!</span>
@@ -85,14 +40,14 @@
 					Ім’я є обов'язковим і не може бути порожнім!</span>
 				</div>
 				<div class="form-group-xs has-success has-feedback required-simple"
-				tooltip-html-unsafe="Стать <b class='required-tooltip'>*</b>"
+				tooltip-html-unsafe="Стать &lt;b class='required-tooltip'>*&lt;/b>"
 				>
 					<label class="radio-inline"> 
-						<input type="radio" name="patientGender" ng-model="patientHistory.patientHolDb.patientGender" value="1">
+						<input type="radio" name="patientGender" ng-model="patientHistory.patientHolDb.patientGender" value="1"/>
 						Чол
 					</label>
 					<label class="radio-inline"> 
-						<input type="radio" name="patientGender" ng-model="patientHistory.patientHolDb.patientGender" value="0">
+						<input type="radio" name="patientGender" ng-model="patientHistory.patientHolDb.patientGender" value="0"/>
 						Жін
 					</label>
 				</div>
@@ -101,8 +56,8 @@
 				<div class="form-group has-success has-feedback required">
 					<label class="control-label sr-only" for="patientPatronymic"></label>
 					<input type="text" class="form-control input-sm" placeholder="По батькові" 
-					id="patientPatronymic" name="patientPatronymic" ng-model="patientHistory.patientHolDb.patientPatronymic" required
-					tooltip-html-unsafe="По батькові <b class='required-tooltip'>*</b>"
+					id="patientPatronymic" name="patientPatronymic" ng-model="patientHistory.patientHolDb.patientPatronymic" required=""
+					tooltip-html-unsafe="По батькові &lt;b class='required-tooltip'>*&lt;/b>"
 					/>
 					<span class="glyphicon form-control-feedback"></span>
 					<span class="control-label" ng-show="isRequired(newPatientForm.patientPatronymic)">
@@ -111,11 +66,11 @@
 			</div>
 			<div class="col-xs-3">
 				<div class="form-group-xs has-success has-feedback required"
-				tooltip-html-unsafe="Дата народження <b class='required-tooltip'>*</b>"
+				tooltip-html-unsafe="Дата народження &lt;b class='required-tooltip'>*&lt;/b>"
 				>
 				<div class="input-group">
 					<div class="input-group-addon">д.н.</div>
-					<input id="bod" class="form-control input-sm" type="text" placeholder="дд-мм-рррр">
+					<input id="bod" class="form-control input-sm" type="text" placeholder="дд-мм-рррр"/>
 				</div>
 				</div>
 			</div>
@@ -129,7 +84,7 @@
 				<div class="form-group-xs has-success has-feedback required" title="Країна" >
 					<label class="control-label sr-only" for="country"></label>
 					<input type="text" class="form-control input-sm" placeholder="Країна"
-					id="country" name="country" ng-model="patientEditing.country" required
+					id="country" name="country" ng-model="patientEditing.country" required=""
 					/>
 					<span class="glyphicon form-control-feedback"></span>
 					<span class="control-label" ng-show="isNoCountryInDb()">
@@ -140,7 +95,7 @@
 			</div>
 			<div class="col-xs-1">
 				<div class="btn-group">
-					<button type="button"class="btn btn-sm btn-default dropdown-toggle"data-toggle="dropdown">
+					<button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
 						<span class="caret"></span>
 					</button>
 					<div class="dropdown-menu" role="menu">
@@ -148,14 +103,14 @@
 						<tr>
 							<td>
 								<ul>
-									<li ng-repeat="country in addresses" ng-if="$index < addresses.length/2">
+									<li ng-repeat="country in addresses" ng-if="$index &lt; addresses.length/2">
 										<a ng-click="writeToModel('country',country.countryName)">{{country.countryName}}</a>
 									</li>
 								</ul>
 							</td>
 							<td>
 								<ul>
-									<li ng-repeat="country in addresses"ng-if="$index > addresses.length/2">
+									<li ng-repeat="country in addresses" ng-if="$index > addresses.length/2">
 										<a ng-click="writeToModel('country',country.countryName)">{{country.countryName}}</a>
 									</li>
 								</ul>
@@ -175,8 +130,8 @@
 				<div class="form-group has-success has-feedback required">
 					<label class="control-label sr-only" for="district">Область</label>
 					<input type="text" class="form-control input-sm" placeholder="Область" 
-					id="district" name="district" ng-model="patientEditing.district" required
-					tooltip-html-unsafe="Область <b class='required-tooltip'>*</b>"
+					id="district" name="district" ng-model="patientEditing.district" required=""
+					tooltip-html-unsafe="Область &lt;b class='required-tooltip'>*&lt;/b>"
 					/>
 					<span class="glyphicon form-control-feedback"></span>
 					<span class="control-label" ng-show="isRequired(newPatientForm.district)">
@@ -186,7 +141,7 @@
 					<b>Пошук області</b>:
 					<ul>
 						<li ng-repeat="district in districts | filter:patientEditing.district">
-						<a ng-click="writeToModel('district', district.districtName)">{{district.districtName}}</a>
+							<a ng-click="writeToModel('district', district.districtName)">{{district.districtName}}</a>
 						</li>
 					</ul>
 				</div>
@@ -201,7 +156,7 @@
 						<tr>
 							<td>
 							<ul>
-							<li ng-repeat="district in districts" ng-if="$index < districts.length/3">
+							<li ng-repeat="district in districts" ng-if="$index &lt; districts.length/3">
 								<a ng-click="writeToModel('district',district.districtName)">{{district.districtName}}</a>
 							</li>
 							</ul>
@@ -209,7 +164,7 @@
 							<td>
 							<ul>
 							<li ng-repeat="district in districts" 
-							ng-if="$index < districts.length/3*2 && $index > districts.length/3">
+							ng-if="isDistrict2of3($index, districts)">
 								<a ng-click="writeToModel('district',district.districtName)">{{district.districtName}}</a>
 							</li>
 							</ul>
@@ -233,9 +188,9 @@
 				<div class="form-group has-success has-feedback required">
 					<label class="control-label sr-only" for="region"></label>
 					<input type="text" class="form-control input-sm" placeholder="Район" 
-					id="region" name="region" ng-model="patientEditing.region" required
+					id="region" name="region" ng-model="patientEditing.region" required=""
 					ng-change="supportRegionField()"
-					tooltip-html-unsafe="Район <b class='required-tooltip'>*</b>"
+					tooltip-html-unsafe="Район &lt;b class='required-tooltip'>*&lt;/b>"
 					/>
 					<span class="glyphicon form-control-feedback"></span>
 					<span class="control-label" ng-show="isRequired(newPatientForm.region)">
@@ -260,21 +215,21 @@
 						<tr>
 							<td>
 							<ul>
-							<li ng-repeat="region in regions" ng-if="$index < regions.length/4">
+							<li ng-repeat="region in regions" ng-if="$index &lt; regions.length/4">
 								<a ng-click="writeToModel('region',region.regionName)">{{region.regionName}}</a>
 							</li>
 							</ul>
 							</td>
 							<td>
 							<ul>
-							<li ng-repeat="region in regions" ng-if="$index > regions.length/4 && $index < regions.length/4*2">
+							<li ng-repeat="region in regions" ng-if="isRegion2of4($index, regions)">
 								<a ng-click="writeToModel('region',region.regionName)">{{region.regionName}}</a>
 							</li>
 							</ul>
 							</td>
 							<td>
 							<ul>
-							<li ng-repeat="region in regions" ng-if="$index > regions.length/4*2 && $index < regions.length/4*3">
+							<li ng-repeat="region in regions" ng-if="isRegion3of4($index, regions)">
 								<a ng-click="writeToModel('region',region.regionName)">{{region.regionName}}</a>
 							</li>
 							</ul>
@@ -296,14 +251,14 @@
 			<div class="row">
 			<div class="col-xs-1">
 				<div class="form-group-xs has-success has-feedback required"
-				tooltip-html-unsafe="Місто/Село <b class='required-tooltip'>*</b>"
+				tooltip-html-unsafe="Місто/Село &lt;b class='required-tooltip'>*&lt;/b>"
 				>
 					<label class="radio"> 
-						<input type="radio" name="localityType" ng-model="patientEditing.localityType" value="1">
+						<input type="radio" name="localityType" ng-model="patientEditing.localityType" value="1"/>
 						місто
 					</label>
 					<label class="radio"> 
-						<input type="radio" name="localityType" ng-model="patientEditing.localityType" value="0">
+						<input type="radio" name="localityType" ng-model="patientEditing.localityType" value="0"/>
 						село
 					</label>
 				</div>
@@ -312,8 +267,8 @@
 				<div class="form-group has-success has-feedback required">
 					<label class="control-label sr-only" for="localityName"></label>
 					<input type="text" class="form-control input-sm" placeholder="місто/село" 
-					id="localityName" name="localityName" ng-model="patientEditing.localityName" required
-					tooltip-html-unsafe="Населений пункт <b class='required-tooltip'>*</b>"
+					id="localityName" name="localityName" ng-model="patientEditing.localityName" required=""
+					tooltip-html-unsafe="Населений пункт &lt;b class='required-tooltip'>*&lt;/b>"
 					/>
 					<span class="glyphicon form-control-feedback"></span>
 					<span class="control-label" ng-show="isRequired(newPatientForm.district)">
@@ -375,8 +330,8 @@
 			<div class="form-group has-feedback required">
 					<label class="control-label" for="patientJob">Місце роботи:</label>
 					<input type="text" class="form-control input-sm" placeholder="Місце роботи" 
-					id="patientJob" name="patientJob" ng-model="patientHistory.patientHolDb.patientJob" required
-					tooltip-html-unsafe="Місце роботи <b class='required-tooltip'>*</b>"
+					id="patientJob" name="patientJob" ng-model="patientHistory.patientHolDb.patientJob" required=""
+					tooltip-html-unsafe="Місце роботи &lt;b class='required-tooltip'>*&lt;/b>"
 					/>
 					<span class="glyphicon form-control-feedback"></span>
 					<span class="control-label" ng-show="isRequired(newPatientForm.patientJob)">
@@ -388,7 +343,7 @@
 					<label class="control-label" for="patientJob">Пільги:</label>
 				<div class="input-group input-group-sm">
 					<input type="text" class="form-control input-sm" placeholder="Місце роботи" 
-					id="pilgy" name="pilgy" ng-model="patientEditing.pilgy" required
+					id="pilgy" name="pilgy" ng-model="patientEditing.pilgy" required=""
 					/>
 					<div class="input-group-btn">
 						<button type="button" class="btn btn-default dropdown-toggle"
@@ -428,7 +383,7 @@
 			</div>
 			<div class="col-xs-3">
 				<label class="checkbox-inline" >
-				<input type="checkbox" name="patientArmy" ng-model="patientEditing.patientArmy">
+				<input type="checkbox" name="patientArmy" ng-model="patientEditing.patientArmy"/>
 				Призовник
 				</label> 
 			</div>
@@ -440,8 +395,8 @@
 					<div class="form-group has-success has-feedback required">
 						<label class="control-label sr-only" for="direct">Направляючий заклад</label>
 						<input type="text" class="form-control input-sm" placeholder="Направляючий заклад" 
-						id="direct" name="direct" ng-model="patientEditing.direct" required
-						tooltip-html-unsafe="Направляючий заклад <b class='required-tooltip'>*</b>"
+						id="direct" name="direct" ng-model="patientEditing.direct" required=""
+						tooltip-html-unsafe="Направляючий заклад &lt;b class='required-tooltip'>*&lt;/b>"
 						/>
 						<span class="glyphicon form-control-feedback"></span>
 						<span class="control-label" ng-show="isRequired(newPatientForm.direct)">
@@ -460,8 +415,8 @@
 					<div class="form-group has-success has-feedback required">
 						<label class="control-label sr-only" for="direct">Відділення госпіталізації</label>
 						<input type="text" class="form-control input-sm" placeholder="Відділення госпіталізації" 
-						id="department" name="department" ng-model="patientEditing.department" required
-						tooltip-html-unsafe="Відділення госпіталізації <b class='required-tooltip'>*</b>"
+						id="department" name="department" ng-model="patientEditing.department" required=""
+						tooltip-html-unsafe="Відділення госпіталізації &lt;b class='required-tooltip'>*&lt;/b>"
 						/>
 						<span class="glyphicon form-control-feedback"></span>
 						<span class="control-label" ng-show="isRequired(newPatientForm.department)">
@@ -483,9 +438,9 @@
 					<div class="form-group has-success has-feedback required">
 						<label class="control-label sr-only" for="direct">Діагноз</label>
 						<input type="text" class="form-control input-sm" placeholder="Діагноз МКБ" 
-						id="historyDiagnos" name="historyDiagnos" ng-model="patientEditing.historyDiagnos" required
+						id="historyDiagnos" name="historyDiagnos" ng-model="patientEditing.historyDiagnos" required=""
 						ng-change="changeDiagnose()"
-						tooltip-html-unsafe="Діагноз <b class='required-tooltip'>*</b>"
+						tooltip-html-unsafe="Діагноз &lt;b class='required-tooltip'>*&lt;/b>"
 						/>
 						<span class="glyphicon form-control-feedback"></span>
 						<span class="control-label" ng-show="isRequired(newPatientForm.historyDiagnos)">
@@ -507,7 +462,7 @@
 						<input type="text" class="form-control input-sm" placeholder="Діагноз додаток" 
 						id="historyDiagnosAdditional" name="historyDiagnosAdditional" ng-model="patientEditing.historyDiagnosAdditional"
 						ng-change="changeDiagnoseAdditional()"
-						tooltip-html-unsafe="Діагноз  додаток <b class='required-tooltip'>*</b>"
+						tooltip-html-unsafe="Діагноз  додаток &lt;b class='required-tooltip'>*&lt;/b>"
 						/>
 						<span class="glyphicon form-control-feedback"></span>
 						<span class="control-label" ng-show="isRequired(newPatientForm.historyDiagnos)">
@@ -521,8 +476,8 @@
 					<div class="form-group has-success has-feedback required">
 						<label class="control-label sr-only" for="direct">Направляючий заклад</label>
 						<input type="text" class="form-control input-sm" placeholder="Стан при госпіталізації" 
-						id="stan" name="stan" ng-model="patientEditing.stan" required
-						tooltip-html-unsafe="Стан при госпіталізації <b class='required-tooltip'>*</b>"
+						id="stan" name="stan" ng-model="patientEditing.stan" required=""
+						tooltip-html-unsafe="Стан при госпіталізації &lt;b class='required-tooltip'>*&lt;/b>"
 						/>
 						<span class="glyphicon form-control-feedback"></span>
 						<span class="control-label" ng-show="isRequired(newPatientForm.stan)">
@@ -531,14 +486,14 @@
 				</div>
 				<div class="col-xs-4">
 					<div class="form-group-xs has-success has-feedback required-simple"
-					tooltip-html-unsafe="Ургентно / Планово <b class='required-tooltip'>*</b>"
+					tooltip-html-unsafe="Ургентно / Планово &lt;b class='required-tooltip'>*&lt;/b>"
 					>
 						<label class="radio-inline"> 
-							<input type="radio" name="urgentPlan" ng-model="patientEditing.urgentPlan" value="plan">
+							<input type="radio" name="urgentPlan" ng-model="patientEditing.urgentPlan" value="plan"/>
 							Ургентно
 						</label>
 						<label class="radio-inline"> 
-							<input type="radio" name="urgentPlan" ng-model="patientEditing.urgentPlan" value="urgent">
+							<input type="radio" name="urgentPlan" ng-model="patientEditing.urgentPlan" value="urgent"/>
 							Планово
 						</label>
 					</div>
@@ -568,32 +523,32 @@
 						<table>
 							<tr><th></th><th>+</th><th>-</th><th>?</th></tr>
 							<tr><td>Bj</td><td>
-							<input type="radio" name="patientBj" ng-model="patientHistory.patientHolDb.patientBj" value="1">
+							<input type="radio" name="patientBj" ng-model="patientHistory.patientHolDb.patientBj" value="1"/>
 							</td><td>
-							<input type="radio" name="patientBj" ng-model="patientHistory.patientHolDb.patientBj" value="0">
+							<input type="radio" name="patientBj" ng-model="patientHistory.patientHolDb.patientBj" value="0"/>
 							</td><td>
-							<input type="radio" name="patientBj" ng-model="patientHistory.patientHolDb.patientBj" value="">
+							<input type="radio" name="patientBj" ng-model="patientHistory.patientHolDb.patientBj" value=""/>
 							</td></tr>
 							<tr><td>Sc</td><td>
-							<input type="radio" name="patientSc" ng-model="patientHistory.patientHolDb.patientSc" value="1">
+							<input type="radio" name="patientSc" ng-model="patientHistory.patientHolDb.patientSc" value="1"/>
 							</td><td>
-							<input type="radio" name="patientSc" ng-model="patientHistory.patientHolDb.patientSc" value="0">
+							<input type="radio" name="patientSc" ng-model="patientHistory.patientHolDb.patientSc" value="0"/>
 							</td><td>
-							<input type="radio" name="patientSc" ng-model="patientHistory.patientHolDb.patientSc" value="2">
+							<input type="radio" name="patientSc" ng-model="patientHistory.patientHolDb.patientSc" value="2"/>
 							</td></tr>
 							<tr><td>Tbc</td><td>
-							<input type="radio" name="patientTbc" ng-model="patientHistory.patientHolDb.patientTbc" value="1">
+							<input type="radio" name="patientTbc" ng-model="patientHistory.patientHolDb.patientTbc" value="1"/>
 							</td><td>
-							<input type="radio" name="patientTbc" ng-model="patientHistory.patientHolDb.patientTbc" value="0">
+							<input type="radio" name="patientTbc" ng-model="patientHistory.patientHolDb.patientTbc" value="0"/>
 							</td><td>
-							<input type="radio" name="patientTbc" ng-model="patientHistory.patientHolDb.patientTbc" value="2">
+							<input type="radio" name="patientTbc" ng-model="patientHistory.patientHolDb.patientTbc" value="2"/>
 							</td></tr>
 							<tr><td>T</td><td>
-							<input type="radio" name="patientT" ng-model="patientHistory.patientHolDb.patientT" value="1">
+							<input type="radio" name="patientT" ng-model="patientHistory.patientHolDb.patientT" value="1"/>
 							</td><td>
-							<input type="radio" name="patientT" ng-model="patientHistory.patientHolDb.patientT" value="0">
+							<input type="radio" name="patientT" ng-model="patientHistory.patientHolDb.patientT" value="0"/>
 							</td><td>
-							<input type="radio" name="patientT" ng-model="patientHistory.patientHolDb.patientT" value="2">
+							<input type="radio" name="patientT" ng-model="patientHistory.patientHolDb.patientT" value="2"/>
 							</td></tr>
 						</table>
 					</div>
@@ -601,25 +556,25 @@
 						<table>
 							<tr><th></th><th>+</th><th>-</th><th>?</th></tr>
 							<tr><td>Hbs</td><td>
-							<input type="radio" name="patientHbs" ng-model="patientHistory.patientHolDb.patientHbs" value="1">
+							<input type="radio" name="patientHbs" ng-model="patientHistory.patientHolDb.patientHbs" value="1"/>
 							</td><td>
-							<input type="radio" name="patientHbs" ng-model="patientHistory.patientHolDb.patientHbs" value="0">
+							<input type="radio" name="patientHbs" ng-model="patientHistory.patientHolDb.patientHbs" value="0"/>
 							</td><td>
-							<input type="radio" name="patientHbs" ng-model="patientHistory.patientHolDb.patientHbs" value="2">
+							<input type="radio" name="patientHbs" ng-model="patientHistory.patientHolDb.patientHbs" value="2"/>
 							</td></tr>
 							<tr><td>ВІЛ</td><td>
-							<input type="radio" name="patientHiv" ng-model="patientHistory.patientHolDb.patientHiv" value="1">
+							<input type="radio" name="patientHiv" ng-model="patientHistory.patientHolDb.patientHiv" value="1"/>
 							</td><td>
-							<input type="radio" name="patientHiv" ng-model="patientHistory.patientHolDb.patientHiv" value="0">
+							<input type="radio" name="patientHiv" ng-model="patientHistory.patientHolDb.patientHiv" value="0"/>
 							</td><td>
-							<input type="radio" name="patientHiv" ng-model="patientHistory.patientHolDb.patientHiv" value="2">
+							<input type="radio" name="patientHiv" ng-model="patientHistory.patientHolDb.patientHiv" value="2"/>
 							</td></tr>
 							<tr><td>RW</td><td>
-							<input type="radio" name="patientRw" ng-model="patientHistory.patientHolDb.patientRw" value="1">
+							<input type="radio" name="patientRw" ng-model="patientHistory.patientHolDb.patientRw" value="1"/>
 							</td><td>
-							<input type="radio" name="patientRw" ng-model="patientHistory.patientHolDb.patientRw" value="0">
+							<input type="radio" name="patientRw" ng-model="patientHistory.patientHolDb.patientRw" value="0"/>
 							</td><td>
-							<input type="radio" name="patientRw" ng-model="patientHistory.patientHolDb.patientRw" value="2">
+							<input type="radio" name="patientRw" ng-model="patientHistory.patientHolDb.patientRw" value="2"/>
 							</td></tr>
 						</table>
 					</div>
@@ -634,9 +589,7 @@
 				</div>
 			</fieldset>
 		</div>
-	</form>
-	
-	<hr/>
+		</form>
 	</div>
 	<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
 		<div class="container">
@@ -644,225 +597,14 @@
 				<span class="glyphicon glyphicon-floppy-disk"></span>
 				Зберегти
 			</button>
-			<br>
-			<br>
-			<br>
-			<br>
+			<br/>
+			<br/>
+			<br/>
+			<br/>
 		</div>
 	</nav>
-	<script src="/js/jquery-2.1.1.min.js"></script>
-	<!-- 
-	<script src="/js/jquery-ui.min.js"></script>
-	<script src="/js/bootstrap.min.js"></script>
-	 -->
-	<script src="/js/angular.min.js"></script>
-	<!-- 
-	 -->
-	<script src="/js/angular-sanitize.min.js"></script>
-	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
-	<!-- 
-	<script src="/js/ui-utils-1.js"></script>
-	 -->
-	<script src="/js/bootstrap-datepicker.js"></script>
+	<div th:replace="hol1 :: js-lib" />
 	<script src="/db/addresses.json.js"></script>
-	<script src="/js/cuwy1.directives.js"></script>
-	<script type="text/javascript">
-	var historyFile = "/hol/history_no_"+parameters.hno;
-	
-	console.log("historyFile = "+historyFile);
-	
-cuwyApp.controller('NewPatientCtrl', [ '$scope', '$http', function ($scope, $http) {
-
-	$scope.addresses = addresses;
-	$scope.patient = {
-		name: 'Patient name',
-		history_no: parameters.hno,
-		patientHistory: null
-	};
-	$scope.patientHistory = {};
-
-	if(parameters.hno){
-		$http({
-			method : 'GET',
-			url : historyFile
-		}).success(function(data, status, headers, config) {
-			$scope.patientHistory = data;
-		}).error(function(data, status, headers, config) {
-		});
-	}
-
-	$scope.savePatientHistory = function(){
-		console.log("savePatientHistory");
-		var postNewPatien = $http({
-			method : 'POST',
-			data : $scope.patientHistory,
-			url : '/savePatientHistory'
-		}).success(function(data, status, headers, config){
-			$scope.patientHistory = data;
-		}).error(function(data, status, headers, config) {
-		});
-
-	}
-
-	$scope.patientEditing = {name: '', last: '', patientPatronymic: '', patientGender: false,
-		country: addresses[0].countryName,
-		countryCollapsed: true,
-		district: addresses[0].districtsHol[0].districtName,
-		region: '',
-		localityType: '',
-		localityName: '',
-		pilgy: '',
-		urgentPlan: '',
-		x: null
-	};
-
-	$scope.changeDiagnose = function(){
-		console.log("changeDiagnose");
-	}
-	$scope.getCountryDistricts = function(){
-		$($scope.addresses).each(function () {
-			if(this.countryName == $scope.patientEditing.country){
-				$scope.districts = this.districtsHol;
-			}
-		});
-	}
-
-	$scope.getCountryDistricts();
-
-	$scope.getDistrictRegions = function(){
-		$($scope.districts).each(function () {
-			if(this.districtName == $scope.patientEditing.district){
-				$scope.regions = this.regionsHol;
-			}
-		});
-	}
-
-	$scope.getDistrictRegions();
-
-	$scope.writeToModel = function(fieldName, value){
-		$scope.patientEditing[fieldName] = value;
-		if("country" == fieldName){
-			$scope.patientEditing.countryCollapsed = true;
-		}
-	}
-
-	$scope.supportDistrictField = function(){
-		var collapseDistrictListe = true;
-		if($scope.patientEditing.district){
-			collapseDistrictListe = !($scope.patientEditing.district.length > 0);
-			if(!$scope.districts){
-				//seek all districts
-			}else{
-				$($scope.districts).each(function(){
-					if(this.districtName == $scope.patientEditing.district){
-						collapseDistrictListe = true;
-					}
-				});
-			}
-		}
-		return collapseDistrictListe;
-	}
-	$scope.collapseRegionListe = true;
-	$scope.supportRegionField = function(){
-		$scope.collapseRegionListe = true;
-		if($scope.patientEditing.region ){
-			$scope.collapseRegionListe = !($scope.patientEditing.region.length > 0);
-			if(!$scope.regions){
-				//seek all regions
-			}else{
-				$($scope.regions).each(function(){
-					if(this.regionName == $scope.patientEditing.region){
-						$scope.collapseRegionListe = true;
-					}
-				});
-			}
-		}
-	}
-
-	$scope.openCountryFormGroup = function(){
-		console.log($scope.patientEditing.country);
-		$scope.patientEditing.countryCollapsed = !$scope.patientEditing.countryCollapsed;
-		if(false && !$scope.patientEditing.countryCollapsed){
-			$http({
-				method : 'POST',
-				data : patient,
-				url : '/openShortPatienHistory'
-			}).success(function(data, status, headers, config){
-				patient.patientHistory = data;
-			}).error(function(data, status, headers, config) {
-			});
-		}
-	}
-
-	$scope.isWarning = function(field, art){
-		var isShowWarning = field.$error.maxlength || field.$error.minlength;
-		checkShowEditField(field, isShowWarning, "warning", "warning-sign");
-		return field.$error[art] && field.$dirty;
-	}
-
-	$scope.isNoCountryInDb = function(){
-		var isNoCountryInDb = true;
-		$($scope.addresses).each(function () {
-			if(this.countryName == $scope.patientEditing.country)
-				isNoCountryInDb = false;
-		}
-		);
-		checkShowEditField($scope.newPatientForm.country, isNoCountryInDb, "warning", "warning-sign");
-		return isNoCountryInDb;
-	}
-
-	$scope.isLastNameValid = function(field, art){
-		var isRequired = field.$error.required && field.$dirty;
-		if(isRequired){
-			checkShowEditField(field, isRequired, "error", "remove");
-			if(!art)
-				return isRequired;
-		}
-		var isShowWarning = field.$error.maxlength || field.$error.minlength;
-		checkShowEditField(field, isShowWarning, "warning", "warning-sign");
-		return field.$error[art] && field.$dirty;
-	}
-
-	$scope.isRequired = function(field){
-		var isRequired = field.$error.required && field.$dirty;
-		checkShowEditField(field, isRequired, "error", "remove");
-		return isRequired;
-	}
-
-	checkShowEditField = function(field, isOk, groupValidClass, iconValidClass){
-		var fieldEl = $("#"+field.$name);
-		var fieldIconEl = $(fieldEl[0].nextElementSibling);
-		if(fieldIconEl.hasClass("glyphicon")){
-			var formGroupEl = fieldIconEl.parent();
-			formGroupEl.removeClass("has-success has-warning has-error");
-			fieldIconEl.removeClass("glyphicon-remove glyphicon-ok glyphicon-warning-sign");
-			if(isOk){
-				formGroupEl.addClass("has-"+groupValidClass);
-				fieldIconEl.addClass("glyphicon-"+iconValidClass);
-			}else{
-				formGroupEl.addClass("has-success");
-				if(field.$dirty){
-					fieldIconEl.addClass("glyphicon-ok");
-				}
-			}
-		}
-	}
-
-} ] );
-
-$(function() {
-	$('#bod').datepicker({
-		format : 'dd-mm-yyyy'
-	});
-	/*
-	$(document).tooltip({
-		content: function () {
-			return $(this).prop('title');
-		}
-	});
-	*/
-});
-	</script>
-	
+	<script src="/js/admissionPatientCtrl.js"></script>
 </body>
 </html>

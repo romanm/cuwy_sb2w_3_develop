@@ -220,12 +220,14 @@ public class CuwyDbService1 {
 			});
 	}
 
-	String sqlPatientDepartmentMovement ="SELECT * FROM ( SELECT "
+	String sqlPatientDepartmentMovement ="SELECT * FROM "
+			+ "( SELECT "
 			+ " h.patient_id, dh.history_id, d.department_id, d.department_name,"
 			+ " dh.personal_department_id_in, dh.personal_department_id_out,"
 			+ " dh.department_history_in, dh.department_history_out"
 			+ " FROM department d, department_history dh, history h"
-			+ " WHERE h.history_id = dh.history_id AND d.department_id=dh.department_id) ddh LEFT JOIN (SELECT "
+			+ " WHERE h.history_id = dh.history_id AND d.department_id=dh.department_id"
+			+ ") ddh LEFT JOIN (SELECT "
 			+ " pd.personal_department_id,"
 			+ " p.personal_id,"
 			+ " p.personal_surname,"
@@ -256,6 +258,7 @@ public class CuwyDbService1 {
 			PatientDepartmentMovement patientDepartmentMovement = new PatientDepartmentMovement();
 			patientDepartmentMovement.setHistoryId(rs.getInt("history_id"));
 			patientDepartmentMovement.setPatientId(rs.getInt("patient_id"));
+			patientDepartmentMovement.setDepartmentId(rs.getInt("department_id"));
 			patientDepartmentMovement.setDepartmentName(rs.getString("department_name"));
 			patientDepartmentMovement.setPersonalSurname(rs.getString("personal_surname"));
 			patientDepartmentMovement.setPersonalName(rs.getString("personal_name"));
@@ -563,6 +566,36 @@ public class CuwyDbService1 {
 		List<Map<String, Object>> countPatientsProWeek 
 		= jdbcTemplate.queryForList(sqlPatientsYearWeek, new Object[] { year, week });
 		return countPatientsProWeek;
+	}
+
+	public List<Map<String,Object>> getActiveOperationOrder() {
+		String sql = "select * from order_operation oo, (select operation_id, operation_code, operation_name, operation_subgroup_name , operation_group_name "
+				+ " from operation o, operation_subgroup osg, operation_group og"
+				+ " where o.operation_subgroup_id=osg.operation_subgroup_id "
+				+ " and osg.operation_group_id=og.operation_group_id) o"
+				+ ",(select d.department_name, p.personal_name, p.personal_surname, p.personal_patronymic "
+				+ ", pd.personal_department_id, po.position_name"
+				+ " from"
+				+ " personal_department pd, personal p, department d, position po"
+				+ " where p.personal_id=pd.personal_id and d.department_id=pd.department_id"
+				+ " and po.position_id=pd.position_id) p"
+				+ " where oo.new_operation_id is null and p.personal_department_id=oo.personal_department_id"
+				+ " and o.operation_id=oo.operation_id";
+		logger.info("\n"+sql);
+		List<Map<String, Object>> countPatientsProMonth 
+		= jdbcTemplate.queryForList(sql);
+		return countPatientsProMonth;
+	}
+	public List<Map<String,Object>> getPersonalListe() {
+		String sql = "SELECT p.personal_id, p.personal_surname, p.personal_name, p.personal_patronymic,"
+				+ " pdd.department_name FROM personal p LEFT JOIN ("
+				+ "SELECT pd.personal_id, d.* FROM personal_department pd, department d"
+				+ " WHERE d.department_id = pd.department_id"
+				+ ") pdd ON p.personal_id = pdd.personal_id";
+		logger.info("\n"+sql);
+		List<Map<String, Object>> countPatientsProMonth 
+		= jdbcTemplate.queryForList(sql);
+		return countPatientsProMonth;
 	}
 
 }

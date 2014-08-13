@@ -37,7 +37,9 @@
 
 			<ul class="patients">
 				<li> <b> №, ПІБ, Поступив, Діагноз </b> </li>
-				<li ng-repeat="patient in department.patientesDiagnosisHol | filter:query">
+				<li ng-repeat="patient in department.patientesDiagnosisHol | filter:query"
+					ng-context-menu="menuPatientList"
+				>
 					<a href="history.html?hno={{patient.history_no}}">
 						<span> {{patient.history_no}}</span>, {{patient.name}}
 					</a>,
@@ -147,7 +149,7 @@
 		</div>
 
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-4 well">
 			<h2>Відділення</h2>
 			<div ng-if="department.department_name == 'Реанімаційне'" >
 			<div>
@@ -223,6 +225,20 @@
 				});
 			}
 		}
+
+		$scope.menuPatientList = [
+			['<span class="glyphicon glyphicon-floppy-open"></span> Відкрити іс.х.', function ($itemScope) {
+				console.debug('Edit');
+				console.log($itemScope);
+				console.log($itemScope.patient);
+				window.location.href = "/hol/history.html?hno="+$itemScope.patient.history_no;
+			}],
+			null,
+			['<b>∑</b> Зведена інформація', function ($itemScope) {
+				console.debug('Add');
+				$scope.openPatientInfo($itemScope.patient);
+			}]
+		];
 
 		$http({
 			method : 'GET',

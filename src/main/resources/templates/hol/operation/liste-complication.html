@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="ListeOperationCtrl">
+<head>
+	<title>{{title}}</title>
+	<div th:replace="hol1 :: header" />
+</head>
+<body>
+	<nav th:replace="hol1 :: navbar-top" />
+	<div class="container">
+		<div th:replace="hol1 :: hol-print-head"/>
+		<div class="row">
+			<div class="col-xs-11">
+			<table class="table table-striped">
+				<caption>
+					<h4>{{title}}</h4>
+				</caption>
+				<thead>
+					<tr><th>Код</th><th>Назва</th></tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+			</div>
+		</div>
+	</div>
+	<div th:replace="hol1 :: js-lib" />
+	<script type="text/javascript">
+	
+	cuwyApp.controller('ListeOperationCtrl', [ '$scope', '$http', function ($scope, $http) {
+		$scope.title = "Список післяопераційних ускладнень";
+	} ] );
+	</script>
+</body>
+</html>

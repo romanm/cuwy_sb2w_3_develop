@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="AddOperationCtrl">
+<head>
+	<title>{{title}}</title>
+	<div th:replace="hol1 :: header" />
+</head>
+<body>
+	<nav th:replace="hol1 :: navbar-top" />
+	<form action="">
+	<div class="container">
+		<h4>{{title}}</h4>
+		<p>Для подання заявки на додання операції необхідно вказати операцію цієї ж групи, 
+		до якої буде входити нова операція; назву нової операції.</p>
+		<p>Якщо необхідно додати терміново - подзвоніть в оргметодвідділ, 
+		якщо ні - зачекайте, термін обробки - один робочий день.</p>
+		<div class="row">
+			<div class="col-xs-2">Операція цієї ж групи:</div>
+			<div class="col-xs-6">
+				<div class="form-group has-success has-feedback required">
+					<label class="control-label sr-only" for="direct">Операція цієї ж групи</label>
+					<!-- 
+					 -->
+					<input type="text" class="form-control input-sm" placeholder="Операція цієї ж групи" 
+					id="historyDiagnos" name="historyDiagnos" ng-model="patientEditing.historyDiagnos" required=""
+					ng-change="changeDiagnose()"
+					tooltip-html-unsafe="Операція цієї ж групи &lt;b class='required-tooltip'>*&lt;/b>"
+					/>
+					<span class="glyphicon form-control-feedback"></span>
+				</div>
+			</div>
+			<div class="col-xs-1">
+				<button ng-click="getCountryDistricts()" type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+					<span class="glyphicon glyphicon-th-list"></span>
+					<span class="caret"></span>
+				</button>
+				<div class="dropdown-menu" role="menu">
+				d----d
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-2">Назва нової операції:</div>
+			<div class="col-xs-6">
+				<div class="form-group has-feedback ">
+					<label class="control-label sr-only" for="direct">Назва нової операції</label>
+					<!-- 
+					 -->
+					<input type="text" class="form-control input-sm" placeholder="Назва нової операції" 
+					id="historyDiagnosAdditional" name="historyDiagnosAdditional" ng-model="patientEditing.historyDiagnosAdditional"
+					ng-change="changeDiagnoseAdditional()"
+					tooltip-html-unsafe="Назва нової операції &lt;b class='required-tooltip'>*&lt;/b>"
+					/>
+					<span class="glyphicon form-control-feedback"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+	</form>
+	<div th:replace="hol1 :: js-lib" />
+	<script type="text/javascript">
+	
+	cuwyApp.controller('AddOperationCtrl', [ '$scope', '$http', function ($scope, $http) {
+		$scope.title = "Заявка на додавання операції до словника";
+	} ] );
+
+	</script>
+	
+</body>
+</html>

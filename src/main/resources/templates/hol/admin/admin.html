@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="AdminCtrl">
+<head>
+<title>{{title}}</title>
+<div th:replace="hol1 :: header" />
+</head>
+<body>
+	<nav th:replace="hol1 :: navbar-top-admin" />
+	<div class="container">
+		<h1>{{title}}</h1>
+		<div class="row">
+			<div class="col-xs-4">
+				<h4><a href="/hol/operation/order-active">
+						Активні заявки на доповненя списку операцій</a></h4>
+				<h4><a href="/hol/operation/order-archive">
+						Виконані заявки на доповненя списку операцій</a></h4>
+			</div>
+			<div class="col-xs-4">
+				<h4><a href="/hol/admin/personal">Працівники</a></h4>
+				<h4><a href="/hol/admin/ato">Адміністративно-територіальні одиниці</a></h4>
+				
+			</div>
+		</div>
+	</div>
+	<div th:replace="hol1 :: js-lib" />
+	<script type="text/javascript">
+	
+	cuwyApp.controller('AdminCtrl', [ '$scope', '$http', function ($scope, $http) {
+		$scope.title = "Адміністратор";
+	} ] );
+
+	</script>
+</body>
+</html>

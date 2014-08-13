@@ -3,7 +3,7 @@ package org.cuwy1.hol.model;
 import java.sql.Timestamp;
 
 public class PatientDepartmentMovement {
-	private int historyId, patientId;
+	private int historyId, patientId, departmentId;
 	private String departmentName;
 	private String personalSurname;
 	private String personalName;
@@ -72,5 +72,13 @@ public class PatientDepartmentMovement {
 
 	public void setPatientId(int patientId) {
 		this.patientId = patientId;
+	}
+
+	public int getDepartmentId() {
+		return departmentId;
+	}
+
+	public void setDepartmentId(int departmentId) {
+		this.departmentId = departmentId;
 	}
 }

@@ -6,6 +6,10 @@ if(window.location.search){
 	});
 }
 
+function isMiddleWeek(index, countPatientsProWeeks){
+	return index !=0 && !(index == countPatientsProWeeks.length - 1);
+}
+
 Date.prototype.getMonthUa = function (month){
 	var monthsUa = ["Січень", "Лютий"
 		, "Березень", "Квітень", "Травень"
@@ -109,7 +113,8 @@ cuwyApp.directive('ngContextMenu', function ($parse) {
 			} else {
 				$a = $('<a>');
 				$a.attr({ tabindex: '-1', href: '#' });
-				$a.text(item[0]);
+				$a.append(item[0]);
+//				$a.text(item[0]);
 				$li.append($a);
 				$li.on('click', function () {
 					$scope.$apply(function() {

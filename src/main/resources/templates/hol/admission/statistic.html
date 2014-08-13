@@ -1,54 +1,18 @@
 <!DOCTYPE html>
-<html ng-app="cuwyApp">
+<html ng-app="cuwyApp" ng-controller="AdmissionStatisticCtrl">
 <head>
-	<meta charset=utf-8>
-	<link href="/css/bootstrap.css" rel="stylesheet">
-	<title>Журнал обліку хворих</title>
-	<style type="text/css">
-		body {
-			padding-top: 60px;
-			padding-bottom: 60px;
-		}
-	</style>
+	<title>{{title}}</title>
+	<div th:replace="hol1 :: header" />
 </head>
-<body ng-controller="AdmissionStatisticCtrl">
-
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-<div class="container">
-	<div class="navbar-header">
-		<ol class="breadcrumb">
-			<li><a href="/home.html">ХОЛ</a></li>
-			<li class="active">Приймальне: Журнал обліку хворих</li>
-		</ol>
-	</div>
-	<div class="collapse navbar-collapse">
-		<ul class="nav navbar-nav navbar-right">
-			<li class="dropdown"><a href="#" class="dropdown-toggle"
-				data-toggle="dropdown"
-				title="Premium Bootstrap Themes &amp; Templates"><i
-					class="fa fa-star text-yellow"></i> меню <b class="caret"></b></a>
-				<ul class="dropdown-menu">
-					<li><a href="/hol/admission.html">Завести історію хвороби</a></li>
-					<li><a href="/hol/admission/statistic.html">Статистика по приймальному відділенню</a></li>
-					<li class="divider"></li>
-					<li><a href="/hol/operation/add-op.html">
-							Заявка на додавання операції до словника</a></li>
-					<li><a href="/hol/operation/liste-op.html">
-							Список операцій</a></li>
-					<li><a href="/hol/operation/liste-complication.html">
-							Список післяопераційних ускладнень</a></li>
-				</ul></li>
-		</ul>
-	</div>
-</div>
-</nav>
-
+<body>
+	<nav th:replace="hol1 :: navbar-top" />
 	<div class="container">
-		<h4>Журнал обліку хворих</h4>
+		<h4>{{title}}</h4>
 		Сьогодні
 		{{today | date:'dd.MM.yyyy'}},
 		{{today.getWeekOfYear()}} неділя року
 		<h3>Кількість пацієнтів</h3>
+		
 		<div class="row">
 			<div class="col-xs-3">
 				<fieldset><legend>по неділях 
@@ -62,7 +26,7 @@
 						<tr ng-repeat="countPatientsProWeek in countPatientsProWeeks"
 							class="{{countPatientsProWeek.weekNr == weekOfYear ? 'success':''}}"
 						>
-							<td ng-if="$index !=0 && !($index == countPatientsProWeeks.length - 1)">
+							<td ng-if="isMiddleWeek($index, countPatientsProWeeks)">
 							{{countPatientsProWeek.weekPatientCount}}
 							</td>
 							<td ng-if="$index == countPatientsProWeeks.length - 1">
@@ -171,19 +135,17 @@
 			</div>
 		</div>
 	</div>
-
-	<script src="/js/jquery-2.1.1.min.js"></script>
-	<script src="/js/angular.min.js"></script>
-	<script src="/js/angular-sanitize.min.js"></script>
-	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
-	<script src="/js/cuwy1.directives.js"></script>
+	<div th:replace="hol1 :: js-lib" />
 	<script type="text/javascript">
 	cuwyApp.controller('AdmissionStatisticCtrl', [ '$scope', '$http', function ($scope, $http) {
+		$scope.title = "Журнал обліку хворих";
 		$scope.today = new Date();
 		console.log($scope.today.getMonthUa(1));
 		$scope.year = $scope.today.getFullYear();
 		console.log($scope.year);
-
+		$scope.isMiddleWeek = function(index, countPatientsProWeeks){
+			return isMiddleWeek(index, countPatientsProWeeks);
+		}
 		$scope.setWeekOfYear = function(weekOfYear){
 			$scope.weekOfYear = weekOfYear;
 			$http({
@@ -254,5 +216,6 @@
 
 	} ] );
 	</script>
+	
 </body>
 </html>

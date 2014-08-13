@@ -60,6 +60,67 @@ public class HelloController {
 		return "index_t";
 	}
 
+	@RequestMapping(value="/hol/admin", method=RequestMethod.GET)
+	public String hol_admin() {
+		logger.info("\n Start /hol/admin");
+		return "hol/admin/admin";
+	}
+	@RequestMapping(value="/hol/admin/ato", method=RequestMethod.GET)
+	public String hol_admin_ato() {
+		logger.info("\n Start /hol/admin/ato");
+		return "hol/admin/ato";
+	}
+	@RequestMapping(value="/hol/operation/order-active", method=RequestMethod.GET)
+	public String hol_operation_order_active() {
+		logger.info("\n Start /hol/operation/order-active");
+		return "hol/admin/order-active";
+	}
+	@RequestMapping(value="/hol/operation-order-active", method=RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> json_operation_order_active() {
+		logger.info("\n Start /hol/operation-order-active");
+		return cuwyDbService1.getActiveOperationOrder();
+	}
+	@RequestMapping(value="/hol/admin/personal", method=RequestMethod.GET)
+	public String hol_admin_personal() {
+		logger.info("\n Start /hol/admin/personal");
+		return "hol/admin/personal";
+	}
+	@RequestMapping(value="/hol/personal-list", method=RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> hol_personal_list() {
+		logger.info("\n Start /hol/personal-list");
+		return cuwyDbService1.getPersonalListe();
+	}
+
+	@RequestMapping(value="/hol/admission/patient", method=RequestMethod.GET)
+	public String hol_admission_patient() {
+		logger.info("\n Start /hol/admission/patient");
+		return "hol/admission/patient";
+	}
+
+	@RequestMapping(value="/hol/operation/add-op", method=RequestMethod.GET)
+	public String hol_operation_add_op() {
+		logger.info("\n Start /hol/operation/add-op ");
+		return "hol/operation/add-op";
+	}
+
+	@RequestMapping(value="/hol/operation/liste-op", method=RequestMethod.GET)
+	public String hol_operation_liste_op() {
+		logger.info("\n Start /hol/operation/liste-op ");
+		return "hol/operation/liste-op";
+	}
+
+	@RequestMapping(value="/hol/operation/liste-complication", method=RequestMethod.GET)
+	public String hol_operation_liste_complication() {
+		logger.info("\n Start /hol/operation/liste-complication");
+		return "hol/operation/liste-complication";
+	}
+
+	@RequestMapping(value="/hol/admission/statistic", method=RequestMethod.GET)
+	public String hol_admission_statistic() {
+		logger.info("\n Start /hol/admission/statistic");
+		return "hol/admission/statistic";
+	}
+
 	@RequestMapping(value = "/jsonservlet", method = RequestMethod.POST)
 	public @ResponseBody Article createEmployee(@RequestBody Article article) {
 		logger.info("Start createEmployee.");
@@ -328,7 +389,6 @@ public class HelloController {
 		return department;
 	}
 
-//	String applicationFolderPfad = "/home/roman/Documents/01_curepathway/work1/cuwy_sb2w_template_3--1/";
 	String applicationFolderPfad = "/home/roman/Documents/01_curepathway/work2/cuwy_sb2w_3_develop-w2/";
 	String innerDbFolderPfad = "src/main/webapp/db/";
 	//surgical intensive care unit (SICU)
@@ -403,8 +463,6 @@ public class HelloController {
 	@RequestMapping(value = "/patients_year_{year}_week_{week}", method = RequestMethod.GET)
 	public @ResponseBody PatientsAdmission patientsYearWeek(
 			@PathVariable Integer year, @PathVariable Integer week) {
-//		List<Map<String, Object>> historysYearWeek111 
-//		= cuwyDbService1.patientsYearWeekRsList(year,week);
 		PatientsAdmission patientsAdmission = new PatientsAdmission();
 		List<HistoryHolDb> historysYearWeek = cuwyDbService1.getHistorysYearWeek(year, week);
 		patientsAdmission.setHistorysYearWeek(historysYearWeek);
