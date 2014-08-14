@@ -173,18 +173,26 @@
 	<div class="col-md-3 well">
 		<h4>Робоча панель</h4>
 		<ol>
-			<li> Переведеня </li>
-			<li> Редагування </li>
-			<li> Виписка </li>
+			<li><span class="glyphicon glyphicon-share"></span> Переведеня </li>
+			<li><a href="/hol/admission/patient?hno={{patient.history_no}}">
+				<span class="glyphicon glyphicon-edit"></span> Редагування </a>
+			</li>
+			<li><span class="glyphicon glyphicon-share"></span> Виписка </li>
 		</ol>
 	</div>
 	</div>
 	<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
 		<div class="container">
-		<ol class="list-inline">
-			<li> Переведеня </li>
-			<li> Редагування </li>
-			<li> Виписка </li>
+		Text
+		<!-- 
+		<ul class="nav navbar-nav navbar-right">
+		 -->
+		<ol class="list-inline navbar-right">
+			<li><a href="#"><span class="glyphicon glyphicon-share"></span> Переведеня </a></li>
+			<li><a href="/hol/admission/patient?hno={{patient.history_no}}">
+				<span class="glyphicon glyphicon-edit"></span> Редагування </a>
+			</li>
+			<li><a href="#"><span class="glyphicon glyphicon-share"></span> Виписка </a></li>
 		</ol>
 		</div>
 	</nav>
