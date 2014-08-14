@@ -10,14 +10,30 @@
 		<div th:replace="hol1 :: hol-print-head"/>
 		<div class="row">
 			<div class="col-xs-11">
+			<div class="input-group">
+				<span class="input-group-addon">Пошук:</span>
+				<input ng-model="query" type="text" class="form-control" 
+				placeholder="Перші букви/цифри пошуку" auto-focus=""
+				ng-change="queryChange()"
+				/>
+			</div>
 			<table class="table table-striped">
 				<caption>
 					<h4>{{title}}</h4>
 				</caption>
-				<thead>
-					<tr><th>Код</th><th>Назва</th></tr>
-				</thead>
-				<tbody>
+				<thead><tr><th>Код</th><th>Назва</th></tr></thead>
+				<tbody ng-repeat="operation in operationListe2">
+					<tr ng-if="operation.operation_subgroup_id != operationListe2[$index -1].operation_subgroup_id">
+						<th colspan="2">
+							<ul><li>{{operation.operation_group_name}}
+									<ul><li>{{operation.operation_subgroup_name}}
+							</li></ul></li></ul>
+						</th>
+					</tr>
+					<tr>
+						<td>{{operation.operation_code}}</td>
+						<td>{{operation.operation_name}}</td>
+					</tr>
 				</tbody>
 			</table>
 			</div>
@@ -26,8 +42,21 @@
 	<div th:replace="hol1 :: js-lib" />
 	<script type="text/javascript">
 	
-	cuwyApp.controller('ListeOperationCtrl', [ '$scope', '$http', function ($scope, $http) {
+	cuwyApp.controller('ListeOperationCtrl', [ '$scope', '$http','$filter' , function ($scope, $http, $filter) {
 		$scope.title = "Список операцій";
+		$scope.queryChange = function(){
+			$scope.operationListe2 = $filter('filter')($scope.operationListe, $scope.query)
+		}
+
+		$http({
+			method : 'GET',
+			url : '/hol/operation-liste'
+		}).success(function(data, status, headers, config) {
+			$scope.operationListe = data;
+			$scope.operationListe2 = data;
+		}).error(function(data, status, headers, config) {
+		});
+
 	} ] );
 	</script>
 </body>

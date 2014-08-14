@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="cuwyApp" ng-controller="ListeOperationCtrl">
+<html ng-app="cuwyApp" ng-controller="ListeComplicationCtrl">
 <head>
 	<title>{{title}}</title>
 	<div th:replace="hol1 :: header" />
@@ -10,6 +10,13 @@
 		<div th:replace="hol1 :: hol-print-head"/>
 		<div class="row">
 			<div class="col-xs-11">
+			<div class="input-group">
+				<span class="input-group-addon">Пошук:</span>
+				<input ng-model="query" type="text" class="form-control" 
+				placeholder="Перші букви/цифри пошуку" auto-focus=""
+				ng-change="queryChange()"
+				/>
+			</div>
 			<table class="table table-striped">
 				<caption>
 					<h4>{{title}}</h4>
@@ -18,6 +25,14 @@
 					<tr><th>Код</th><th>Назва</th></tr>
 				</thead>
 				<tbody>
+					<tr ng-repeat="complication in complicationListe | filter:query">
+						<td>
+						{{complication.operation_complication_id}}
+						</td>
+						<td>
+						{{complication.operation_complication_name}}
+						</td>
+					</tr>
 				</tbody>
 			</table>
 			</div>
@@ -26,8 +41,17 @@
 	<div th:replace="hol1 :: js-lib" />
 	<script type="text/javascript">
 	
-	cuwyApp.controller('ListeOperationCtrl', [ '$scope', '$http', function ($scope, $http) {
+	cuwyApp.controller('ListeComplicationCtrl', [ '$scope', '$http', function ($scope, $http) {
 		$scope.title = "Список післяопераційних ускладнень";
+
+		$http({
+			method : 'GET',
+			url : '/hol/operation-complication'
+		}).success(function(data, status, headers, config) {
+			$scope.complicationListe = data;
+		}).error(function(data, status, headers, config) {
+		});
+
 	} ] );
 	</script>
 </body>

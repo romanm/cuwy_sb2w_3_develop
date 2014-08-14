@@ -9,10 +9,10 @@
 	<div class="container">
 		<h1>{{title}}</h1>
 		<div class="input-group">
-				<span class="input-group-addon">Пошук:</span>
-				<input ng-model="query" type="text" class="form-control" 
-				placeholder="Перші букви/цифри пошуку" auto-focus=""/>
-			</div>
+			<span class="input-group-addon">Пошук:</span>
+			<input ng-model="query" type="text" class="form-control" 
+			placeholder="Перші букви/цифри пошуку" auto-focus=""/>
+		</div>
 		<ul>
 			<li ng-repeat="person in personalList | filter:query">
 				{{person.personal_id}},

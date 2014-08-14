@@ -571,7 +571,7 @@ public class CuwyDbService1 {
 	public List<Map<String, Object>> getArchiveOperationOrder() {
 		String sql = "SELECT o_saved.operation_name op_name_saved, oo.*, o.*, p.* "
 				+ " FROM order_operation oo, operation o_saved,"
-				+ " (SELECT operation_id, operation_code, operation_name, operation_subgroup_name , operation_group_name "
+				+ " (SELECT operation_id, operation_code, operation_name, operation_subgroup_name, operation_group_name "
 				+ " FROM operation o, operation_subgroup osg, operation_group og "
 				+ "WHERE o.operation_subgroup_id=osg.operation_subgroup_id "
 				+ " AND osg.operation_group_id=og.operation_group_id) o,"
@@ -579,7 +579,7 @@ public class CuwyDbService1 {
 				+ " FROM personal_department pd, personal p, department d, position po"
 				+ " WHERE p.personal_id=pd.personal_id AND d.department_id=pd.department_id AND po.position_id=pd.position_id) p"
 				+ " WHERE p.personal_department_id=oo.personal_department_id AND o.operation_id=oo.operation_id "
-				+ " and o_saved.operation_id=oo.new_operation_id";
+				+ " AND o_saved.operation_id=oo.new_operation_id";
 		logger.info("\n"+sql);
 		List<Map<String, Object>> countPatientsProMonth 
 		= jdbcTemplate.queryForList(sql);
@@ -612,6 +612,26 @@ public class CuwyDbService1 {
 				+ "SELECT pd.personal_id, d.* FROM personal_department pd, department d"
 				+ " WHERE d.department_id = pd.department_id"
 				+ ") pdd ON p.personal_id = pdd.personal_id";
+		logger.info("\n"+sql);
+		List<Map<String, Object>> countPatientsProMonth 
+		= jdbcTemplate.queryForList(sql);
+		return countPatientsProMonth;
+	}
+
+	public List<Map<String, Object>> getOperationListe() {
+		String sql = "SELECT o.*,osg.operation_subgroup_name,og.* "
+				+ " FROM operation o, operation_subgroup osg, operation_group og "
+				+ " WHERE o.operation_subgroup_id = osg.operation_subgroup_id AND og.operation_group_id = osg.operation_group_id "
+				+ " ORDER BY operation_group_sort ";
+//		+ " ORDER BY operation_code ";
+		logger.info("\n"+sql);
+		List<Map<String, Object>> countPatientsProMonth 
+		= jdbcTemplate.queryForList(sql);
+		return countPatientsProMonth;
+	}
+
+	public List<Map<String, Object>> getComplicationListe() {
+		String sql = "SELECT * FROM operation_complication";
 		logger.info("\n"+sql);
 		List<Map<String, Object>> countPatientsProMonth 
 		= jdbcTemplate.queryForList(sql);

@@ -118,11 +118,20 @@ public class HelloController {
 		logger.info("\n Start /hol/operation/liste-op ");
 		return "hol/operation/liste-op";
 	}
-
+	@RequestMapping(value="/hol/operation-liste", method=RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> json_operation_liste() {
+		logger.info("\n Start /hol/operation-liste");
+		return cuwyDbService1.getOperationListe();
+	}
 	@RequestMapping(value="/hol/operation/liste-complication", method=RequestMethod.GET)
 	public String hol_operation_liste_complication() {
 		logger.info("\n Start /hol/operation/liste-complication");
 		return "hol/operation/liste-complication";
+	}
+	@RequestMapping(value="/hol/operation-complication", method=RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> json_complication_liste() {
+		logger.info("\n Start /hol/operation-complication");
+		return cuwyDbService1.getComplicationListe();
 	}
 
 	@RequestMapping(value="/hol/admission/statistic", method=RequestMethod.GET)
