@@ -568,19 +568,39 @@ public class CuwyDbService1 {
 		return countPatientsProWeek;
 	}
 
+	public List<Map<String, Object>> getArchiveOperationOrder() {
+		String sql = "SELECT o_saved.operation_name op_name_saved, oo.*, o.*, p.* "
+				+ " FROM order_operation oo, operation o_saved,"
+				+ " (SELECT operation_id, operation_code, operation_name, operation_subgroup_name , operation_group_name "
+				+ " FROM operation o, operation_subgroup osg, operation_group og "
+				+ "WHERE o.operation_subgroup_id=osg.operation_subgroup_id "
+				+ " AND osg.operation_group_id=og.operation_group_id) o,"
+				+ " (SELECT d.department_name, p.personal_name, p.personal_surname, p.personal_patronymic , pd.personal_department_id, po.position_name"
+				+ " FROM personal_department pd, personal p, department d, position po"
+				+ " WHERE p.personal_id=pd.personal_id AND d.department_id=pd.department_id AND po.position_id=pd.position_id) p"
+				+ " WHERE p.personal_department_id=oo.personal_department_id AND o.operation_id=oo.operation_id "
+				+ " and o_saved.operation_id=oo.new_operation_id";
+		logger.info("\n"+sql);
+		List<Map<String, Object>> countPatientsProMonth 
+		= jdbcTemplate.queryForList(sql);
+		return countPatientsProMonth;
+	}
+
 	public List<Map<String,Object>> getActiveOperationOrder() {
-		String sql = "select * from order_operation oo, (select operation_id, operation_code, operation_name, operation_subgroup_name , operation_group_name "
-				+ " from operation o, operation_subgroup osg, operation_group og"
-				+ " where o.operation_subgroup_id=osg.operation_subgroup_id "
-				+ " and osg.operation_group_id=og.operation_group_id) o"
-				+ ",(select d.department_name, p.personal_name, p.personal_surname, p.personal_patronymic "
-				+ ", pd.personal_department_id, po.position_name"
-				+ " from"
-				+ " personal_department pd, personal p, department d, position po"
-				+ " where p.personal_id=pd.personal_id and d.department_id=pd.department_id"
-				+ " and po.position_id=pd.position_id) p"
-				+ " where oo.new_operation_id is null and p.personal_department_id=oo.personal_department_id"
-				+ " and o.operation_id=oo.operation_id";
+		String sql = "SELECT * FROM order_operation oo, "
+				+ " (SELECT operation_id, operation_code, operation_name, operation_subgroup_name "
+				+ ", operation_group_name "
+				+ " FROM operation o, operation_subgroup osg, operation_group og "
+				+ " WHERE o.operation_subgroup_id=osg.operation_subgroup_id "
+				+ " AND osg.operation_group_id=og.operation_group_id) o "
+				+ ",(SELECT d.department_name, p.personal_name, p.personal_surname, p.personal_patronymic "
+				+ ", pd.personal_department_id, po.position_name "
+				+ " FROM "
+				+ " personal_department pd, personal p, department d, position po "
+				+ " WHERE p.personal_id=pd.personal_id AND d.department_id=pd.department_id "
+				+ " AND po.position_id=pd.position_id) p "
+				+ " WHERE oo.new_operation_id IS NULL and p.personal_department_id=oo.personal_department_id "
+				+ " AND o.operation_id=oo.operation_id ";
 		logger.info("\n"+sql);
 		List<Map<String, Object>> countPatientsProMonth 
 		= jdbcTemplate.queryForList(sql);
@@ -597,5 +617,7 @@ public class CuwyDbService1 {
 		= jdbcTemplate.queryForList(sql);
 		return countPatientsProMonth;
 	}
+
+	
 
 }

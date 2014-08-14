@@ -70,6 +70,16 @@ public class HelloController {
 		logger.info("\n Start /hol/admin/ato");
 		return "hol/admin/ato";
 	}
+	@RequestMapping(value="/hol/operation/order-archive", method=RequestMethod.GET)
+	public String hol_operation_order_archive() {
+		logger.info("\n Start /hol/operation/order-archive");
+		return "hol/admin/order-archive";
+	}
+	@RequestMapping(value="/hol/operation-order-archive", method=RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> json_operation_order_archive() {
+		logger.info("\n Start /hol/operation-order-archive");
+		return cuwyDbService1.getArchiveOperationOrder();
+	}
 	@RequestMapping(value="/hol/operation/order-active", method=RequestMethod.GET)
 	public String hol_operation_order_active() {
 		logger.info("\n Start /hol/operation/order-active");

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="ChangeOperationListCtrl">
+<head>
+<title>{{title}}</title>
+<div th:replace="hol1 :: header" />
+</head>
+<body>
+	<nav th:replace="hol1 :: navbar-top-admin" />
+	<div class="container">
+		<h1>{{title}}</h1>
+		<div class="input-group">
+			<span class="input-group-addon">Пошук:</span>
+			<input ng-model="query" type="text" class="form-control" 
+			placeholder="Перші букви/цифри пошуку" auto-focus=""/>
+		</div>
+		<!-- 
+		<table class="table table-striped">
+		 -->
+		<table class="table">
+		<thead>
+			<tr>
+				<th>Дата заявки</th>
+				<th>Лікар</th>
+				<th>Операція цієї ж групи</th>
+				<th>Назва нової операції</th>
+				<th>Нова операція</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="changeOperation in changeOperationList | filter:query">
+				<td>
+				{{changeOperation.order_operation_date | date:'dd-MM-yyyy HH:mm'}}
+				</td>
+				<td>
+				{{changeOperation.department_name}},
+				{{changeOperation.position_name}},
+				{{changeOperation.personal_surname}}
+				{{changeOperation.personal_name}}
+				{{changeOperation.personal_patronymic}}
+				</td>
+				<td>
+				{{changeOperation.operation_group_name}},
+				{{changeOperation.operation_subgroup_name}},
+				{{changeOperation.operation_code}},
+				{{changeOperation.operation_name}}
+				</td>
+				<td>
+				{{changeOperation.new_operation_name}}
+				</td>
+				<td>
+				{{changeOperation.op_name_saved}}
+				</td>
+			</tr>
+		</tbody>
+		</table>
+	</div>
+	<div th:replace="hol1 :: js-lib" />
+	<script src="/db/addresses.json.js"></script>
+	<script type="text/javascript">
+	cuwyApp.controller('ChangeOperationListCtrl', [ '$scope', '$http', function ($scope, $http) {
+		$scope.title = "Виконані заявки на доповненя списку операцій";
+
+		$http({
+			method : 'GET',
+			url : '/hol/operation-order-archive'
+		}).success(function(data, status, headers, config) {
+			$scope.changeOperationList = data;
+		}).error(function(data, status, headers, config) {
+		});
+
+	} ] );
+	</script>
+</body>
+</html>
