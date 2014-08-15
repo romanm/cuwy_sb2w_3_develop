@@ -6,6 +6,7 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 
 	$scope.title = "Створити історію хвороби";
 	$scope.addresses = addresses;
+	$scope.parameters = parameters;
 	$scope.patient = {
 		name: 'Patient name',
 		history_no: parameters.hno,

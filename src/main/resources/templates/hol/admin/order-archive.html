@@ -6,6 +6,12 @@
 </head>
 <body>
 	<nav th:replace="hol1 :: navbar-top-admin" />
+	<div class="navbar-right"> 
+		<small>
+			<a href="http://localhost/admin/order_operation/admin?OrderOperation[active]=0"> 
+			<span class="glyphicon glyphicon-link"></span> HOL1 </a>
+		</small>
+	</div>
 	<div class="container">
 		<h1>{{title}}</h1>
 		<div class="input-group">
@@ -23,7 +29,11 @@
 				<th>Лікар</th>
 				<th>Операція цієї ж групи</th>
 				<th>Назва нової операції</th>
-				<th>Нова операція</th>
+				<th>Нова операція
+					<small class="navbar-right" style="font-weight: normal;">
+						Всього <b> {{changeOperationList.length}} </b>
+					</small>
+				</th>
 			</tr>
 		</thead>
 		<tbody>

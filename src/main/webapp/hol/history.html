@@ -173,12 +173,28 @@
 	<div class="col-md-3 well">
 		<h4>Робоча панель</h4>
 		<ol>
-			<li><span class="glyphicon glyphicon-share"></span> Переведеня </li>
+			<li>
+			<span class="glyphicon glyphicon-transfer"></span>
+			 Переведеня </li>
 			<li><a href="/hol/admission/patient?hno={{patient.history_no}}">
 				<span class="glyphicon glyphicon-edit"></span> Редагування </a>
+				|
+				<small>
+				<a href="http://localhost/history/edit/id/{{patientHistory.historyId}}"> 
+				<span class="glyphicon glyphicon-link"></span>HOL1 </a>
+				</small>
 			</li>
 			<li><span class="glyphicon glyphicon-share"></span> Виписка </li>
 		</ol>
+		<div class="navbar-right"> 
+			<a href="http://localhost/history/{{patientHistory.historyId}}"> 
+			<span class="glyphicon glyphicon-link"></span>
+			HOL1 </a> 
+			|
+			<a href="http://localhost/history/inedit/id/{{patientHistory.historyId}}"> 
+			<span class="glyphicon glyphicon-link"></span>
+			HOL1 </a> 
+		</div>
 	</div>
 	</div>
 	<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
@@ -188,7 +204,9 @@
 		<ul class="nav navbar-nav navbar-right">
 		 -->
 		<ol class="list-inline navbar-right">
-			<li><a href="#"><span class="glyphicon glyphicon-share"></span> Переведеня </a></li>
+			<li><a href="#"> 
+			<span class="glyphicon glyphicon-transfer"></span>
+			Переведеня </a></li>
 			<li><a href="/hol/admission/patient?hno={{patient.history_no}}">
 				<span class="glyphicon glyphicon-edit"></span> Редагування </a>
 			</li>

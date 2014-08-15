@@ -6,6 +6,12 @@
 </head>
 <body>
 	<nav th:replace="hol1 :: navbar-top-admin" />
+	<div class="navbar-right"> 
+		<small>
+			<a href="http://localhost/admin/personal"> 
+			<span class="glyphicon glyphicon-link"></span> HOL1 </a>
+		</small>
+	</div>
 	<div class="container">
 		<h1>{{title}}</h1>
 		<div class="input-group">
@@ -13,6 +19,9 @@
 			<input ng-model="query" type="text" class="form-control" 
 			placeholder="Перші букви/цифри пошуку" auto-focus=""/>
 		</div>
+		<small class="navbar-right">Всього <b> {{personalList.length}} 
+			<span ng-if="query">/ {{filterPersonalList().length}}</span>
+		</b></small>
 		<ul>
 			<li ng-repeat="person in personalList | filter:query">
 				{{person.personal_id}},
@@ -26,10 +35,12 @@
 	<div th:replace="hol1 :: js-lib" />
 	<script src="/db/addresses.json.js"></script>
 	<script type="text/javascript">
-	cuwyApp.controller('AdminAtoCtrl', [ '$scope', '$http', function ($scope, $http) {
+	cuwyApp.controller('AdminAtoCtrl', [ '$scope', '$http', '$filter', function ($scope, $http, $filter) {
 		$scope.title = "Працівники";
 		$scope.addresses = addresses;
-
+		$scope.filterPersonalList = function(){
+			return $filter('filter')($scope.personalList, $scope.query)
+		}
 		$scope.openCountry = function(country)	{ country.openCountry = !country.openCountry; }
 		$scope.openDistrict = function(district){ district.openDistrict = !district.openDistrict; }
 
