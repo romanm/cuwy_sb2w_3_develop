@@ -5,7 +5,16 @@
 	<div th:replace="hol1 :: header" />
 </head>
 <body>
+	<!-- 
 	<nav th:replace="hol1 :: navbar-top" />
+ -->
+	<nav th:replace="hol1 :: navbar-top-admin" />
+	<div class="navbar-right"> 
+		<small>
+			<a href="http://localhost/complication"> 
+			<span class="glyphicon glyphicon-link"></span> HOL1 </a>
+		</small>
+	</div>
 	<div class="container">
 		<div th:replace="hol1 :: hol-print-head"/>
 		<div class="row">
@@ -17,6 +26,9 @@
 				ng-change="queryChange()"
 				/>
 			</div>
+			<small class="navbar-right">Всього <b> {{complicationListe.length}} 
+				<span ng-if="query">/ {{filterComplicationListe().length}}</span>
+			</b></small>
 			<table class="table table-striped">
 				<caption>
 					<h4>{{title}}</h4>
@@ -41,8 +53,12 @@
 	<div th:replace="hol1 :: js-lib" />
 	<script type="text/javascript">
 	
-	cuwyApp.controller('ListeComplicationCtrl', [ '$scope', '$http', function ($scope, $http) {
+	cuwyApp.controller('ListeComplicationCtrl', [ '$scope', '$http', '$filter', function ($scope, $http, $filter) {
 		$scope.title = "Список післяопераційних ускладнень";
+
+		$scope.filterComplicationListe = function(){
+			return $filter('filter')($scope.complicationListe, $scope.query)
+		}
 
 		$http({
 			method : 'GET',

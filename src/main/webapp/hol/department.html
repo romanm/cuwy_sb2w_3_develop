@@ -20,7 +20,6 @@
 </head>
 <body>
 
-
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation" th:fragment="navbar-top-admin">
 	<div class="container">
 		<div class="navbar-header">
@@ -89,7 +88,10 @@
 					</a>,
 					<span> {{patient.history_in | date:'dd-MM-yyyy HH:mm'}} </span>,
 					<span>Дз: {{patient.icd_code}}, {{patient.icd_name}}</span>
-					<button ng-click="openPatientInfo(patient)">...</button>
+					<button ng-click="openPatientInfo(patient)" class="btn btn-default btn-xs">
+						<span ng-if="patient.collapsed" class="glyphicon glyphicon-chevron-right"></span>
+						<span ng-if="!patient.collapsed" class="glyphicon glyphicon-chevron-down"></span>
+					</button>
 					<div collapse="patient.collapsed">
 						<div class="well well-lg">
 						<div ng-if="!patient.patientHistory"> Інформація считується </div>
@@ -188,13 +190,19 @@
 							</div>
 						</div> 
 					</div>
+					</div>
 				</li>
 			</ul>
 		</div>
 
 		</div>
 		<div class="col-md-4 well">
-			<div class="navbar-right"> <a href="http://localhost/department/{{parameters.dep}}"> HOL1 </a> </div>
+			<div class="navbar-right"> 
+			<small>
+			<a href="http://localhost/department/{{parameters.dep}}">
+			<span class="glyphicon glyphicon-link"></span> HOL1 </a> 
+			</small>
+			</div>
 			<h2>Відділення</h2>
 			<div ng-if="department.department_name == 'Реанімаційне'" >
 			<div>
@@ -204,7 +212,7 @@
 			</div>
 			<div>
 				<h3> Шаблони лікування </h3>
-				<h4> Анестезія урологія</h4>
+				<h4> Анестезія урологія </h4>
 				<ul>
 					<li>
 						<a href="/anesthesia/template/eta-ea.html">

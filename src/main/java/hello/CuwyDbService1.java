@@ -131,27 +131,55 @@ public class CuwyDbService1 {
 				});
 	}
 
-	String sqlPatientsYearWeek = "SELECT * FROM history h "
-		+ " WHERE YEAR(h.history_in)= ? AND WEEKOFYEAR(h.history_in) = ? ";
+	String sql_WHERE_YearWeek = " YEAR(h.history_in)= ? AND WEEKOFYEAR(h.history_in) = ? ";
+	String sqlPatientsYearWeek = "SELECT * FROM history h WHERE " + sql_WHERE_YearWeek;
 
 	public List<HistoryHolDb> getHistorysYearWeek(Integer year, Integer week) {
+		return getHistory(year, week, sqlPatientsYearWeek);
+	}
+
+	public List<HistoryHolDb> getHistorysYearWeek(Integer year, Integer week,
+			Integer departmentId) {
+		String andDeparment = " AND history_department_id = ? ".replaceFirst("\\?", "" + departmentId);
+		return getHistory(year, week, sqlPatientsYearWeek + andDeparment);
+	}
+
+	private List<HistoryHolDb> getHistory(Integer year, Integer week, String sqlPatientsYearWeek) {
 		logger.info("\n"+sqlPatientsYearWeek.replaceFirst("\\?", ""+year).replaceFirst("\\?", ""+week));
 		Map<Integer, HistoryHolDb> mapHistoryOfPatient = new HashMap<Integer, HistoryHolDb>();
 		List patientsYearWeek = jdbcTemplate.query(
 				sqlPatientsYearWeek, new Object[] { year, week }, 
 				new HistoryHolDbRowMapper(mapHistoryOfPatient)
 				);
+		String sql2 = "SELECT p.* FROM patient p, (" + sqlPatientsYearWeek
+		+ ") h WHERE p.patient_id = h.patient_id";
+		logger.info("\n"+sql2.replaceFirst("\\?", ""+year).replaceFirst("\\?", ""+week));
 		jdbcTemplate.query(
-				"SELECT p.* FROM patient p, (" + sqlPatientsYearWeek
-				+ ") h WHERE p.patient_id = h.patient_id", new Object[] { year, week }, 
+				sql2, new Object[] { year, week }, 
 				new PatientHolDbRowMapper(mapHistoryOfPatient)
 				);
+		String sql3 = sqlPatientDepartmentMovement.replaceFirst("\\?", 
+			"SELECT h.history_id FROM (" + sqlPatientsYearWeek + ") h");
+		logger.info("\n"+sql3.replaceFirst("\\?", ""+year).replaceFirst("\\?", ""+week));
 		jdbcTemplate.query(
-				sqlPatientDepartmentMovement.replaceFirst("\\?", 
-					"SELECT h.history_id FROM (" + sqlPatientsYearWeek + ") h"), new Object[] { year, week }, 
+				sql3, new Object[] { year, week }, 
 				new PatientDepartmentMovementRowMapper(mapHistoryOfPatient)
 				);
 		return patientsYearWeek;
+	}
+
+	public List<Map<String, Object>> getHistorysDepartmentYearWeek(Integer year, Integer week) {
+		String sql = "SELECT department_name, department_id, cnt "
+				+ " FROM department d, ( "
+				+ " SELECT history_department_id, COUNT(history_department_id) cnt "
+				+ " FROM history h WHERE "
+				+ sql_WHERE_YearWeek
+				+ " GROUP BY history_department_id ) hd "
+				+ " WHERE hd.history_department_id = d.department_id";
+		logger.info("\n"+sql.replaceFirst("\\?", ""+year).replaceFirst("\\?", ""+week));
+		List<Map<String, Object>> countPatientsProMonth 
+		= jdbcTemplate.queryForList(sql, new Object[] { year, week });
+		return countPatientsProMonth;
 	}
 
 	class HistoryHolDbRowMapper<T> implements RowMapper<T>{

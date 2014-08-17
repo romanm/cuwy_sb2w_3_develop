@@ -6,9 +6,20 @@
 </head>
 <body>
 	<nav th:replace="hol1 :: navbar-top" />
-	<div ng-if="!parameters.hno" class="navbar-right"> <a href="http://localhost/department/19"> HOL1 </a> </div>
+	<div ng-if="!parameters.hno" class="navbar-right"> 
+	<small>
+	<a href="http://localhost/department/19"> 
+	<span class="glyphicon glyphicon-link"></span>
+	HOL1 </a> 
+	</small>
+	</div>
 	<div ng-if="parameters.hno" class="navbar-right">
-		<a href="http://localhost/history/edit/id/{{patientHistory.historyId}}"> HOL1 </a> </div>
+		<small>
+			<a href="http://localhost/history/inedit/id/{{patientHistory.historyId}}"> 
+			<span class="glyphicon glyphicon-link"></span>
+			HOL1 </a> 
+		</small>
+	</div>
 	<div class="container">
 		<form name="newPatientForm" role="form">
 			<h4>{{title}} № {{patientHistory.historyNo}}</h4>

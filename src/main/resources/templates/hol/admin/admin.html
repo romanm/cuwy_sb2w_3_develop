@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html ng-app="cuwyApp" ng-controller="AdminCtrl">
 <head>
-<title>{{title}}</title>
-<div th:replace="hol1 :: header" />
+	<title>{{title}}</title>
+	<div th:replace="hol1 :: header" />
 </head>
 <body>
 	<nav th:replace="hol1 :: navbar-top-admin" />
@@ -15,10 +15,19 @@
 						</h4>
 				<h4><a href="/hol/operation/order-archive">
 						Виконані заявки на доповненя списку операцій</a></h4>
+				<hr/>
+				<h4><a href="/hol/operation/liste-op">Список операцій</a></h4>
+				<h4><a href="/hol/operation/liste-complication">Список ускладнень</a></h4>
 			</div>
 			<div class="col-xs-4">
 				<h4><a href="/hol/admin/personal">Працівники</a></h4>
 				<h4><a href="/hol/admin/ato">Адміністративно-територіальні одиниці</a></h4>
+				<h4><a href="/">Список Відділень</a></h4>
+				<h4>
+				<a href="/tree/keyNav3.html">МКБ10</a>
+				|
+				<a href="/tree/keyNav2.html">МКБ10</a>
+				</h4>
 				
 			</div>
 		</div>
@@ -27,7 +36,9 @@
 	<script type="text/javascript">
 	
 	cuwyApp.controller('AdminCtrl', [ '$scope', '$http', function ($scope, $http) {
+		console.log(window.location.pathname == '/hol/admin');
 		$scope.title = "Адміністратор";
+		$scope.isAdminSite = true;
 	} ] );
 
 	</script>

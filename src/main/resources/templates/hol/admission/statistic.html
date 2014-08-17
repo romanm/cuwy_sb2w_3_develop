@@ -14,86 +14,168 @@
 		<h3>Кількість пацієнтів</h3>
 		
 		<div class="row">
-			<div class="col-xs-3">
-				<fieldset><legend>по неділях 
-				{{today.getMonthUa(monthNr - 1 )}} 
-				{{year}}</legend>
-				<table class="table table-striped">
-					<thead>
-						<tr><th>Кількість пацієнтів</th><th>Неділя</th></tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="countPatientsProWeek in countPatientsProWeeks"
-							class="{{countPatientsProWeek.weekNr == weekOfYear ? 'success':''}}"
-						>
-							<td ng-if="isMiddleWeek($index, countPatientsProWeeks)">
-							{{countPatientsProWeek.weekPatientCount}}
-							</td>
-							<td ng-if="$index == countPatientsProWeeks.length - 1">
-								{{countPatientsPro2Weeks[1].weekPatientCount}}
-								<span ng-if="countPatientsProWeek.weekPatientCount != countPatientsPro2Weeks[1].weekPatientCount">
-								({{countPatientsProWeek.weekPatientCount}})
-								</span>
-							</td>
-							<td ng-if="$index == 0">
-								{{countPatientsPro2Weeks[0].weekPatientCount}}
-								<span ng-if="countPatientsProWeek.weekPatientCount != countPatientsPro2Weeks[0].weekPatientCount">
-								({{countPatientsProWeek.weekPatientCount}})
-								</span>
-							</td>
-							<td ng-click="setWeekOfYear(countPatientsProWeek.weekNr)">{{countPatientsProWeek.weekNr}}</td>
-							<td></td>
-						</tr>
-					</tbody>
-					
-				</table>
-				</fieldset>
+			<div class="col-xs-4">
+				<h3  ng-click="changeCollapseQueryPanel()" style="text-align: right;" >Сформувати запит до БД
+				<small>
+					<a>
+						<span ng-if="collapseQueryPanel" class="glyphicon glyphicon-chevron-right"></span>
+						<span ng-if="!collapseQueryPanel" class="glyphicon glyphicon-chevron-down"></span>
+					</a>
+				</small>
+				</h3>
 			</div>
-			<div class="col-xs-3">
-				<fieldset><legend>по місяцях {{year}} року</legend>
-					<table class="table table-striped">
-					<thead>
-						<tr><th>Кількість пацієнтів</th><th>Місяць</th></tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="countPatientProMonth in countPatientsProMonth"
-							class="{{countPatientProMonth.monthNr == monthNr ? 'success':''}}"
-						>
-							<td>
-								{{countPatientProMonth.monthPatientCount}}
-							</td>
-							<td ng-click="setMonthNr(countPatientProMonth.monthNr)">{{today.getMonthUa(countPatientProMonth.monthNr-1)}}</td>
-						</tr>
-					</tbody>
-					<thead>
+			<div class="col-xs-7">
+				<ul id="patientsTab" class="nav nav-tabs">
+					<li ng-click="collapseQueryPanel = false" class="active"><a href="#of_date" data-toggle="tab">По даті</a></li>
+					<li ng-click="collapseQueryPanel = false"><a href="#of_data" data-toggle="tab">По даним</a></li>
+				</ul>
+				По даті:
+				<span ng-if="!weekOfYear">?</span>
+				<span ng-if="weekOfYear">
+					{{weekOfYear}}
+					 неділя {{year}} року
+					 (
+					 {{patientsAdmission.historysYearWeek[0].historyIn | date:'dd.MM.yyyy HH:mm'}}
+					 -
+					 {{patientsAdmission.historysYearWeek[patientsAdmission.historysYearWeek.length - 1].historyIn | date:'dd.MM.yyyy HH:mm'}}
+					 )
+				</span>
+				По даним:
+				<span ng-if="!department2query"> * </span>
+				<span ng-if="department2query"> {{department2query.department_name}} </span>
+				відділеня
+				<hr/>
+			</div>
+			<div class="col-xs-1">+</div>
+		</div>
+		
+		<div class="row well" collapse="collapseQueryPanel">
+			<div class="col-md-12 tab-content" id="patientsTabContent" >
+				<div class="row tab-pane fade in active" id="of_date">
+					<div class="col-xs-3">
+						<fieldset><legend>по неділях {{today.getMonthUa(monthNr - 1 )}} {{year}}</legend>
+						<table class="table table-striped">
+							<thead>
+								<tr><th>Кількість пацієнтів</th><th>Неділя</th></tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="countPatientsProWeek in countPatientsProWeeks"
+									class="{{countPatientsProWeek.weekNr == weekOfYear ? 'success':''}}"
+									ng-click="setWeekOfYear(countPatientsProWeek.weekNr)"
+								>
+									<td ng-if="isMiddleWeek($index, countPatientsProWeeks)">
+									{{countPatientsProWeek.weekPatientCount}}
+									</td>
+									<td ng-if="$index == countPatientsProWeeks.length - 1">
+										{{countPatientsPro2Weeks[1].weekPatientCount}}
+										<span ng-if="countPatientsProWeek.weekPatientCount != countPatientsPro2Weeks[1].weekPatientCount">
+										({{countPatientsProWeek.weekPatientCount}})
+										</span>
+									</td>
+									<td ng-if="$index == 0">
+										{{countPatientsPro2Weeks[0].weekPatientCount}}
+										<span ng-if="countPatientsProWeek.weekPatientCount != countPatientsPro2Weeks[0].weekPatientCount">
+										({{countPatientsProWeek.weekPatientCount}})
+										</span>
+									</td>
+									<td>{{countPatientsProWeek.weekNr}}</td>
+									<td></td>
+								</tr>
+							</tbody>
+						</table>
+						</fieldset>
+					</div>
+					<div class="col-xs-3">
+						<fieldset><legend>по місяцях {{year}} року</legend>
+							<table class="table table-striped">
+							<thead>
+								<tr><th>Кількість пацієнтів</th><th>Місяць</th></tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="countPatientProMonth in countPatientsProMonth"
+									class="{{countPatientProMonth.monthNr == monthNr ? 'success':''}}"
+									ng-click="setMonthNr(countPatientProMonth.monthNr)"
+								>
+									<td>
+										{{countPatientProMonth.monthPatientCount}}
+									</td>
+									<td>{{today.getMonthUa(countPatientProMonth.monthNr-1)}}</td>
+								</tr>
+							</tbody>
+							<thead>
+								<tr>
+									<td>Всього:
+									{{countAllMonthsPatients()}}</td>
+								</tr>
+							</thead>
+							</table>
+						</fieldset>
+					</div>
+					<div class="col-xs-3">
+						<fieldset><legend>по роках</legend>
+							<table class="table table-striped">
+							<thead>
+								<tr><th>Кількість пацієнтів</th><th>Рік</th></tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="countPatientProYear in countPatientsProYear"
+									class="{{countPatientProYear.year == year ? 'success':''}}"
+									ng-click="setYear(countPatientProYear.year)"
+								>
+									<td>{{countPatientProYear.yearPatientCount}}</td>
+									<td>{{countPatientProYear.year}}</td>
+								</tr>
+							</tbody>
+							</table>
+						</fieldset>
+					</div>
+				</div>
+				<div class="row tab-pane fade in active" id="of_data">
+					<div class="col-xs-12">
+					<div ng-click="setDepartmentAll()">Всі *</div>
+					<table>
 						<tr>
-							<td>Всього:
-							{{countAllMonthsPatients()}}</td>
+							<td style="vertical-align: top;">
+						<table class="table table-striped">
+							<thead>
+								<tr><th>Відділення</th><th>Кількість</th></tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="d in historysDepartment" ng-if="$index &lt; historysDepartment.length/2"
+									class="{{d.department_id == department2query.department_id ? 'success':''}}"
+									ng-click="setDepartment(d)"
+								>
+									<td>{{d.department_name}}</td><td>{{d.cnt}}</td>
+								</tr>
+							</tbody>
+						</table>
+							</td>
+							<td style="vertical-align: top;">
+						<table class="table table-striped">
+							<thead>
+								<tr><th>Відділення</th><th>Кількість</th></tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="d in historysDepartment" ng-if="$index > historysDepartment.length/2"
+									class="{{d.department_id == department2query.department_id ? 'success':''}}"
+									ng-click="setDepartment(d)"
+								>
+									<td>{{d.department_name}}</td><td>{{d.cnt}}</td>
+								</tr>
+							</tbody>
+						</table>
+							</td>
 						</tr>
-					</thead>
 					</table>
-				</fieldset>
-			</div>
-			<div class="col-xs-3">
-				<fieldset><legend>по роках</legend>
-					<table class="table table-striped">
-					<thead>
-						<tr><th>Кількість пацієнтів</th><th>Рік</th></tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="countPatientProYear in countPatientsProYear"
-							class="{{countPatientProYear.year == year ? 'success':''}}"
-						>
-							<td>{{countPatientProYear.yearPatientCount}}</td>
-							<td ng-click="setYear(countPatientProYear.year)">{{countPatientProYear.year}}</td>
-						</tr>
-					</tbody>
-					</table>
-				</fieldset>
+					</div>
+				</div>
 			</div>
 		</div>
+		
+		
 		<div class="row">
 			<div class="col-xs-12">
+			
 				<table class="table table-striped">
 					<thead>
 						<tr>
@@ -132,6 +214,7 @@
 						</tr>
 					</tbody>
 				</table>
+			
 			</div>
 		</div>
 	</div>
@@ -143,11 +226,32 @@
 		console.log($scope.today.getMonthUa(1));
 		$scope.year = $scope.today.getFullYear();
 		console.log($scope.year);
+		$scope.changeCollapseQueryPanel = function(){
+			$scope.collapseQueryPanel = !$scope.collapseQueryPanel;
+			return $scope.collapseQueryPanel;
+		}
+
 		$scope.isMiddleWeek = function(index, countPatientsProWeeks){
 			return isMiddleWeek(index, countPatientsProWeeks);
 		}
-		$scope.setWeekOfYear = function(weekOfYear){
-			$scope.weekOfYear = weekOfYear;
+		$scope.setDepartmentAll = function(){
+			$scope.department2query = null;
+			httpGetWeekOfYear();
+		}
+		$scope.setDepartment = function(department){
+			$scope.department2query = department;
+			console.log(department);
+			console.log(department.department_id);
+			$http({
+				method : 'GET',
+				url : '/patients' + '_department_' + $scope.department2query.department_id 
+				+ '_year_' + $scope.year + '_week_' + $scope.weekOfYear
+			}).success(function(data, status, headers, config) {
+				$scope.patientsAdmission = data;
+			}).error(function(data, status, headers, config) {
+			});
+		}
+		httpGetWeekOfYear = function(){
 			$http({
 				method : 'GET',
 				url : '/patients_year_'+$scope.year+'_week_'+$scope.weekOfYear
@@ -155,6 +259,17 @@
 				$scope.patientsAdmission = data;
 			}).error(function(data, status, headers, config) {
 			});
+			$http({
+				method : 'GET',
+				url : '/patients_department_year_'+$scope.year+'_week_'+$scope.weekOfYear
+			}).success(function(data, status, headers, config) {
+				$scope.historysDepartment = data;
+			}).error(function(data, status, headers, config) {
+			});
+		}
+		$scope.setWeekOfYear = function(weekOfYear){
+			$scope.weekOfYear = weekOfYear;
+			httpGetWeekOfYear();
 		}
 
 		$scope.setMonthNr = function(monthNr){

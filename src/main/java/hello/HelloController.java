@@ -479,6 +479,25 @@ public class HelloController {
 		return emp;
 	}
 
+	@RequestMapping(value = "/patients_department_year_{year}_week_{week}", method = RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> patientsDepartmentYearWeek(
+			@PathVariable Integer year, @PathVariable Integer week) {
+		List<Map<String, Object>> historysDepartment = cuwyDbService1.getHistorysDepartmentYearWeek(year, week);
+		return historysDepartment;
+	}
+	@RequestMapping(value = "/patients_department_{departmentId}_year_{year}_week_{week}", method = RequestMethod.GET)
+	public @ResponseBody PatientsAdmission patientsDepartmentYearWeek(
+			@PathVariable Integer year, @PathVariable Integer week, @PathVariable Integer departmentId) {
+		logger.warn("1");
+		PatientsAdmission patientsAdmission = new PatientsAdmission();
+		logger.warn("2");
+		List<HistoryHolDb> historysYearWeek = cuwyDbService1.getHistorysYearWeek(year, week, departmentId);
+		logger.warn("3");
+		patientsAdmission.setHistorysYearWeek(historysYearWeek);
+		logger.warn("4");
+		return patientsAdmission;
+	}
+	
 	@RequestMapping(value = "/patients_year_{year}_week_{week}", method = RequestMethod.GET)
 	public @ResponseBody PatientsAdmission patientsYearWeek(
 			@PathVariable Integer year, @PathVariable Integer week) {
