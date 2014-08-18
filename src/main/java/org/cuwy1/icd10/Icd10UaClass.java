@@ -1,83 +1,110 @@
 package org.cuwy1.icd10;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Icd10UaClass {
-	private String text;
-	private String code;
-	private String kind;
-	private List<Icd10UaClass> icd10Classes;
-	private long icd_id, icd_start, icd_end;
+public class Icd10UaClass implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String icdCode, icdName;
+	private List<Icd10UaClass> icd10Childs;
+//	private Icd10UaClass parent;
+	private Integer icdId=0, icdStart=0, icdEnd=Integer.MAX_VALUE
+		, icdLeftKey=0, icdRightKey=Integer.MAX_VALUE;
 
 	@Override
 	public String toString() {
 		return String.format(
-				"Icd10UaClass[icd_id=%d, icd_start=%d, icd_end=%d, firstName='%s', lastName='%s']",
-				icd_id, icd_start, icd_end, code, text);
-	}
-	
-	public Icd10UaClass(long icd_id,long  icd_start,long  icd_end, String code, String text) {
-		this.setIcd_id(icd_id);
-		this.code = code;
-		this.text = text;
+				"Icd10UaClass{icd_id=%d, icd_start=%d, icd_end=%d, icd_code='%s', icd_name='%s'}",
+				getIcdId(), getIcdStart(), getIcdEnd(), icdCode, icdName);
 	}
 
 	public Icd10UaClass() {
 	}
 
-	public String getKind() {
-		return kind;
+	public long getIcdLeftKey() {
+		return icdLeftKey;
 	}
 
-	public void setKind(String kind) {
-		this.kind = kind;
+	public void setIcdLeftKey(Integer icdLeftKey) {
+		this.icdLeftKey = icdLeftKey;
 	}
 
-	public String getCode() {
-		return code;
+
+	public long getIcdRightKey() {
+		return icdRightKey;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+
+	public void setIcdRightKey(Integer icdRightKey) {
+		this.icdRightKey = icdRightKey;
 	}
 
-	public List<Icd10UaClass> getIcd10Classes() {
-		return icd10Classes;
+
+	public long getIcdEnd() {
+		return icdEnd;
 	}
 
-	public void setIcd10Classes(List<Icd10UaClass> icd10Classes) {
-		this.icd10Classes = icd10Classes;
+
+	public void setIcdEnd(Integer icdEnd) {
+		this.icdEnd = icdEnd;
 	}
 
-	public String getText() {
-		return text;
+
+	public long getIcdStart() {
+		return icdStart;
 	}
 
-	public void setText(String text) {
-		this.text = text;
+
+	public void setIcdStart(Integer icdStart) {
+		this.icdStart = icdStart;
 	}
 
-	public long getIcd_id() {
-		return icd_id;
+
+	public long getIcdId() {
+		return icdId;
 	}
 
-	public void setIcd_id(long icd_id) {
-		this.icd_id = icd_id;
+
+	public void setIcdId(Integer icdId) {
+		this.icdId = icdId;
 	}
 
-	public long getIcd_end() {
-		return icd_end;
+
+	public String getIcdName() {
+		return icdName;
 	}
 
-	public void setIcd_end(long icd_end) {
-		this.icd_end = icd_end;
+
+	public void setIcdName(String icdName) {
+		this.icdName = icdName;
 	}
 
-	public long getIcd_start() {
-		return icd_start;
+
+	public String getIcdCode() {
+		return icdCode;
 	}
 
-	public void setIcd_start(long icd_start) {
-		this.icd_start = icd_start;
+
+	public void setIcdCode(String icdCode) {
+		this.icdCode = icdCode;
 	}
+
+	public void addChild(Icd10UaClass icd10UaClass) {
+		if(null == icd10Childs)
+			icd10Childs = new ArrayList<Icd10UaClass>();
+		icd10Childs.add(icd10UaClass);
+	}
+
+	public List<Icd10UaClass> getIcd10Childs() {
+		return icd10Childs;
+	}
+
+	public void setIcd10Childs(List<Icd10UaClass> icd10Childs) {
+		this.icd10Childs = icd10Childs;
+	}
+
 }

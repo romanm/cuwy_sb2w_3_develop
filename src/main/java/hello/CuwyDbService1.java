@@ -34,6 +34,7 @@ public class CuwyDbService1 {
 	private static final Logger logger = LoggerFactory.getLogger(CuwyDbService1.class);
 	
 	private JdbcTemplate jdbcTemplate;
+	public JdbcTemplate getJdbcTemplate() { return jdbcTemplate; }
 
 	public CuwyDbService1(){
 		SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
@@ -44,19 +45,67 @@ public class CuwyDbService1 {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
-	public JdbcTemplate getJdbcTemplate() {
-		return jdbcTemplate;
-	}
-
-	public List<Icd10UaClass> getIcd10UaChilds() {
+	public Icd10UaClass getIcd10UaGroups() {
+		Icd10UaClass icd10UaRoot = new Icd10UaClass();
+		String sql = "SELECT * FROM icd i1 where i1.icd_code like '%-%' ";
+		logger.info("\n "+sql);
 		List<Icd10UaClass> icd10Classes = jdbcTemplate.query(
-				"SELECT * FROM icd WHERE icd_left_key = ?", new Object[] { 1 },
+				sql,
+				new Icd2TreeMapper(icd10UaRoot));
+		return icd10UaRoot;
+	}
+	class Icd2TreeMapper<T> implements RowMapper<T>{
+
+		private Icd10UaClass icd10UaRoot;
+		private List<Icd10UaClass> icd10UaPfad;
+		public Icd2TreeMapper(Icd10UaClass icd10UaRoot) {
+			this.icd10UaRoot = icd10UaRoot;
+			this.icd10UaPfad= new ArrayList<Icd10UaClass>();
+			icd10UaPfad.add(icd10UaRoot);
+		}
+
+		@Override
+		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Icd10UaClass icd10UaClass = new Icd10UaClass();
+			icd10UaClass.setIcdId(rs.getInt("icd_id"));
+			icd10UaClass.setIcdLeftKey(rs.getInt("icd_left_key"));
+			icd10UaClass.setIcdRightKey(rs.getInt("icd_right_key"));
+			icd10UaClass.setIcdStart(rs.getInt("icd_start"));
+			icd10UaClass.setIcdEnd(rs.getInt("icd_end"));
+			icd10UaClass.setIcdCode(rs.getString("icd_code"));
+			icd10UaClass.setIcdName(rs.getString("icd_name"));
+			logger.warn("\n"+icd10UaPfad);
+			int i = icd10UaPfad.size()-1;
+			logger.warn("\n i = "+i);
+			for (; i>0; i--) 
+				if(icd10UaClass.getIcdEnd() < icd10UaPfad.get(i).getIcdEnd())
+					break;
+			logger.warn("\n i = "+i);
+			icd10UaPfad.get(i).addChild(icd10UaClass);
+			if(icd10UaPfad.size() > i+1)
+				icd10UaPfad = icd10UaPfad.subList(0, i+1);
+			logger.warn("\n icd10UaPfad = "+icd10UaPfad);
+			icd10UaPfad.add(icd10UaClass);
+			logger.warn("\n icd10UaPfad = "+icd10UaPfad);
+			return (T) icd10UaClass;
+		}
+		
+	}
+	public List<Icd10UaClass> getIcd10UaChilds() {
+		int icdLeftKey = 1;
+		String sql = "SELECT * FROM icd WHERE icd_left_key = ?";
+		logger.info("\n "+sql.replaceFirst("\\?", ""+icdLeftKey));
+		List<Icd10UaClass> icd10Classes = jdbcTemplate.query(
+				sql, new Object[] { icdLeftKey },
 				new RowMapper<Icd10UaClass>() {
 					@Override
 					public Icd10UaClass mapRow(ResultSet rs, int rowNum) throws SQLException {
-						Icd10UaClass icd10UaClass = new Icd10UaClass(
-								rs.getLong("icd_id"), rs.getLong("icd_start"), rs.getLong("icd_end"), 
-								rs.getString("icd_code"), rs.getString("icd_name"));
+						Icd10UaClass icd10UaClass = new Icd10UaClass();
+						icd10UaClass.setIcdId(rs.getInt("icd_id"));
+						icd10UaClass.setIcdStart(rs.getInt("icd_start"));
+						icd10UaClass.setIcdEnd(rs.getInt("icd_end"));
+						icd10UaClass.setIcdCode(rs.getString("icd_code"));
+						icd10UaClass.setIcdName(rs.getString("icd_name"));
 						return icd10UaClass;
 					}
 				});
