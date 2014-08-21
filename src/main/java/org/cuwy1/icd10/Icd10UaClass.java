@@ -9,6 +9,7 @@ public class Icd10UaClass implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private boolean collapse ;
 	private String icdCode, icdName;
 	private List<Icd10UaClass> icd10Childs;
 //	private Icd10UaClass parent;
@@ -105,6 +106,14 @@ public class Icd10UaClass implements Serializable{
 
 	public void setIcd10Childs(List<Icd10UaClass> icd10Childs) {
 		this.icd10Childs = icd10Childs;
+	}
+
+	public boolean isCollapse() {
+		return collapse;
+	}
+
+	public void setCollapse(boolean collapse) {
+		this.collapse = collapse;
 	}
 
 }

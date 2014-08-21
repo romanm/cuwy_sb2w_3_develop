@@ -147,9 +147,16 @@ public class HelloController {
 		return article;
 	}
 
+	@RequestMapping(value = "/icd10ua/groups", method = RequestMethod.GET)
+	public @ResponseBody Icd10UaClass getDummyIcd10Ua2() {
+		Icd10UaClass icd10UaGroups = cuwyDbService1.getIcd10UaGroups();
+		return icd10UaGroups;
+	}
+
 	@RequestMapping(value = "/readIcd10Childs", method = RequestMethod.POST)
-	public @ResponseBody Icd10Class readIcd10Childs(@RequestBody Icd10Class icd10Class) {
+	public @ResponseBody Icd10UaClass readIcd10Childs(@RequestBody Icd10UaClass icd10Class) {
 		logger.warn("\n /readIcd10Childs= "+icd10Class);
+		icd10Class = cuwyDbService1.getIcd10UaChilds(icd10Class);
 		return icd10Class;
 	}
 
@@ -160,22 +167,7 @@ public class HelloController {
 		List<Icd10UaClass> icd10UaChilds = cuwyDbService1.getIcd10UaChilds();
 		logger.warn("\n "+icd10UaClass);
 		icd10UaClass.setIcd10Childs(icd10UaChilds);
-		if(true)
-			return icd10UaClass;
-		/*
-		icd10UaClass.setIcd10Childs(new ArrayList<Icd10UaClass>());
-		logger.warn("\n "+icd10UaChilds);
-		for (Icd10UaClass icd10UaClass2 : icd10UaChilds) {
-			icd10UaClass.getIcd10Childs().add(icd10UaClass2);
-			icd10UaClass2.setParent(icd10UaClass);
-		}
-		 * */
 		return icd10UaClass;
-	}
-	@RequestMapping(value = "/icd10ua/dummy2", method = RequestMethod.GET)
-	public @ResponseBody Icd10UaClass getDummyIcd10Ua2() {
-		Icd10UaClass icd10UaGroups = cuwyDbService1.getIcd10UaGroups();
-		return icd10UaGroups;
 	}
 
 	@RequestMapping(value = "/icd10/dummy", method = RequestMethod.GET)

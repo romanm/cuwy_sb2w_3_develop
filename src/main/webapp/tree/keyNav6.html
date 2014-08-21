@@ -4,12 +4,17 @@
 <head>
 	<link href="/css/bootstrap.min.css" rel="stylesheet">
 	<style type="text/css">
-div.record {
+.record {
 }
-div.record-highlight-parent {
+.record-highlight-parent {
+	/*
+	border: 1px outset green;
+	border: 1px inset green;
+	border: 1px dashed green;
+	*/
 	border: 1px dotted green;
 }
-div.record-highlight {
+.record-highlight {
 	background-color: green;
 	color: #fff;
 }
@@ -21,37 +26,71 @@ http://stackoverflow.com/questions/16859970/navigate-the-ui-using-keyboard
 http://stackoverflow.com/questions/17388021/navigate-the-ui-using-only-keyboard
 	<div ng-controller="cuwyAppCtrl">
 		<ul>
-			<li ng-repeat="icd10Class0 in icd10Root.icd10Childs">
-				<div class="record" ng-class="{'record-highlight':  icd10Class0.icdId == icd10Selected.icdId
-				, 'record-highlight-parent': icd10Class0.icdId == icd10Pfad2Parents[1].icdId }"
-				ng-click="clickItem(icd10Class0)" >
-					<span ng-if="!icd10Class0.collapse" class="glyphicon glyphicon-chevron-right"></span>
-					<span ng-if="icd10Class0.collapse" class="glyphicon glyphicon-chevron-down"></span>
-					{{icd10Class0.icdCode }}, {{icd10Class0.icdName}}, {{icd10Class0.icd10Childs.length}}
-				</div>
-				<ul ng-if="icd10Class0.icd10Childs && icd10Class0.collapse">
-					<li ng-repeat="icd10Class1 in icd10Class0.icd10Childs">
-						<div class="record" ng-class="{'record-highlight': icd10Class1.icdId == icd10Selected.icdId
-						, 'record-highlight-parent': icd10Class1.icdId == icd10Pfad2Parents[2].icdId }"
-						ng-click="clickItem(icd10Class1)">
-							<span ng-if="!icd10Class1.collapse" class="glyphicon glyphicon-chevron-right"></span>
-							<span ng-if="icd10Class1.collapse" class="glyphicon glyphicon-chevron-down"></span>
-							{{icd10Class1.icdCode }}, {{icd10Class1.icdName}}, {{icd10Class1.icd10Childs.length}}
-						</div>
-						<ul ng-if="icd10Class1.icd10Childs && icd10Class1.collapse">
-							<li ng-repeat="icd10Class2 in icd10Class1.icd10Childs">
-								<div class="record" ng-class="{'record-highlight': icd10Class2.icdId == icd10Selected.icdId
-								, 'record-highlight-parent': icd10Class2.icdId == icd10Pfad2Parents[3].icdId }"
-								ng-click="clickItem(icd10Class2)">
-									{{icd10Class2.icdCode }}, {{icd10Class2.icdName}}, {{icd10Class2.icd10Childs.length}}
-								</div>
-								<ul ng-if="icd10Class2.icd10Childs && icd10Class2.collapse">
-									<li ng-repeat="icd10Class3 in icd10Class2.icd10Childs">
-										<div class="record" ng-class="{'record-highlight': icd10Class3.icdId == icd10Selected.icdId
-										, 'record-highlight-parent': icd10Class3.icdId == icd10Pfad2Parents[4].icdId }"
-										ng-click="clickItem(icd10Class3)">
-											{{icd10Class3.icdCode }}, {{icd10Class3.icdName}}, {{icd10Class3.icd10Childs.length}}
-										</div>
+			<li ng-repeat="icd10Class1 in icd10Root.icd10Childs">
+				<span ng-if="!icd10Class1.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+				<span ng-if="icd10Class1.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+				<span class="record" ng-class="{'record-highlight':  icd10Class1.icdId == icd10Selected.icdId
+				, 'record-highlight-parent': icd10Class1.icdId == icd10Pfad2Parents[1].icdId }"
+				ng-init="addChilds(icd10Class1, $index)"
+				ng-click="clickItem(icd10Class1)" title="{{icd10Class1.icd10Childs.length}}">
+					{{icd10Class1.icdCode }}, {{icd10Class1.icdName}}
+				</span>
+				<ul ng-if="icd10Class1.icd10Childs && icd10Class1.collapse">
+					<li ng-repeat="icd10Class2 in icd10Class1.icd10Childs">
+						<span ng-if="!icd10Class2.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+						<span ng-if="icd10Class2.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+						<span class="record" ng-class="{'record-highlight': icd10Class2.icdId == icd10Selected.icdId
+						, 'record-highlight-parent': icd10Class2.icdId == icd10Pfad2Parents[2].icdId }"
+						ng-click="clickItem(icd10Class2)" title="{{icd10Class2.icd10Childs.length}}">
+							{{icd10Class2.icdCode }}, {{icd10Class2.icdName}}
+						</span>
+						<ul ng-if="icd10Class2.icd10Childs && icd10Class2.collapse">
+							<li ng-repeat="icd10Class3 in icd10Class2.icd10Childs" ng-init="addChilds(icd10Class3, $index)">
+								<span ng-if="icd10Class3.icdRightKey - icd10Class3.icdLeftKey == 1"
+										class="glyphicon glyphicon-minus"
+									>
+								</span>
+								<span ng-if="icd10Class3.icdRightKey - icd10Class3.icdLeftKey > 1">
+									<span ng-if="!icd10Class3.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+									<span ng-if="icd10Class3.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+								</span>
+								<span class="record" ng-class="{'record-highlight': icd10Class3.icdId == icd10Selected.icdId
+								, 'record-highlight-parent': icd10Class3.icdId == icd10Pfad2Parents[3].icdId }"
+								ng-click="clickItem(icd10Class3)" title="{{icd10Class3.icd10Childs.length}}">
+									{{icd10Class3.icdCode }}, {{icd10Class3.icdName}}
+								</span>
+								<ul ng-if="icd10Class3.icd10Childs && icd10Class3.collapse">
+									<li ng-repeat="icd10Class4 in icd10Class3.icd10Childs">
+										<span ng-if="icd10Class4.icdRightKey - icd10Class4.icdLeftKey == 1"
+											class="glyphicon glyphicon-minus"
+										>
+										</span>
+										<span ng-if="icd10Class4.icdRightKey - icd10Class4.icdLeftKey > 1">
+											<span ng-if="!icd10Class4.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+											<span ng-if="icd10Class4.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+										</span>
+										<span class="record" ng-class="{'record-highlight': icd10Class4.icdId == icd10Selected.icdId
+										, 'record-highlight-parent': icd10Class4.icdId == icd10Pfad2Parents[4].icdId }"
+										ng-click="clickItem(icd10Class4)" title="{{icd10Class4.icd10Childs.length}}">
+											{{icd10Class4.icdCode }}, {{icd10Class4.icdName}}
+										</span>
+										<ul ng-if="icd10Class4.icd10Childs && icd10Class4.collapse">
+											<li ng-repeat="icd10Class5 in icd10Class4.icd10Childs">
+												<span ng-if="icd10Class5.icdRightKey - icd10Class5.icdLeftKey == 1"
+													class="glyphicon glyphicon-minus"
+												>
+												</span>
+												<span ng-if="icd10Class5.icdRightKey - icd10Class5.icdLeftKey > 1">
+													<span ng-if="!icd10Class5.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+													<span ng-if="icd10Class5.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+												</span>
+												<span class="record" ng-class="{'record-highlight': icd10Class5.icdId == icd10Selected.icdId
+												, 'record-highlight-parent': icd10Class5.icdId == icd10Pfad2Parents[5].icdId }"
+												ng-click="clickItem(icd10Class5)" title="{{icd10Class5.icd10Childs.length}}">
+													{{icd10Class5.icdCode }}, {{icd10Class5.icdName}}
+												</span>
+											</li>
+										</ul>
 									</li>
 								</ul>
 							</li>
@@ -69,9 +108,27 @@ http://stackoverflow.com/questions/17388021/navigate-the-ui-using-only-keyboard
 
 	app.controller('cuwyAppCtrl',function ($scope, $http) {
 
+		//$scope.iconsTreeClose = "chevron-right";
+		//$scope.iconsTreeOpen = "chevron-down";
+		//$scope.iconsTreeClose = "plus";
+		//$scope.iconsTreeOpen = "minus";
+		$scope.iconsTreeClose = "folder-close";
+		$scope.iconsTreeOpen = "folder-open";
+		$scope.focusDeepIndex = 0;
+		$scope.icd10Pfad2Parents = [];
+
+		$scope.addChilds = function(icd10Class, index) {
+			console.log(icd10Class);
+			console.log(index);
+			console.log(icd10Class.icd10Childs);
+		}
 		highlightSelect = function(icd10Class, fDeepIndex) {
 			if(icd10Class.icdId == $scope.icd10Selected.icdId){
 				$scope.focusDeepIndex = fDeepIndex - 1;
+				if(!icd10Class.icd10Childs && $scope.icd10Selected.icd10Childs){
+					var indexOfIcd10Selected = $scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs.indexOf(icd10Class);
+					$scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs[indexOfIcd10Selected] = $scope.icd10Selected;
+				}
 			}else
 			if(icd10Class.icdStart <= $scope.icd10Selected.icdStart && icd10Class.icdEnd >= $scope.icd10Selected.icdEnd){
 				$scope.icd10Pfad2Parents[fDeepIndex] = icd10Class;
@@ -79,11 +136,10 @@ http://stackoverflow.com/questions/17388021/navigate-the-ui-using-only-keyboard
 		}
 
 		$scope.clickItem = function(icd10Class) {
+			console.log("======clickItem=======");
 			var icd10SelectedOld = $scope.icd10Selected;
 			$scope.icd10Selected = icd10Class;
 			icd10Class.collapse = !icd10Class.collapse;
-			console.log($scope.icd10Selected.collapse+"/"+$scope.icd10Selected.selected
-				+"::"+$scope.icd10Selected.icdStart+"/"+$scope.icd10Selected.icdEnd);
 			$($scope.icd10Root.icd10Childs).each(function () {
 				highlightSelect(this, 1);
 				$(this.icd10Childs).each(function () {
@@ -92,18 +148,16 @@ http://stackoverflow.com/questions/17388021/navigate-the-ui-using-only-keyboard
 						highlightSelect(this, 3);
 						$(this.icd10Childs).each(function () {
 							highlightSelect(this, 4);
+							$(this.icd10Childs).each(function () {
+								highlightSelect(this, 5);
+							});
 						});
 					});
 				});
 			});
-			return icd10Class.collapse;
 		}
 
 		console.log("cuwyAppCtrl");
-
-		$scope.focusIndex = 0;
-		$scope.focusDeepIndex = 0;
-		$scope.icd10Pfad2Parents = [];
 
 		var KeyCodes = {
 			BACKSPACE : 8,
@@ -147,26 +201,35 @@ http://stackoverflow.com/questions/17388021/navigate-the-ui-using-only-keyboard
 						, url : "/readIcd10Childs"
 					}).success(function(data, status, headers, config) {
 						$scope.icd10Selected = data;
+						openChild();
 					}).error(function(data, status, headers, config) {
 					});
-				}
-				if($scope.icd10Selected.icd10Childs){
-					console.log("go deep " + $scope.focusDeepIndex);
-					if($scope.focusDeepIndex <= 3){
-						$scope.icd10Selected.collapse = true;
-						$scope.focusDeepIndex++;
-						$scope.icd10Pfad2Parents[$scope.focusDeepIndex] = $scope.icd10Selected;
-						$scope.icd10Selected = $scope.icd10Selected.icd10Childs[0];
-					}
+				}else{
+					openChild();
 				}
 			}
 		});
+
+		openChild = function(){
+			console.log("======openChild=======");
+			if($scope.icd10Selected.icd10Childs){
+				console.log("go deep " + $scope.focusDeepIndex);
+				if($scope.focusDeepIndex <= 5){
+					$scope.clickItem($scope.icd10Selected);
+					console.log("=============");
+					$scope.icd10Selected.collapse = true;
+					$scope.focusDeepIndex++;
+					$scope.icd10Pfad2Parents[$scope.focusDeepIndex] = $scope.icd10Selected;
+					$scope.icd10Selected = $scope.icd10Selected.icd10Childs[0];
+				}
+			}
+		}
+
 		$scope.keys.push({
 			code : KeyCodes.UPARROW,
 			action : function() {
 				console.log(" UPARROW ");
 				var indexSelected = $scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs.indexOf($scope.icd10Selected);
-				console.log(indexSelected+"/"+$scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs.length+"/"+$scope.focusIndex);
 				if(indexSelected > 0)
 					$scope.icd10Selected = $scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs[indexSelected - 1];
 				else
@@ -197,7 +260,7 @@ http://stackoverflow.com/questions/17388021/navigate-the-ui-using-only-keyboard
 		});
 
 		$http({ 
-			method : "GET", url : "/icd10ua/dummy2"
+			method : "GET", url : "/icd10ua/groups"
 		}).success(function(data, status, headers, config) {
 			$scope.icd10Root = data;
 			$scope.icd10Pfad2Parents[0] = $scope.icd10Root;

@@ -45,9 +45,21 @@ public class CuwyDbService1 {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
+	public Icd10UaClass getIcd10UaChilds(Icd10UaClass icd10Class) {
+		String sql = "SELECT * FROM icd i1 WHERE icd_start >= ? AND icd_end <= ? AND icd_id != ? ";
+		String sql2 = sql.replaceFirst("\\?", "" + icd10Class.getIcdStart())
+				.replaceFirst("\\?", "" + icd10Class.getIcdEnd())
+				.replaceFirst("\\?", "" + icd10Class.getIcdId());
+		logger.info("\n "+sql2);
+		List<Icd10UaClass> icd10Classes = jdbcTemplate.query(
+				sql2,
+				new Icd2TreeMapper(icd10Class));
+		return icd10Class;
+	}
 	public Icd10UaClass getIcd10UaGroups() {
 		Icd10UaClass icd10UaRoot = new Icd10UaClass();
-		String sql = "SELECT * FROM icd i1 where i1.icd_code like '%-%' ";
+		String sql = "SELECT * FROM icd i1 WHERE i1.icd_code not like '%.%'";
+//		String sql = "SELECT * FROM icd i1 WHERE i1.icd_code like '%-%' ";
 		logger.info("\n "+sql);
 		List<Icd10UaClass> icd10Classes = jdbcTemplate.query(
 				sql,
@@ -60,7 +72,7 @@ public class CuwyDbService1 {
 		private List<Icd10UaClass> icd10UaPfad;
 		public Icd2TreeMapper(Icd10UaClass icd10UaRoot) {
 			this.icd10UaRoot = icd10UaRoot;
-			this.icd10UaPfad= new ArrayList<Icd10UaClass>();
+			this.icd10UaPfad = new ArrayList<Icd10UaClass>();
 			icd10UaPfad.add(icd10UaRoot);
 		}
 
@@ -74,19 +86,14 @@ public class CuwyDbService1 {
 			icd10UaClass.setIcdEnd(rs.getInt("icd_end"));
 			icd10UaClass.setIcdCode(rs.getString("icd_code"));
 			icd10UaClass.setIcdName(rs.getString("icd_name"));
-			logger.warn("\n"+icd10UaPfad);
 			int i = icd10UaPfad.size()-1;
-			logger.warn("\n i = "+i);
 			for (; i>0; i--) 
-				if(icd10UaClass.getIcdEnd() < icd10UaPfad.get(i).getIcdEnd())
+				if(icd10UaClass.getIcdEnd() <= icd10UaPfad.get(i).getIcdEnd())
 					break;
-			logger.warn("\n i = "+i);
 			icd10UaPfad.get(i).addChild(icd10UaClass);
 			if(icd10UaPfad.size() > i+1)
 				icd10UaPfad = icd10UaPfad.subList(0, i+1);
-			logger.warn("\n icd10UaPfad = "+icd10UaPfad);
 			icd10UaPfad.add(icd10UaClass);
-			logger.warn("\n icd10UaPfad = "+icd10UaPfad);
 			return (T) icd10UaClass;
 		}
 		
