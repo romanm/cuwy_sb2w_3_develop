@@ -16,14 +16,14 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-3">
-				<h3 ng-repeat="departmentHol in departmentsHol.departmentsHol"
+				<h3 ng-repeat="departmentHol in departmentsHol"
 				ng-if="departmentHol.department_profile_id == 3 "
 				>
 					<a href="hol/admission/patient">
 						{{departmentHol.department_name}}
 					</a>
 				</h3>
-				<h4 ng-repeat="departmentHol in departmentsHol.departmentsHol"
+				<h4 ng-repeat="departmentHol in departmentsHol"
 				ng-if="departmentHol.department_profile_id == 4 "
 				>
 					<a href="hol/department.html?dep={{departmentHol.department_id}}">
@@ -38,22 +38,24 @@
 				</h4>
 			</div>
 			<div class="col-md-4">
-	<h4 ng-repeat="departmentHol in departmentsHol.departmentsHol"
+	<h4 ng-repeat="departmentHol in departmentsHol"
 	ng-if="departmentHol.department_profile_id == 2 "
 	>
 		<a href="hol/department.html?dep={{departmentHol.department_id}}">
 			{{departmentHol.department_name}}
 		</a>
 	</h4>
+	<hr/>
 			</div>
 			<div class="col-md-4">
-	<h4 ng-repeat="departmentHol in departmentsHol.departmentsHol"
+	<h4 ng-repeat="departmentHol in departmentsHol"
 	ng-if="departmentHol.department_profile_id == 1 "
 	>
 		<a href="hol/department.html?dep={{departmentHol.department_id}}">
 			{{departmentHol.department_name}}
 		</a>
 	</h4>
+	<hr/>
 			</div>
 		</div>
 	</div>
@@ -63,20 +65,12 @@
 	<script src="/js/angular.min.js"></script>
 	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
 	<script src="/js/angular-sanitize.min.js"></script>
+	<script src="/db/config.json.js"></script>
 	<script src="/js/cuwy1.directives.js"></script>
 	<script type="text/javascript">
 	cuwyApp.controller('HomeHolCtrl', [ '$scope', '$http', function ($scope, $http) {
-
-		$http({
-			method : "GET",
-			url : "/hol/department-list"
-		}).success(function(data, status, headers, config) {
-			$scope.departmentsHol = data;
-		}).error(function(data, status, headers, config) {
-		});
-
+		$scope.departmentsHol = configHol.departments;
 	} ] );
-
 	</script>
 
 </body>

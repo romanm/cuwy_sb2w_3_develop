@@ -10,6 +10,7 @@ public class PatientHolDb {
 	private String patientPersonalName;
 	private String patientPatronymic;
 	private Date patientDob;
+	private String patientDob2;
 	private String patientPhoneHome;
 	private String patientPhoneMobil;
 	private String patientJob;
@@ -225,5 +226,13 @@ public class PatientHolDb {
 
 	public void setPatientBj(String patientBj) {
 		this.patientBj = patientBj;
+	}
+
+	public String getPatientDob2() {
+		return patientDob2;
+	}
+
+	public void setPatientDob2(String patientDob2) {
+		this.patientDob2 = patientDob2;
 	}
 }

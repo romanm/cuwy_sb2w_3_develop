@@ -9,6 +9,7 @@ import org.cuwy1.hol.model.HistoryTreatmentAnalysis;
 import org.cuwy1.hol.model.PatientDepartmentMovement;
 
 public class HistoryHolDb {
+	private boolean perevid = false;
 	private PatientHolDb patientHolDb;
 	private int historyId,historyNo, patientId;
 	private Timestamp historyIn;
@@ -78,6 +79,14 @@ public class HistoryHolDb {
 
 	public void setHistoryIn(Timestamp historyIn) {
 		this.historyIn = historyIn;
+	}
+
+	public boolean isPerevid() {
+		return perevid;
+	}
+
+	public void setPerevid(boolean perevid) {
+		this.perevid = perevid;
 	}
 
 }

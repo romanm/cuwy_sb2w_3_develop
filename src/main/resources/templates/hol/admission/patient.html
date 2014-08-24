@@ -84,7 +84,8 @@
 				>
 				<div class="input-group">
 					<div class="input-group-addon">д.н.</div>
-					<input id="bod" class="form-control input-sm" type="text" placeholder="дд-мм-рррр"/>
+					<input id="dob" ng-model="patientHistory.patientHolDb.patientDob2"
+					class="form-control input-sm" type="text" placeholder="дд-мм-рррр"/>
 				</div>
 				</div>
 			</div>
@@ -429,7 +430,7 @@
 					<div class="form-group has-success has-feedback required">
 						<label class="control-label sr-only" for="direct">Відділення госпіталізації</label>
 						<input type="text" class="form-control input-sm" placeholder="Відділення госпіталізації" 
-						id="department" name="department" ng-model="patientEditing.department" required=""
+						id="department" name="department" ng-model="patientHistory.patientDepartmentMovements[0].departmentName" required=""
 						tooltip-html-unsafe="Відділення госпіталізації &lt;b class='required-tooltip'>*&lt;/b>"
 						/>
 						<span class="glyphicon form-control-feedback"></span>
@@ -441,8 +442,22 @@
 					<button ng-click="getCountryDistricts()" type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
 						<span class="caret"></span>
 					</button>
-					<div class="dropdown-menu" role="menu">
-					d----d
+					<div class="dropdown-menu  dropdown-menu-right" role="menu">
+						<table>
+							<tr><td>
+							<ul>
+								<li ng-repeat="departmentHol in departmentsHol" ng-if="departmentHol.department_profile_id == 2">
+									<a ng-click="writeDepartment(departmentHol)">{{departmentHol.department_name}}</a>
+								</li>
+							</ul>
+							</td><td>
+							<ul>
+								<li ng-repeat="departmentHol in departmentsHol" ng-if="departmentHol.department_profile_id == 1">
+									<a ng-click="writeDepartment(departmentHol)">{{departmentHol.department_name}}</a>
+								</li>
+							</ul>
+							</td></tr>
+						</table>
 					</div>
 				</div>
 			</div>
@@ -593,17 +608,16 @@
 						</table>
 					</div>
 					<div class="col-xs-6">
-						<div>
-						Онкологічний профілактичний огляд
-						</div>
-						<div>
-						Флюорографічне обстеження
-						</div>
+						<div>Онкологічний профілактичний огляд</div>
+						<div>Флюорографічне обстеження</div>
 					</div>
 				</div>
 			</fieldset>
 		</div>
 		</form>
+			<br/><br/><br/><br/>
+			<br/><br/><br/><br/>
+			<br/><br/><br/><br/>
 	</div>
 	<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
 		<div class="container">
@@ -618,7 +632,7 @@
 		</div>
 	</nav>
 	<div th:replace="hol1 :: js-lib" />
-	<script src="/db/addresses.json.js"></script>
+	<script src="/db/config.json.js"></script>
 	<script src="/js/admissionPatientCtrl.js"></script>
 </body>
 </html>

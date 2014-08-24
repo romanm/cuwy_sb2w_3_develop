@@ -3,6 +3,7 @@ package hello;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.cuwy1.hol.model.ConfigHol;
 import org.cuwy1.hol.model.ConsumptionMaterialBooking;
 import org.cuwy1.hol.model.CountryHol;
 import org.cuwy1.hol.model.DepartmentHol;
@@ -147,6 +149,27 @@ public class HelloController {
 		return article;
 	}
 
+	@RequestMapping(value = "/seekIcd10Db/{query}", method = RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> seekIcd10Db(@PathVariable String query) {
+		logger.warn("\n /seekIcd10Db/{query} query = "+query);
+		List<Map<String, Object>> seekIcd10Db = cuwyDbService1.seekIcd10Db(query);
+		logger.warn("\n /seekIcd10Db/"+query+" = "+seekIcd10Db.size());
+		return seekIcd10Db;
+	}
+
+	@RequestMapping(value = "/icd10ua/allToFile", method = RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> icd10UaAllToFile() {
+		List<Map<String, Object>> icd10UaAllToFile = cuwyDbService1.icd10UaAllToFile();
+		writeToJsDbFile("var icd10uaAll = ", icd10UaAllToFile, icd10uaAllFileName);
+		return icd10UaAllToFile;
+	}
+	@RequestMapping(value = "/icd10uaGroups/toFile", method = RequestMethod.GET)
+	public @ResponseBody Icd10UaClass getIcd10UaGroupsToFile() {
+		Icd10UaClass icd10UaGroups = cuwyDbService1.getIcd10UaGroups();
+		writeToJsDbFile("var icd10uaGroups = ", icd10UaGroups, icd10uaGroupsFileName);
+		return icd10UaGroups;
+	}
+
 	@RequestMapping(value = "/icd10ua/groups", method = RequestMethod.GET)
 	public @ResponseBody Icd10UaClass getDummyIcd10Ua2() {
 		Icd10UaClass icd10UaGroups = cuwyDbService1.getIcd10UaGroups();
@@ -270,6 +293,10 @@ public class HelloController {
 		logger.info("\n Start /hol/history_no_"+historyNo);
 //		PatientHistory patientHistory = getShortPatientHistory(historyNo);
 		HistoryHolDb shortPatientHistory = getShortPatientHistory(historyNo);
+		Date patientDob = shortPatientHistory.getPatientHolDb().getPatientDob();
+		String format = new SimpleDateFormat("dd-MM-yyyy").format(patientDob);
+		logger.info("\n patientDob2 = "+format);
+		shortPatientHistory.getPatientHolDb().setPatientDob2(format);
 		return shortPatientHistory;
 	}
 
@@ -422,7 +449,22 @@ public class HelloController {
 	String departmentFileName = "departmentSICU.json";
 	String addressesJsonFileName = "addresses.json";
 	String addressesJsFileName = "addresses.json.js";
+	String configJsFileName = "config.json.js";
+	String icd10uaAllFileName = "icd10uaAll.json.js";
+	String icd10uaGroupsFileName = "icd10uaGroups.json.js";
 	String icd10FileName = "icd102010en.xml";
+
+	@RequestMapping(value = "/config/create_file", method = RequestMethod.GET)
+	public @ResponseBody ConfigHol createConfigFile() {
+		ConfigHol configHol = new ConfigHol();
+		List<CountryHol> readCountries = cuwyDbService1.readCountries();
+		configHol.setCountries(readCountries);
+		List<DepartmentHol> departmentHol = cuwyDbService1.getDepartmentsHol();
+		configHol.setDepartments(departmentHol);
+//		writeToJsonDbFile(readCountries, addressesJsonFileName);
+		writeToJsDbFile("var configHol = ", configHol, configJsFileName);
+		return configHol;
+	}
 
 	@RequestMapping(value = "/address/create_file", method = RequestMethod.GET)
 	public @ResponseBody List<CountryHol> createAddressFile() {

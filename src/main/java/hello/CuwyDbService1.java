@@ -722,6 +722,23 @@ public class CuwyDbService1 {
 		return countPatientsProMonth;
 	}
 
+	public List<Map<String, Object>> seekIcd10Db(String query) {
+		String sql = "SELECT * FROM icd i1 WHERE CONCAT(i1.icd_code, ' ',i1.icd_name ) LIKE '%?%'";
+		String sql2 = sql.replaceFirst("\\?", query);
+		logger.info("\n"+sql2);
+		List<Map<String, Object>> countPatientsProMonth 
+		= jdbcTemplate.queryForList(sql2);
+		return countPatientsProMonth;
+	}
+
+	public List<Map<String,Object>> icd10UaAllToFile() {
+		String sql = "select * from icd";
+		logger.info("\n"+sql);
+		List<Map<String, Object>> countPatientsProMonth 
+		= jdbcTemplate.queryForList(sql);
+		return countPatientsProMonth;
+	}
+
 	
 
 }

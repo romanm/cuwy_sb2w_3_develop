@@ -5,7 +5,8 @@ console.log("historyFile = "+historyFile);
 cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope, $http) {
 
 	$scope.title = "Створити історію хвороби";
-	$scope.addresses = addresses;
+	$scope.addresses = configHol.countries;
+	$scope.departmentsHol = configHol.departments;
 	$scope.parameters = parameters;
 	$scope.patient = {
 		name: 'Patient name',
@@ -50,9 +51,9 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	}
 
 	$scope.patientEditing = {name: '', last: '', patientPatronymic: '', patientGender: false,
-		country: addresses[0].countryName,
+		country: $scope.addresses[0].countryName,
 		countryCollapsed: true,
-		district: addresses[0].districtsHol[0].districtName,
+		district: $scope.addresses[0].districtsHol[0].districtName,
 		region: '',
 		localityType: '',
 		localityName: '',
@@ -83,6 +84,12 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	}
 
 	$scope.getDistrictRegions();
+
+	$scope.writeDepartment = function(department){
+		$scope.patientHistory.patientDepartmentMovements[0].departmentId = department.department_id;
+		$scope.patientHistory.patientDepartmentMovements[0].departmentName = department.department_name;
+		console.log($scope.patientHistory.patientDepartmentMovements[0]);
+	}
 
 	$scope.writeToModel = function(fieldName, value){
 		$scope.patientEditing[fieldName] = value;
@@ -196,7 +203,7 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 } ] );
 
 $(function() {
-	$('#bod').datepicker({
+	$('#dob').datepicker({
 		format : 'dd-mm-yyyy'
 	});
 });
