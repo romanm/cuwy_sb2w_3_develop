@@ -178,16 +178,14 @@
 							</td>
 							<td>
 							<ul>
-							<li ng-repeat="district in districts" 
-							ng-if="isDistrict2of3($index, districts)">
+							<li ng-repeat="district in districts" ng-if="isDistrict2of3($index, districts)">
 								<a ng-click="writeToModel('district',district.districtName)">{{district.districtName}}</a>
 							</li>
 							</ul>
 							</td>
 							<td>
 							<ul>
-							<li ng-repeat="district in districts" 
-							ng-if="$index > districts.length/3*2">
+							<li ng-repeat="district in districts" ng-if="$index > districts.length/3*2">
 								<a ng-click="writeToModel('district',district.districtName)">{{district.districtName}}</a>
 							</li>
 							</ul>
@@ -215,7 +213,7 @@
 					<b>Пошук району</b>:
 					<ul>
 						<li ng-repeat="region in regions | filter:patientEditing.region">
-						<a ng-click="writeToModel('region', region.regionName)">{{region.regionName}}</a>
+							<a ng-click="writeToModel('region', region.regionName)">{{region.regionName}}</a>
 						</li>
 					</ul>
 				</div>
@@ -293,7 +291,7 @@
 					<b>Пошук області</b>:
 					<ul>
 						<li ng-repeat="district in districts | filter:patientEditing.district">
-						<a ng-click="writeToModel('district', district.districtName)">{{district.districtName}}</a>
+							<a ng-click="writeToModel('district', district.districtName)">{{district.districtName}}</a>
 						</li>
 					</ul>
 				</div>
@@ -411,20 +409,34 @@
 						<label class="control-label sr-only" for="direct">Направляючий заклад</label>
 						<input type="text" class="form-control input-sm" placeholder="Направляючий заклад" 
 						id="direct" name="direct" ng-model="patientEditing.direct" required=""
+						ng-change="supportDirectField()"
 						tooltip-html-unsafe="Направляючий заклад &lt;b class='required-tooltip'>*&lt;/b>"
 						/>
 						<span class="glyphicon form-control-feedback"></span>
 						<span class="control-label" ng-show="isRequired(newPatientForm.direct)">
 						Направляючий заклад є обов'язковим і не може бути порожнім!</span>
 					</div>
+					<div collapse="collapseDirectListe" class="well">
+					<b>Пошук направляючого закладу</b>:
+					<ul>
+						<li ng-repeat="direct in directs | filter:patientEditing.direct">
+							<a ng-click="writeDirect(direct)">{{direct.direct_name}}</a>
+						</li>
+					</ul>
+					</div>
 				</div>
 				<div class="col-xs-1">
+					<button class="btn btn-default btn-sm" type="button" ng-click="collapseDirectListe = !collapseDirectListe">
+						<span class="caret"></span>
+					</button>
+<!-- 
 					<button ng-click="getCountryDistricts()" type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
 						<span class="caret"></span>
 					</button>
 					<div class="dropdown-menu" role="menu">
-					d----d
+					d-d
 					</div>
+ -->
 				</div>
 				<div class="col-xs-5">
 					<div class="form-group has-success has-feedback required">

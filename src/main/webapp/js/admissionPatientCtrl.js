@@ -6,6 +6,7 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 
 	$scope.title = "Створити історію хвороби";
 	$scope.addresses = configHol.countries;
+	$scope.directs = configHol.directs;
 	$scope.departmentsHol = configHol.departments;
 	$scope.parameters = parameters;
 	$scope.patient = {
@@ -98,6 +99,23 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 		}
 	}
 
+	$scope.writeDirect = function(direct){
+		$scope.patientEditing.direct = direct.direct_name;
+		$scope.supportDirectField();
+	}
+
+	$scope.collapseDirectListe = true;
+	$scope.supportDirectField = function(){
+		if($scope.patientEditing.direct){
+			$scope.collapseDirectListe = !($scope.patientEditing.direct.length > 0);
+			for(var i = 0 ; i < $scope.directs.length ; i++ ){
+				if($scope.directs[i].direct_name == $scope.patientEditing.direct){
+					$scope.collapseDirectListe = true;
+					return ;
+				}
+			}
+		}
+	}
 	$scope.supportDistrictField = function(){
 		var collapseDistrictListe = true;
 		if($scope.patientEditing.district){

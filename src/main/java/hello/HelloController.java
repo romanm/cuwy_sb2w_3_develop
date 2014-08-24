@@ -458,9 +458,11 @@ public class HelloController {
 	public @ResponseBody ConfigHol createConfigFile() {
 		ConfigHol configHol = new ConfigHol();
 		List<CountryHol> readCountries = cuwyDbService1.readCountries();
-		configHol.setCountries(readCountries);
 		List<DepartmentHol> departmentHol = cuwyDbService1.getDepartmentsHol();
+		List<Map<String, Object>> directsHol = cuwyDbService1.getDirectsHol();
+		configHol.setCountries(readCountries);
 		configHol.setDepartments(departmentHol);
+		configHol.setDirects(directsHol);
 //		writeToJsonDbFile(readCountries, addressesJsonFileName);
 		writeToJsDbFile("var configHol = ", configHol, configJsFileName);
 		return configHol;

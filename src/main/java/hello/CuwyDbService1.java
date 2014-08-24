@@ -143,7 +143,11 @@ public class CuwyDbService1 {
 				"SELECT * FROM department WHERE department_id = ?", 
 				new Object[] { id }, new DepartmentHolRowMapper());
 	}
-
+	public List<Map<String, Object>> getDirectsHol() {
+		String sql = "select * from direct";
+		List<Map<String, Object>> directsHol = jdbcTemplate.queryForList(sql);
+		return directsHol;
+	}
 	public List<DepartmentHol> getDepartmentsHol() {
 		return jdbcTemplate.query(
 				"SELECT * FROM department", 
@@ -738,6 +742,7 @@ public class CuwyDbService1 {
 		= jdbcTemplate.queryForList(sql);
 		return countPatientsProMonth;
 	}
+
 
 	
 
