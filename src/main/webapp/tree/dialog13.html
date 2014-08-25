@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html ng-app='cuwyApp'>
+
+<head>
+	<meta charset=utf-8>
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<style type="text/css">
+		.show {
+			display: block !important;
+		}
+		.hidden {
+			display: none !important;
+			visibility: hidden !important;
+		}
+		.record { }
+		.record-highlight-parent { border: 1px dotted green; }
+		.record-highlight { background-color: green; color: #fff; }
+	</style>
+</head>
+
+<body ng-controller="IcdSeekCtrl">
+	<h1>MKБ 10</h1>
+	<!-- Button trigger modal -->
+	<div class="row">
+		<div class="col-xs-1">Діагноз:</div>
+		<div class="col-xs-7">
+			<div class="form-group has-success has-feedback required">
+				<label class="control-label sr-only" for="direct">Діагноз</label>
+				<input type="text" class="form-control input-sm" placeholder="Діагноз МКБ10" 
+				id="historyDiagnos" name="historyDiagnos" ng-model="patientEditing.historyDiagnos" required=""
+				ng-change="openIcd10FilterDialog()"
+				tooltip-html-unsafe="Діагноз &lt;b class='required-tooltip'>*&lt;/b>"
+				/>
+				<span class="glyphicon form-control-feedback"></span>
+				<span class="control-label" ng-show="isRequired(newPatientForm.historyDiagnos)">
+				Діагноз є обов'язковим і не може бути порожнім!</span>
+			</div>
+		</div>
+		<div class="col-xs-1">
+			<button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">
+				<span class="glyphicon glyphicon-th-list"></span>
+				<span class="caret"></span>
+			</button>
+		</div>
+	</div>
+http://nakupanda.github.io/bootstrap3-dialog/
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" ng-controller="Icd10DialogCtrl">
+			<div class="modal-content">
+				<div class="modal-header ">
+					<h4 class="modal-title" id="myModalLabel">Вибір МКБ10 Діагнозу</h4>
+					<button type="button" class="btn btn-default"
+						ng-click="collapseIcd10TreeFilter()"
+					>
+						<span class="glyphicon glyphicon glyphicon-{{!collapseDiagnoseTreeFilter?'list':'filter'}}"></span>
+					</button>
+					&nbsp; &nbsp;
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрити</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Прийняти</button>
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Закрити</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="well {{!collapseDiagnoseTreeFilter?'show':'hidden'}}">
+						Діагноз МКБ10: 
+						<input type="text" class="form-control input-sm" placeholder="Пошук діагнозу в МКБ10" 
+					id="dialogDiagnos" name="dialogDiagnos" ng-model="patientEditing.historyDiagnos" required=""
+					ng-change="seekIcd10FilterDialog()"
+					/>
+					Filter
+						for diagnose filter/tree {{collapseDiagnoseTreeFilter}}
+					</div>
+					<div class="well {{collapseDiagnoseTreeFilter?'show':'hidden'}}">
+					Tree
+						for diagnose filter/tree {{collapseDiagnoseTreeFilter}}
+						
+						<ul>
+			<li ng-repeat="icd10Class1 in icd10Root.icd10Childs">
+				<span ng-if="!icd10Class1.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+				<span ng-if="icd10Class1.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+				<span class="record" ng-class="{'record-highlight':  icd10Class1.icdId == icd10Selected.icdId
+				, 'record-highlight-parent': icd10Class1.icdId == icd10Pfad2Parents[1].icdId }"
+				ng-click="clickItem(icd10Class1)" title="{{icd10Class1.icd10Childs.length}}">
+					{{icd10Class1.icdCode }}, {{icd10Class1.icdName}}
+				-- {{icd10Class1.icdStart }}/{{icd10Class1.icdEnd}}
+				</span>
+				<ul ng-if="icd10Class1.icd10Childs && icd10Class1.collapse">
+					<li ng-repeat="icd10Class2 in icd10Class1.icd10Childs">
+						<span ng-if="!icd10Class2.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+						<span ng-if="icd10Class2.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+						<span class="record" ng-class="{'record-highlight': icd10Class2.icdId == icd10Selected.icdId
+						, 'record-highlight-parent': icd10Class2.icdId == icd10Pfad2Parents[2].icdId }"
+						ng-click="clickItem(icd10Class2)" title="{{icd10Class2.icd10Childs.length}}">
+							{{icd10Class2.icdCode }}, {{icd10Class2.icdName}}
+						-- {{icd10Class2.icdStart }}/{{icd10Class2.icdEnd}}
+						</span>
+						<ul ng-if="icd10Class2.icd10Childs && icd10Class2.collapse">
+							<li ng-repeat="icd10Class3 in icd10Class2.icd10Childs" >
+								<span ng-if="icd10Class3.icdRightKey - icd10Class3.icdLeftKey == 1"
+										class="glyphicon glyphicon-minus"
+									>
+								</span>
+								<span ng-if="icd10Class3.icdRightKey - icd10Class3.icdLeftKey > 1">
+									<span ng-if="!icd10Class3.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+									<span ng-if="icd10Class3.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+								</span>
+								<span class="record" ng-class="{'record-highlight': icd10Class3.icdId == icd10Selected.icdId
+								, 'record-highlight-parent': icd10Class3.icdId == icd10Pfad2Parents[3].icdId }"
+								ng-click="clickItem(icd10Class3)" title="{{icd10Class3.icd10Childs.length}}">
+									{{icd10Class3.icdCode }}, {{icd10Class3.icdName}}
+									-- {{icd10Class3.icdStart }}/{{icd10Class3.icdEnd}}
+								</span>
+								<ul ng-if="icd10Class3.icd10Childs && icd10Class3.collapse">
+									<li ng-repeat="icd10Class4 in icd10Class3.icd10Childs">
+										<span ng-if="icd10Class4.icdRightKey - icd10Class4.icdLeftKey == 1"
+											class="glyphicon glyphicon-minus"
+										>
+										</span>
+										<span ng-if="icd10Class4.icdRightKey - icd10Class4.icdLeftKey > 1">
+											<span ng-if="!icd10Class4.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+											<span ng-if="icd10Class4.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+										</span>
+										<span class="record" ng-class="{'record-highlight': icd10Class4.icdId == icd10Selected.icdId
+										, 'record-highlight-parent': icd10Class4.icdId == icd10Pfad2Parents[4].icdId }"
+										ng-click="clickItem(icd10Class4)" title="{{icd10Class4.icd10Childs.length}}">
+											{{icd10Class4.icdCode }}, {{icd10Class4.icdName}}
+										</span>
+										<ul ng-if="icd10Class4.icd10Childs && icd10Class4.collapse">
+											<li ng-repeat="icd10Class5 in icd10Class4.icd10Childs">
+												<span ng-if="icd10Class5.icdRightKey - icd10Class5.icdLeftKey == 1"
+													class="glyphicon glyphicon-minus"
+												>
+												</span>
+												<span ng-if="icd10Class5.icdRightKey - icd10Class5.icdLeftKey > 1">
+													<span ng-if="!icd10Class5.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+													<span ng-if="icd10Class5.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+												</span>
+												<span class="record" ng-class="{'record-highlight': icd10Class5.icdId == icd10Selected.icdId
+												, 'record-highlight-parent': icd10Class5.icdId == icd10Pfad2Parents[5].icdId }"
+												ng-click="clickItem(icd10Class5)" title="{{icd10Class5.icd10Childs.length}}">
+													{{icd10Class5.icdCode }}, {{icd10Class5.icdName}}
+												</span>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</ul>
+						
+						
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрити</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Прийняти</button>
+				</div>
+			</div>
+		</dsiv>
+	</div>
+	<script src="/js/jquery-2.1.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/angular.min.js"></script>
+	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
+	<script src="/db/icd10uaGroups.json.js"></script>
+	<script type="text/javascript">
+	var cuwyApp = angular.module('cuwyApp', ['ui.bootstrap' ]);
+
+	cuwyApp.controller('IcdSeekCtrl', [ '$scope', '$http', function ($scope, $http) {
+		console.log('IcdSeekCtrl');
+		$scope.patientEditing = {
+			historyDiagnos: ""
+		}
+		$scope.collapseDiagnoseTreeFilter = true;
+		$scope.collapseIcd10TreeFilter = function(){
+			$scope.collapseDiagnoseTreeFilter = !$scope.collapseDiagnoseTreeFilter;
+		}
+		$scope.openIcd10FilterDialog = function(){
+			console.log("----openIcd10FilterDialog--------");
+			$scope.collapseDiagnoseTreeFilter = false;
+			$('#myModal').modal('show');
+		}
+	}]);
+
+	cuwyApp.controller('Icd10DialogCtrl', [ '$scope', '$http',  function ($scope, $http) {
+		console.log('Icd10DialogCtrl');
+		console.log($scope.patientEditing);
+		console.log($scope.patientEditing.historyDiagnos);
+		$scope.seekIcd10FilterDialog = function(){
+			console.log("----seekIcd10FilterDialog--------");
+		}
+
+		//$scope.iconsTreeClose = "chevron-right";
+		//$scope.iconsTreeOpen = "chevron-down";
+		//$scope.iconsTreeClose = "plus";
+		//$scope.iconsTreeOpen = "minus";
+		$scope.iconsTreeClose = "folder-close";
+		$scope.iconsTreeOpen = "folder-open";
+		$scope.focusDeepIndex = 0;
+		$scope.icd10Pfad2Parents = [];
+
+		$scope.icd10Root = icd10uaGroups;
+		console.log($scope.icd10Root);
+		$scope.icd10Pfad2Parents[0] = $scope.icd10Root;
+		$scope.icd10Selected = $scope.icd10Root.icd10Childs[0];
+
+		highlightSelect = function(icd10Class, fDeepIndex) {
+			if(icd10Class.icdId == $scope.icd10Selected.icdId){
+				$scope.focusDeepIndex = fDeepIndex - 1;
+				if(!icd10Class.icd10Childs && $scope.icd10Selected.icd10Childs){
+					var indexOfIcd10Selected = $scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs.indexOf(icd10Class);
+					$scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs[indexOfIcd10Selected] = $scope.icd10Selected;
+				}
+			}else
+			if(icd10Class.icdStart <= $scope.icd10Selected.icdStart && icd10Class.icdEnd >= $scope.icd10Selected.icdEnd){
+				$scope.icd10Pfad2Parents[fDeepIndex] = icd10Class;
+			}
+		}
+
+		$scope.clickItem = function(icd10Class) {
+			console.log("======clickItem=======");
+			var icd10SelectedOld = $scope.icd10Selected;
+			$scope.icd10Selected = icd10Class;
+			icd10Class.collapse = !icd10Class.collapse;
+			$($scope.icd10Root.icd10Childs).each(function () {
+				highlightSelect(this, 1);
+				$(this.icd10Childs).each(function () {
+					highlightSelect(this, 2);
+					$(this.icd10Childs).each(function () {
+						highlightSelect(this, 3);
+						$(this.icd10Childs).each(function () {
+							highlightSelect(this, 4);
+							$(this.icd10Childs).each(function () {
+								highlightSelect(this, 5);
+							});
+						});
+					});
+				});
+			});
+		}
+
+		console.log("cuwyAppCtrl");
+
+		var KeyCodes = {
+			BACKSPACE : 8,
+			TABKEY : 9,
+			RETURNKEY : 13,
+			ESCAPE : 27,
+			SPACEBAR : 32,
+			LEFTARROW : 37,
+			UPARROW : 38,
+			RIGHTARROW : 39,
+			DOWNARROW : 40,
+		};
+
+		$scope.keys = [];
+		$scope.keys.push({
+			code : KeyCodes.RETURNKEY,
+			action : function() {
+				console.log("code: RETURNKEY");
+			}
+		});
+		$scope.keys.push({
+			code : KeyCodes.LEFTARROW,
+			action : function() {
+				if($scope.focusDeepIndex != 0){
+					$scope.icd10Selected = $scope.icd10Pfad2Parents[$scope.focusDeepIndex];
+					$scope.icd10Pfad2Parents[$scope.focusDeepIndex] = null;
+					$scope.focusDeepIndex--;
+					$scope.icd10Selected.collapse = false;
+				}
+				console.log("LEFTARROW " + $scope.focusDeepIndex);
+			}
+		});
+		$scope.keys.push({
+			code : KeyCodes.RIGHTARROW,
+			action : function() {
+				console.log("RIGHTARROW " + $scope.focusDeepIndex);
+				if(!$scope.icd10Selected.icd10Childs){
+					$http({ 
+						method : "POST"
+						, data : $scope.icd10Selected
+						, url : "/readIcd10Childs"
+					}).success(function(data, status, headers, config) {
+						$scope.icd10Selected = data;
+						openChild();
+					}).error(function(data, status, headers, config) {
+					});
+				}else{
+					openChild();
+				}
+			}
+		});
+
+		openChild = function(){
+			console.log("======openChild=======");
+			if($scope.icd10Selected.icd10Childs){
+				console.log("go deep " + $scope.focusDeepIndex);
+				if($scope.focusDeepIndex <= 5){
+					$scope.clickItem($scope.icd10Selected);
+					console.log("=============");
+					$scope.icd10Selected.collapse = true;
+					$scope.focusDeepIndex++;
+					$scope.icd10Pfad2Parents[$scope.focusDeepIndex] = $scope.icd10Selected;
+					$scope.icd10Selected = $scope.icd10Selected.icd10Childs[0];
+				}
+			}
+		}
+
+		$scope.keys.push({
+			code : KeyCodes.UPARROW,
+			action : function() {
+				console.log(" UPARROW ");
+				var indexSelected = $scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs.indexOf($scope.icd10Selected);
+				if(indexSelected > 0)
+					$scope.icd10Selected = $scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs[indexSelected - 1];
+				else
+					$scope.icd10Selected = $scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs[$scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs.length - 1];
+			}
+		});
+		$scope.keys.push({
+			code : KeyCodes.DOWNARROW,
+			action : function() {
+				console.log(" DOWNARROW ");
+				var indexSelected = $scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs.indexOf($scope.icd10Selected);
+				if($scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs.length - indexSelected == 1)
+					$scope.icd10Selected = $scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs[0];
+				else
+					$scope.icd10Selected = $scope.icd10Pfad2Parents[$scope.focusDeepIndex].icd10Childs[indexSelected + 1];
+			}
+		});
+
+		$scope.$on('keydown', function(msg, obj) {
+			var code = obj.code;
+			$scope.keys.forEach(function(o) {
+				if (o.code !== code) {
+					return;
+				}
+				o.action();
+				$scope.$apply();
+			});
+		});
+
+	}]);
+	
+
+	cuwyApp.directive('keyTrap', function() {
+		return function(scope, elem) {
+			elem.bind('keydown', function(event) {
+				scope.$broadcast('keydown', {
+					code : event.keyCode
+				});
+			});
+		};
+	});
+
+	</script>
+</body>
+</html>
