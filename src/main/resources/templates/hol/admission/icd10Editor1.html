@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html ng-app='cuwyApp'>
+
+<head>
+	<meta charset="utf-8"/>
+	<link href="/css/bootstrap.min.css" rel="stylesheet"/>
+	<style type="text/css">
+		.record { }
+		.record-highlight-parent { border: 1px dotted green; }
+		.record-highlight { background-color: green; color: #fff; }
+	</style>
+</head>
+
+<body key-trap="" ng-controller="cuwyAppCtrl">
+
+	<div>
+		<h1>MKБ 10</h1>
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-1">Діагноз:</div>
+				<div class="col-xs-7">
+					<div class="form-group has-success has-feedback required">
+						<label class="control-label sr-only" for="direct">Діагноз</label>
+						<input type="text" class="form-control input-sm" placeholder="Діагноз МКБ10" 
+						id="historyDiagnos" name="historyDiagnos" ng-model="patientEditing.historyDiagnos" required=""
+						ng-change="openIcd10FilterDialog()"
+						tooltip-html-unsafe="Діагноз &lt;b class='required-tooltip'>*&lt;/b>"
+						/>
+						<span class="glyphicon form-control-feedback"></span>
+						<span class="control-label" ng-show="isRequired(newPatientForm.historyDiagnos)">
+						Діагноз є обов'язковим і не може бути порожнім!</span>
+					</div>
+				</div>
+				<div class="col-xs-1">
+					<button class="btn btn-default btn-sm" ng-click="openIcd10TreeDialog()">
+						<span class="glyphicon glyphicon-th-list"></span>
+						<span class="caret"></span>
+					</button>
+				</div>
+			</div>
+			<div th:replace="hol1 :: icd10ChoiceDialog" />
+		</div>
+
+	</div>
+	<script src="/js/jquery-2.1.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/angular.min.js"></script>
+	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
+	<script src="/db/icd10uaGroups.json.js"></script>
+	
+	<script type="text/javascript">
+	var cuwyApp = angular.module('cuwyApp', ['ui.bootstrap']);
+
+	cuwyApp.controller('cuwyAppCtrl', [ '$scope', '$http',function ($scope, $http) {
+		$scope.patientEditing = {
+			historyDiagnos: ""
+		}
+		$scope.collapseDiagnoseTreeFilter = true;
+		$scope.changeTreeFilterView = true;
+		$scope.openIcd10FilterDialog = function(){
+			console.log("----openIcd10FilterDialog--------"+$scope.collapseDiagnoseTreeFilter);
+			$scope.collapseDiagnoseTreeFilter = false;
+			$scope.changeTreeFilterView = true;
+		}
+		$scope.openIcd10TreeDialog = function(){
+			$scope.collapseDiagnoseTreeFilter = !$scope.collapseDiagnoseTreeFilter;
+			$scope.changeTreeFilterView = false;
+		}
+	}]);
+
+	</script>
+	<script src="/js/icd10Editor1Ctrl.js"></script>
+</body>
+
+</html>

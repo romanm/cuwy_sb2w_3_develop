@@ -18,6 +18,9 @@
 		.required-simple:after {
 			content: "*"; position:absolute; color: red;
 		}
+		.record { }
+		.record-highlight-parent { border: 1px dotted green; }
+		.record-highlight { background-color: green; color: #fff; }
 	</style>
 </head>
 
@@ -83,6 +86,101 @@
 		</div>
 	</div>
 </nav>
+
+<div th:fragment="icd10ChoiceDialog" class="row well" collapse="collapseDiagnoseTreeFilter" ng-controller="icd10Ctrl" >
+	<div class="col-xs-9">
+	<button type="button" class="btn btn-default"
+			ng-click="setChangeTreeFilterView()"
+		>
+			<span class="glyphicon glyphicon glyphicon-{{changeTreeFilterView?'list':'filter'}}"></span>
+	</button>
+	<div class="{{changeTreeFilterView?'show':'hidden'}}">
+		filter
+	</div>
+	<div class="{{!changeTreeFilterView?'show':'hidden'}}">
+	<ul>
+		<li ng-repeat="icd10Class1 in icd10Root.icd10Childs">
+			<span ng-if="!icd10Class1.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+			<span ng-if="icd10Class1.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+			<span class="record" ng-class="{'record-highlight':  icd10Class1.icdId == icd10Selected.icdId
+			, 'record-highlight-parent': icd10Class1.icdId == icd10Pfad2Parents[1].icdId }"
+			ng-click="clickItem(icd10Class1)" title="{{icd10Class1.icd10Childs.length}}">
+				{{icd10Class1.icdCode }}, {{icd10Class1.icdName}}
+			</span>
+			<ul ng-if="isIcd10ChildsOpen(icd10Class1)">
+				<li ng-repeat="icd10Class2 in icd10Class1.icd10Childs">
+					<span ng-if="!icd10Class2.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+					<span ng-if="icd10Class2.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+					<span class="record" ng-class="{'record-highlight': icd10Class2.icdId == icd10Selected.icdId
+					, 'record-highlight-parent': icd10Class2.icdId == icd10Pfad2Parents[2].icdId }"
+					ng-click="clickItem(icd10Class2)" title="{{icd10Class2.icd10Childs.length}}">
+						{{icd10Class2.icdCode }}, {{icd10Class2.icdName}}
+					</span>
+					<ul ng-if="isIcd10ChildsOpen(icd10Class2)">
+						<li ng-repeat="icd10Class3 in icd10Class2.icd10Childs" >
+							<span ng-if="icd10Class3.icdRightKey - icd10Class3.icdLeftKey == 1"
+									class="glyphicon glyphicon-minus"
+								>
+							</span>
+							<span ng-if="icd10Class3.icdRightKey - icd10Class3.icdLeftKey > 1">
+								<span ng-if="!icd10Class3.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+								<span ng-if="icd10Class3.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+							</span>
+							<span class="record" ng-class="{'record-highlight': icd10Class3.icdId == icd10Selected.icdId
+							, 'record-highlight-parent': icd10Class3.icdId == icd10Pfad2Parents[3].icdId }"
+							ng-click="clickItem(icd10Class3)" title="{{icd10Class3.icd10Childs.length}}">
+								{{icd10Class3.icdCode }}, {{icd10Class3.icdName}}
+							</span>
+							<ul ng-if="isIcd10ChildsOpen(icd10Class3)">
+								<li ng-repeat="icd10Class4 in icd10Class3.icd10Childs">
+									<span ng-if="icd10Class4.icdRightKey - icd10Class4.icdLeftKey == 1"
+										class="glyphicon glyphicon-minus"
+									>
+									</span>
+									<span ng-if="icd10Class4.icdRightKey - icd10Class4.icdLeftKey > 1">
+										<span ng-if="!icd10Class4.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+										<span ng-if="icd10Class4.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+									</span>
+									<span class="record" ng-class="{'record-highlight': icd10Class4.icdId == icd10Selected.icdId
+									, 'record-highlight-parent': icd10Class4.icdId == icd10Pfad2Parents[4].icdId }"
+									ng-click="clickItem(icd10Class4)" title="{{icd10Class4.icd10Childs.length}}">
+										{{icd10Class4.icdCode }}, {{icd10Class4.icdName}}
+									</span>
+									<ul ng-if="isIcd10ChildsOpen(icd10Class4)">
+										<li ng-repeat="icd10Class5 in icd10Class4.icd10Childs">
+											<span ng-if="icd10Class5.icdRightKey - icd10Class5.icdLeftKey == 1"
+												class="glyphicon glyphicon-minus"
+											>
+											</span>
+											<span ng-if="icd10Class5.icdRightKey - icd10Class5.icdLeftKey > 1">
+												<span ng-if="!icd10Class5.collapse" class="glyphicon glyphicon-{{iconsTreeClose}}"></span>
+												<span ng-if="icd10Class5.collapse" class="glyphicon glyphicon-{{iconsTreeOpen}}"></span>
+											</span>
+											<span class="record" ng-class="{'record-highlight': icd10Class5.icdId == icd10Selected.icdId
+											, 'record-highlight-parent': icd10Class5.icdId == icd10Pfad2Parents[5].icdId }"
+											ng-click="clickItem(icd10Class5)" title="{{icd10Class5.icd10Childs.length}}">
+												{{icd10Class5.icdCode }}, {{icd10Class5.icdName}}
+											</span>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
+	
+	</div>
+	
+
+	
+</div>
+
+
+</div>
+
 <div class="row" th:fragment="hol-print-head">
 	<div class="col-xs-5" style="text-align: right;">
 		Хмельницька Обласна Лікарня<br/>
@@ -105,7 +203,6 @@ http://hol.org.ua/
 	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
 	<script src="/js/bootstrap-datepicker.js"></script>
 	<script src="/js/cuwy1.directives.js"></script>
-	
 </div>
 </body>
 

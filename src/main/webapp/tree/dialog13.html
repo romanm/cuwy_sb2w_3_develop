@@ -18,7 +18,7 @@
 	</style>
 </head>
 
-<body ng-controller="IcdSeekCtrl">
+<body key-trap="" ng-controller="IcdSeekCtrl">
 	<h1>MKБ 10</h1>
 	<!-- Button trigger modal -->
 	<div class="row">
@@ -111,7 +111,6 @@ http://nakupanda.github.io/bootstrap3-dialog/
 								, 'record-highlight-parent': icd10Class3.icdId == icd10Pfad2Parents[3].icdId }"
 								ng-click="clickItem(icd10Class3)" title="{{icd10Class3.icd10Childs.length}}">
 									{{icd10Class3.icdCode }}, {{icd10Class3.icdName}}
-									-- {{icd10Class3.icdStart }}/{{icd10Class3.icdEnd}}
 								</span>
 								<ul ng-if="icd10Class3.icd10Childs && icd10Class3.collapse">
 									<li ng-repeat="icd10Class4 in icd10Class3.icd10Childs">

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html ng-app="cuwyApp" ng-controller="AdmissionPatientCtrl">
 <head>
-<title>{{title}}</title>
-<div th:replace="hol1 :: header" />
+	<title>{{title}}</title>
+	<div th:replace="hol1 :: header" />
 </head>
-<body>
+<body key-trap="">
 	<nav th:replace="hol1 :: navbar-top" />
 	<div ng-if="!parameters.hno" class="navbar-right"> 
 	<small>
@@ -192,7 +192,7 @@
 							</td>
 						</tr>
 					</table>
-				{{districts.length}}
+				{{districts.length}}ng-controlle
 				</div>
 			</div>
 			</div>
@@ -480,7 +480,7 @@
 						<label class="control-label sr-only" for="direct">Діагноз</label>
 						<input type="text" class="form-control input-sm" placeholder="Діагноз МКБ" 
 						id="historyDiagnos" name="historyDiagnos" ng-model="patientEditing.historyDiagnos" required=""
-						ng-change="changeDiagnose()"
+						ng-change="openIcd10FilterDialog()"
 						tooltip-html-unsafe="Діагноз &lt;b class='required-tooltip'>*&lt;/b>"
 						/>
 						<span class="glyphicon form-control-feedback"></span>
@@ -489,13 +489,10 @@
 					</div>
 				</div>
 				<div class="col-xs-1">
-					<button ng-click="getCountryDistricts()" type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+					<button class="btn btn-default btn-sm" ng-click="openIcd10TreeDialog()">
 						<span class="glyphicon glyphicon-th-list"></span>
 						<span class="caret"></span>
 					</button>
-					<div class="dropdown-menu" role="menu">
-					d----d
-					</div>
 				</div>
 				<div class="col-xs-5">
 					<div class="form-group has-feedback ">
@@ -511,6 +508,7 @@
 					</div>
 				</div>
 			</div>
+			<div th:replace="hol1 :: icd10ChoiceDialog" />
 			<div class="row">
 				<div class="col-xs-3">Стан при госпіталізації</div>
 				<div class="col-xs-4">
@@ -645,6 +643,8 @@
 	</nav>
 	<div th:replace="hol1 :: js-lib" />
 	<script src="/db/config.json.js"></script>
+	<script src="/db/icd10uaGroups.json.js"></script>
 	<script src="/js/admissionPatientCtrl.js"></script>
+	<script src="/js/icd10Editor1Ctrl.js"></script>
 </body>
 </html>

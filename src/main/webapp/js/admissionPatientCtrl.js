@@ -26,6 +26,18 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 		});
 	}
 	
+	$scope.collapseDiagnoseTreeFilter = true;
+	$scope.changeTreeFilterView = true;
+	$scope.openIcd10FilterDialog = function(){
+		console.log("----openIcd10FilterDialog--------"+$scope.collapseDiagnoseTreeFilter);
+		$scope.collapseDiagnoseTreeFilter = false;
+		$scope.changeTreeFilterView = true;
+	}
+	$scope.openIcd10TreeDialog = function(){
+		$scope.collapseDiagnoseTreeFilter = !$scope.collapseDiagnoseTreeFilter;
+		$scope.changeTreeFilterView = false;
+	}
+
 	$scope.isRegion2of4 = function($index, regions){
 		return $index > regions.length/4 && $index < regions.length/4*2;
 	}
