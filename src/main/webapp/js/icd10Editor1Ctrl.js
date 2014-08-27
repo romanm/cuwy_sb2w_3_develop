@@ -14,7 +14,6 @@ cuwyApp.controller('icd10Ctrl', [ '$scope', '$http',function ($scope, $http) {
 	$scope.icd10Pfad2Parents[0] = $scope.icd10Root;
 	$scope.icd10Selected = $scope.icd10Root.icd10Childs[0];
 
-
 	$scope.isIcd10ChildsOpen = function(icd10Class){
 		return icd10Class.icd10Childs && icd10Class.collapse;
 	}
@@ -164,13 +163,3 @@ cuwyApp.controller('icd10Ctrl', [ '$scope', '$http',function ($scope, $http) {
 
 }]);
 
-
-cuwyApp.directive('keyTrap', function() {
-	return function(scope, elem) {
-		elem.bind('keydown', function(event) {
-			scope.$broadcast('keydown', {
-				code : event.keyCode
-			});
-		});
-	};
-});

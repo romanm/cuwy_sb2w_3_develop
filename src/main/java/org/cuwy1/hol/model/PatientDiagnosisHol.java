@@ -10,6 +10,7 @@ public class PatientDiagnosisHol {
 	private int history_id;
 	private short diagnos_id;
 	private boolean collapsed = true;
+	private boolean collapseMovePatient = true;
 	private Timestamp history_in;
 	private PatientHistory patientHistory;
 
@@ -109,6 +110,14 @@ public class PatientDiagnosisHol {
 
 	public void setHistory_id(int history_id) {
 		this.history_id = history_id;
+	}
+
+	public boolean isCollapseMovePatient() {
+		return collapseMovePatient;
+	}
+
+	public void setCollapseMovePatient(boolean collapseMovePatient) {
+		this.collapseMovePatient = collapseMovePatient;
 	}
 
 }

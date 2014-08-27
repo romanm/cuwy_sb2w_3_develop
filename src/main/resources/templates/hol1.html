@@ -21,6 +21,13 @@
 		.record { }
 		.record-highlight-parent { border: 1px dotted green; }
 		.record-highlight { background-color: green; color: #fff; }
+		.row h2 { margin-top: 0px; }
+		hr.shortPatienHistory { margin: 0px; border-width: 3px 0 0;}
+		@media print {
+			.breadcrumb, .no-print {
+				display: none !important;
+			}
+		}
 	</style>
 </head>
 
@@ -173,12 +180,44 @@
 	</ul>
 	
 	</div>
-	
-
-	
+	</div>
 </div>
 
-
+<div th:fragment="departmentChoiceDialog" ng-controller="departmentCtrl">
+	<div class="col-xs-5">
+		<div class="form-group has-success has-feedback required">
+			<label class="control-label sr-only" for="direct">Відділення госпіталізації</label>
+			<input type="text" class="form-control input-sm" placeholder="Відділення госпіталізації" 
+			id="department" name="department" ng-model="patientEditing.departmentName" required=""
+			tooltip-html-unsafe="Відділення госпіталізації &lt;b class='required-tooltip'>*&lt;/b>"
+			/>
+			<span class="glyphicon form-control-feedback"></span>
+			<span class="control-label" ng-show="isRequired(newPatientForm.department)">
+			Відділення госпіталізації є обов'язковим і не може бути порожнім!</span>
+		</div>
+	</div>
+	<div class="col-xs-1">
+		<button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+			<span class="caret"></span>
+		</button>
+		<div class="dropdown-menu  dropdown-menu-right" role="menu">
+			<table>
+				<tr><td>
+				<ul>
+					<li ng-repeat="departmentHol in departmentsHol" ng-if="departmentHol.department_profile_id == 2">
+						<a ng-click="writeDepartment(departmentHol)">{{departmentHol.department_name}}</a>
+					</li>
+				</ul>
+				</td><td>
+				<ul>
+					<li ng-repeat="departmentHol in departmentsHol" ng-if="departmentHol.department_profile_id == 1">
+						<a ng-click="writeDepartment(departmentHol)">{{departmentHol.department_name}}</a>
+					</li>
+				</ul>
+				</td></tr>
+			</table>
+		</div>
+	</div>
 </div>
 
 <div class="row" th:fragment="hol-print-head">
@@ -195,6 +234,7 @@
 http://hol.org.ua/
 	</div>
 </div>
+
 <div th:fragment="js-lib" th:remove="tag">
 	<script src="/js/jquery-2.1.1.min.js"></script>
 	<script src="/js/bootstrap.min.js"></script>
@@ -202,8 +242,11 @@ http://hol.org.ua/
 	<script src="/js/angular-sanitize.min.js"></script>
 	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
 	<script src="/js/bootstrap-datepicker.js"></script>
+	<script src="/db/config.json.js"></script>
 	<script src="/js/cuwy1.directives.js"></script>
+	<script src="/js/cuwy1.controller.js"></script>
 </div>
+
 </body>
 
 </html>

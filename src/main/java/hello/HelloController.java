@@ -103,6 +103,18 @@ public class HelloController {
 		return cuwyDbService1.getPersonalListe();
 	}
 
+	@RequestMapping(value="/hol/department", method=RequestMethod.GET)
+	public String department() {
+		logger.info("\n Start /hol/department");
+		return "hol/department";
+	}
+
+	@RequestMapping(value="/hol/history", method=RequestMethod.GET)
+	public String patient_history() {
+		logger.info("\n Start /hol/history");
+		return "hol/history";
+	}
+
 	@RequestMapping(value="/hol/admission/icd10Editor1", method=RequestMethod.GET)
 	public String icd10Editor1() {
 		logger.info("\n Start /hol/admission/icd10Editor1");

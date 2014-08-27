@@ -22,6 +22,8 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 			url : historyFile
 		}).success(function(data, status, headers, config) {
 			$scope.patientHistory = data;
+			$scope.patientEditing.departmentId = $scope.patientHistory.patientDepartmentMovements[0].departmentId;
+			$scope.patientEditing.departmentName = $scope.patientHistory.patientDepartmentMovements[0].departmentName;
 		}).error(function(data, status, headers, config) {
 		});
 	}
@@ -63,7 +65,8 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 
 	}
 
-	$scope.patientEditing = {name: '', last: '', patientPatronymic: '', patientGender: false,
+	$scope.patientEditing = {
+		name: '', last: '', patientPatronymic: '', patientGender: false,
 		country: $scope.addresses[0].countryName,
 		countryCollapsed: true,
 		district: $scope.addresses[0].districtsHol[0].districtName,
@@ -97,12 +100,6 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	}
 
 	$scope.getDistrictRegions();
-
-	$scope.writeDepartment = function(department){
-		$scope.patientHistory.patientDepartmentMovements[0].departmentId = department.department_id;
-		$scope.patientHistory.patientDepartmentMovements[0].departmentName = department.department_name;
-		console.log($scope.patientHistory.patientDepartmentMovements[0]);
-	}
 
 	$scope.writeToModel = function(fieldName, value){
 		$scope.patientEditing[fieldName] = value;

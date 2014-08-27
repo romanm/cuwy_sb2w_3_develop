@@ -429,49 +429,10 @@
 					<button class="btn btn-default btn-sm" type="button" ng-click="collapseDirectListe = !collapseDirectListe">
 						<span class="caret"></span>
 					</button>
-<!-- 
-					<button ng-click="getCountryDistricts()" type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
-						<span class="caret"></span>
-					</button>
-					<div class="dropdown-menu" role="menu">
-					d-d
-					</div>
- -->
 				</div>
-				<div class="col-xs-5">
-					<div class="form-group has-success has-feedback required">
-						<label class="control-label sr-only" for="direct">Відділення госпіталізації</label>
-						<input type="text" class="form-control input-sm" placeholder="Відділення госпіталізації" 
-						id="department" name="department" ng-model="patientHistory.patientDepartmentMovements[0].departmentName" required=""
-						tooltip-html-unsafe="Відділення госпіталізації &lt;b class='required-tooltip'>*&lt;/b>"
-						/>
-						<span class="glyphicon form-control-feedback"></span>
-						<span class="control-label" ng-show="isRequired(newPatientForm.department)">
-						Відділення госпіталізації є обов'язковим і не може бути порожнім!</span>
-					</div>
-				</div>
-				<div class="col-xs-1">
-					<button ng-click="getCountryDistricts()" type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
-						<span class="caret"></span>
-					</button>
-					<div class="dropdown-menu  dropdown-menu-right" role="menu">
-						<table>
-							<tr><td>
-							<ul>
-								<li ng-repeat="departmentHol in departmentsHol" ng-if="departmentHol.department_profile_id == 2">
-									<a ng-click="writeDepartment(departmentHol)">{{departmentHol.department_name}}</a>
-								</li>
-							</ul>
-							</td><td>
-							<ul>
-								<li ng-repeat="departmentHol in departmentsHol" ng-if="departmentHol.department_profile_id == 1">
-									<a ng-click="writeDepartment(departmentHol)">{{departmentHol.department_name}}</a>
-								</li>
-							</ul>
-							</td></tr>
-						</table>
-					</div>
-				</div>
+				
+				<div th:replace="hol1 :: departmentChoiceDialog" />
+				
 			</div>
 			<div class="row">
 				<div class="col-xs-1">Діагноз:</div>
@@ -642,7 +603,6 @@
 		</div>
 	</nav>
 	<div th:replace="hol1 :: js-lib" />
-	<script src="/db/config.json.js"></script>
 	<script src="/db/icd10uaGroups.json.js"></script>
 	<script src="/js/admissionPatientCtrl.js"></script>
 	<script src="/js/icd10Editor1Ctrl.js"></script>

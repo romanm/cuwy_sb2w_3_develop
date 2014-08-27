@@ -1,23 +1,10 @@
 <!DOCTYPE html>
 <html ng-app="cuwyApp" ng-controller="DepartmentCtrl">
 <head>
-	<meta charset=utf-8>
 	<title>ХОЛ::{{department.department_name}}</title>
-	<link href="/css/bootstrap.min.css" rel="stylesheet">
-	<style type="text/css">
-		body {
-			padding-top: 60px;
-			padding-bottom: 60px;
-		}
-		.row h2 { margin-top: 0px; }
-		hr.shortPatienHistory { margin: 0px; border-width: 3px 0 0;}
-		@media print {
-			.breadcrumb, .no-print {
-				display: none !important;
-			}
-		}
-	</style>
+	<div th:replace="hol1 :: header" />
 </head>
+
 <body>
 
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation" th:fragment="navbar-top-admin">
@@ -75,7 +62,7 @@
 			<div class="input-group">
 				<span class="input-group-addon">Пошук:</span>
 				<input ng-model="query" type="text" class="form-control" 
-				placeholder="Перші букви/цифри пошуку" auto-focus>
+				placeholder="Перші букви/цифри пошуку" auto-focus=""/>
 			</div>
 
 			<ul class="patients">
@@ -158,7 +145,7 @@
 							</div>
 							<div>Побічна дія медикаментів:
 							</div>
-							<hr class="shortPatienHistory">
+							<hr class="shortPatienHistory"/>
 							<div><u><b>Рух хворого</b></u>:
 								<span ng-repeat="patientDepartmentMovement in patient.patientHistory.patientDepartmentMovements">
 									{{patientDepartmentMovement.departmentName}}:
@@ -173,22 +160,23 @@
 										{{patientDepartmentMovement.personalName}}
 										{{patientDepartmentMovement.personalPatronymic}}
 										</small>
-										<br>
+										<br/>
 									</span>
 								</span>
 							</div>
-							<hr class="shortPatienHistory">
+							<hr class="shortPatienHistory"/>
 							<div>Діагноз при госпіталізації: 
-							<b tooltip-html-unsafe="Дата встановлення: <b>{{patient.patientHistory.diagnosisOnAdmission.historyDiagnosDate | date:'dd.MM.yyyy HH:mm'}}</b>">
+							<b tooltip-html-unsafe="Дата встановлення: &lt;b>{{patient.patientHistory.diagnosisOnAdmission.historyDiagnosDate 
+							| date:'dd.MM.yyyy HH:mm'}}&lt;/b>">
 								{{patient.patientHistory.diagnosisOnAdmission.icdCode}},
 								{{patient.patientHistory.diagnosisOnAdmission.icdName}}
 							</b>
 							</div>
-							<hr class="shortPatienHistory">
+							<hr class="shortPatienHistory"/>
 							<div><u><b>Перебіг хвороби</b></u>:
 								<div ng-repeat="historyTreatmentAnalysis in patient.patientHistory.historyTreatmentAnalysises "
 									ng-if="'' != historyTreatmentAnalysis.historyTreatmentAnalysisText"
-									ng-show="historyTreatmentAnalysis.historyTreatmentAnalysisText.indexOf('table') < 0"
+									ng-show="0 >= historyTreatmentAnalysis.historyTreatmentAnalysisText.indexOf('table')"
 								>
 									<div ng-bind-html="historyTreatmentAnalysis.historyTreatmentAnalysisText"></div>
 								</div>
@@ -231,89 +219,6 @@
 	</div>
 
 </div>
-
-	<script src="/js/jquery-2.1.1.min.js"></script>
-	<script src="/js/bootstrap.min.js"></script>
-	<script src="/js/angular.min.js"></script>
-	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
-	<script src="/js/angular-sanitize.min.js"></script>
-	<script src="/js/cuwy1.directives.js"></script>
-	<script type="text/javascript">
-
-	parameters = {};
-	if(window.location.search){
-		$.each(window.location.search.split("?")[1].split("&"), function(index, value){
-			var par = value.split("=");
-			parameters[par[0]] = par[1];
-		});
-	}
-
-	departmentFile = "/hol/department_"+parameters.dep;
-
-	cuwyApp.controller('DepartmentCtrl', [ '$scope', '$http', function ($scope, $http) {
-		$scope.parameters = parameters;
-		$scope.calculateAge = function (birthday) {
-			var ageDifMs = Date.now() - new Date(birthday);
-			var ageDate = new Date(ageDifMs); // miliseconds from epoch
-			return Math.abs(ageDate.getUTCFullYear() - 1970);
-		}
-
-		$scope.addDepartmentNewPatien = function(){
-			$scope.department.patientesDiagnoses.push($scope.newPatient)
-			var postNewPatien = $http({
-				method : 'POST',
-				data : $scope.department,
-				url : 'addDepartmentNewPatien'
-			}).success(function(data, status, headers, config){
-				$scope.department = data;
-			}).error(function(data, status, headers, config) {
-			});
-		}
-
-		$scope.movePatient = function(patient){
-			patient.collapseMovePatient = !patient.collapseMovePatient;
-		}
-		$scope.openPatientInfo = function(patient){
-			patient.collapsed = !patient.collapsed;
-			if(!patient.collapsed){
-				$http({
-					method : 'POST',
-					data : patient,
-					url : '/openShortPatienHistory'
-				}).success(function(data, status, headers, config){
-					patient.patientHistory = data;
-				}).error(function(data, status, headers, config) {
-				});
-			}
-		}
-
-		$scope.menuPatientList = [
-			['<span class="glyphicon glyphicon-floppy-open"></span> Відкрити іс.хв.', function ($itemScope) {
-				console.debug('Edit');
-				console.log($itemScope);
-				console.log($itemScope.patient);
-				window.location.href = "/hol/history?hno="+$itemScope.patient.history_no;
-			}],
-			null,
-			['<b>∑</b> Зведена інформація', function ($itemScope) {
-				console.debug('Add');
-				$scope.openPatientInfo($itemScope.patient);
-			}],
-			['<span class="glyphicon glyphicon-transfer"></span> Переведеня', function ($itemScope) {
-				console.debug('Add');
-				$scope.movePatient($itemScope.patient);
-			}]
-		];
-
-		$http({
-			method : 'GET',
-			url : departmentFile
-		}).success(function(data, status, headers, config) {
-			$scope.department = data;
-		}).error(function(data, status, headers, config) {
-		});
-
-	} ] );
-
-	</script>
+	<div th:replace="hol1 :: js-lib" />
 </body>
+</html>
