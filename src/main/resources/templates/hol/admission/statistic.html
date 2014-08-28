@@ -15,6 +15,12 @@
 		
 		<div class="row">
 			<div class="col-xs-4">
+				<button ng-click="changeCollapseQueryPanel()" class="btn btn-default">
+					Сформувати запит до БД
+					<span ng-if="collapseQueryPanel" class="glyphicon glyphicon-chevron-right"></span>
+					<span ng-if="!collapseQueryPanel" class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+				<!-- 
 				<h3  ng-click="changeCollapseQueryPanel()" style="text-align: right;" >Сформувати запит до БД
 				<small>
 					<a>
@@ -23,6 +29,7 @@
 					</a>
 				</small>
 				</h3>
+				 -->
 			</div>
 			<div class="col-xs-7">
 				<ul id="patientsTab" class="nav nav-tabs">
@@ -193,9 +200,11 @@
 							<td>{{$index + 1}}</td>
 							<td>{{history.historyIn | date:'dd.MM.yyyy HH:mm'}}</td>
 							<td>
+							<a href="/hol/history_{{history.historyId}}">
 								{{history.patientHolDb.patientSurname}}
 								{{history.patientHolDb.patientPersonalName}}
 								{{history.patientHolDb.patientPatronymic}}
+							</a>
 							</td>
 							<td>{{history.patientHolDb.patientDob | date:'dd.MM.yyyy'}}</td>
 							<td>

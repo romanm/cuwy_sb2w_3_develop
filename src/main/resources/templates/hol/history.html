@@ -206,10 +206,15 @@
 				<span class="glyphicon glyphicon-transfer"></span>
 				<a ng-click="patientHistory.collapseMovePatient = !patientHistory.collapseMovePatient "> Переведеня </a>
 			</li>
-			<li><a href="/hol/admission/patient?hno={{patient.history_no}}">
-				<span class="glyphicon glyphicon-edit"></span> Редагування </a>
+			<li>
+				<span class="glyphicon glyphicon-edit"></span> 
+				<a href="/hol/admission/patient?hno={{patient.history_no}}">
+					Редагування </a>
 			</li>
-			<li><a href="#"><span class="glyphicon glyphicon-share"></span> Виписка </a></li>
+			<li>
+				<span class="glyphicon glyphicon-share"></span>
+				<a href="/hol/epicrise?hno={{patient.history_no}}"> Виписка </a>
+			</li>
 		</ol>
 		</div>
 	</nav>

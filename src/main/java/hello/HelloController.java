@@ -115,6 +115,11 @@ public class HelloController {
 		return "hol/epicrise";
 	}
 
+	@RequestMapping(value="/hol/history_{historyId}", method=RequestMethod.GET)
+	public String getHistoryById(@PathVariable Integer historyId) {
+		logger.info("\n Start /hol/history_"+historyId);
+		return "hol/history";
+	}
 	@RequestMapping(value="/hol/history", method=RequestMethod.GET)
 	public String patient_history() {
 		logger.info("\n Start /hol/history");
@@ -250,8 +255,19 @@ public class HelloController {
 		return icd10Class;
 	}
 
+	private HistoryHolDb getShortPatientHistoryById(int historyId) {
+		HistoryHolDb historyHolDb = cuwyDbService1.getHistoryHolDbById(historyId);
+		System.out.println(1);
+		addShortPatientHistory(historyHolDb);
+		return historyHolDb;
+	}
 	private HistoryHolDb getShortPatientHistory(int historyNo) {
 		HistoryHolDb historyHolDb = cuwyDbService1.getHistoryHolDbByNo(historyNo);
+		addShortPatientHistory(historyHolDb);
+		return historyHolDb;
+	}
+
+	private void addShortPatientHistory(HistoryHolDb historyHolDb) {
 		System.out.println(1);
 		List<PatientDepartmentMovement> patientDepartmentMovements
 		= cuwyDbService1.getPatientDepartmentMovements(historyHolDb.getHistoryId());
@@ -265,7 +281,6 @@ public class HelloController {
 		historyHolDb.setDiagnosisOnAdmission(diagnosisOnAdmission);
 		PatientHolDb patientHolDb = cuwyDbService1.getPatientHolDb(historyHolDb.getPatientId());
 		historyHolDb.setPatientHolDb(patientHolDb);
-		return historyHolDb;
 	}
 
 	private PatientHistory getShortPatientHistory_old(int history_no) {
@@ -298,6 +313,9 @@ public class HelloController {
 	@RequestMapping(value = "/savePatientHistory", method = RequestMethod.POST)
 	public @ResponseBody HistoryHolDb savePatientHistory(@RequestBody HistoryHolDb historyHolDb) {
 		logger.info("\n savePatientHistory patientHistory = "+historyHolDb);
+		logger.info("\n HistoryId = "+historyHolDb.getHistoryId()
+				+"\n PatientId = "+historyHolDb.getPatientId()
+				+"\n HistoryNo = "+historyHolDb.getHistoryNo());
 		String patientPhoneHome = historyHolDb.getPatientHolDb().getPatientPhoneHome();
 		cuwyDbService1.savePatientHolDb(historyHolDb.getPatientHolDb());
 		logger.info("\n patientPhoneHome = "+patientPhoneHome);
@@ -310,6 +328,17 @@ public class HelloController {
 	public @ResponseBody PatientHistory getHolPatientHistoryOld(@PathVariable Integer historyNo) throws IOException {
 		logger.info("\n Start /hol/history_no_"+historyNo);
 		return getShortPatientHistory_old(historyNo);
+	}
+
+	@RequestMapping(value = "/hol/history_id_{historyId}", method = RequestMethod.GET)
+	public @ResponseBody HistoryHolDb getHolPatientHistoryById(@PathVariable Integer historyId) throws IOException {
+		logger.info("\n Start /hol/history_id_"+historyId);
+		HistoryHolDb shortPatientHistory = getShortPatientHistoryById(historyId);
+		Date patientDob = shortPatientHistory.getPatientHolDb().getPatientDob();
+		String format = new SimpleDateFormat("dd-MM-yyyy").format(patientDob);
+		logger.info("\n patientDob2 = "+format);
+		shortPatientHistory.getPatientHolDb().setPatientDob2(format);
+		return shortPatientHistory;
 	}
 
 	@RequestMapping(value = "/hol/history_no_{historyNo}", method = RequestMethod.GET)

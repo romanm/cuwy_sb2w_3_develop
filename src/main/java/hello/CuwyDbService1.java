@@ -266,9 +266,17 @@ public class CuwyDbService1 {
 		
 	}
 
+	public HistoryHolDb getHistoryHolDbById(int historyId) {
+		String sql = "SELECT * FROM history WHERE history_id = ? ";
+		logger.info("\n"+sql.replaceFirst("\\?", ""+historyId));
+		return jdbcTemplate.queryForObject(
+				sql, new Object[] { historyId }, 
+				new HistoryHolDbRowMapper()
+				);
+	}
 	public HistoryHolDb getHistoryHolDbByNo(int historyNo) {
 		String sql = "SELECT * FROM history WHERE history_out IS NULL AND history_no = ? ";
-		logger.info("\n"+sql+historyNo);
+		logger.info("\n"+sql.replaceFirst("\\?", ""+historyNo));
 		return jdbcTemplate.queryForObject(
 				sql, new Object[] { historyNo }, 
 				new HistoryHolDbRowMapper()

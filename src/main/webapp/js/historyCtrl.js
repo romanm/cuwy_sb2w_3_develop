@@ -1,4 +1,4 @@
-var historyFile = "/hol/history_no_"+parameters.hno;
+var historyFile = window.location.pathname.replace(/history_/,"history_id_");
 
 cuwyApp.controller('HistoryCtrl', [ '$scope', '$http', function ($scope, $http) {
 
@@ -10,26 +10,13 @@ cuwyApp.controller('HistoryCtrl', [ '$scope', '$http', function ($scope, $http) 
 		patientHistory: null
 	};
 
-	if(parameters.hno){
-		$http({
-			method : 'GET',
-			url : historyFile
-		}).success(function(data, status, headers, config) {
-			$scope.patientHistory = data;
-		}).error(function(data, status, headers, config) {
-		});
-	}else if(parameters.hnoold){
-		$http({
-			method : 'GET',
-			url : "/hol/history_old_no_"+parameters.hnoold
-		}).success(function(data, status, headers, config) {
-			$scope.patient.patientHistory = data;
-			$scope.patientHistory = data;
-			$scope.patient.name = data.patientName;
-		}).error(function(data, status, headers, config) {
-		});
-		
-	}
+	$http({
+		method : 'GET',
+		url : historyFile
+	}).success(function(data, status, headers, config) {
+		$scope.patientHistory = data;
+	}).error(function(data, status, headers, config) {
+	});
 
 	$scope.calculateAge = function(birthDateStr) {
 		if(!birthDateStr)

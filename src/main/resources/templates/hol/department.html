@@ -70,8 +70,9 @@
 				<li ng-repeat="patient in department.patientesDiagnosisHol | filter:query"
 					ng-context-menu="menuPatientList"
 				>
-					<a href="history?hno={{patient.history_no}}">
-						<span> {{patient.history_no}}</span>, {{patient.name}}
+					<a href="history_{{patient.history_id}}">
+						<span> {{patient.history_no}}</span>, 
+						{{patient.name}}
 					</a>,
 					<span> {{patient.history_in | date:'dd-MM-yyyy HH:mm'}} </span>,
 					<span>Дз: {{patient.icd_code}}, {{patient.icd_name}}</span>

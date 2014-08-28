@@ -43,7 +43,7 @@ cuwyApp.controller('DepartmentCtrl', [ '$scope', '$http', function ($scope, $htt
 
 	$scope.openPatientShortHistory = function(patient){
 		console.debug('openPatientShortHistory');
-		window.location.href = "/hol/history?hno="+patient.history_no;
+		window.location.href = "/hol/history_"+patient.history_id;
 	}
 
 	$scope.openPatientInfo = function(patient){
