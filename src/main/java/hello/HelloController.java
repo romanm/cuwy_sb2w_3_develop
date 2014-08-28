@@ -109,6 +109,12 @@ public class HelloController {
 		return "hol/department";
 	}
 
+	@RequestMapping(value="/hol/epicrise", method=RequestMethod.GET)
+	public String patient_epicrise() {
+		logger.info("\n Start /hol/epicrise");
+		return "hol/epicrise";
+	}
+
 	@RequestMapping(value="/hol/history", method=RequestMethod.GET)
 	public String patient_history() {
 		logger.info("\n Start /hol/history");

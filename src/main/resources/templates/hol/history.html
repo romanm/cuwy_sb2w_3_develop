@@ -120,7 +120,8 @@
 				<div>Побічна дія медикаментів:
 				</div>
 				<hr class="shortPatienHistory" />
-				<div><u><b>Рух хворого</b></u>:
+				<div ng-context-menu="menuMovePatient">
+				<u><b>Рух хворого</b></u>:
 					<span ng-repeat="patientDepartmentMovement in patientHistory.patientDepartmentMovements">
 						{{patientDepartmentMovement.departmentName}}:
 						{{$index==0?'↓↓':'↓'
@@ -137,7 +138,7 @@
 							<br/>
 						</span>
 					</span>
-					<div collapse="!patientHistory.perevid" class="well">
+					<div collapse="!patientHistory.collapseMovePatient" class="well">
 						<h3> Переведеня </h3>
 						<div class="row">
 							<div th:replace="hol1 :: departmentChoiceDialog" />
@@ -167,9 +168,10 @@
 			<ol>
 				<li>
 				<span class="glyphicon glyphicon-transfer"></span>
-				<a ng-click="patientHistory.perevid = !patientHistory.perevid "> Переведеня </a> </li>
-				<li><a href="/hol/admission/patient?hno={{patient.history_no}}">
-					<span class="glyphicon glyphicon-edit"></span> Редагування </a>
+				<a ng-click="patientHistory.collapseMovePatient = !patientHistory.collapseMovePatient "> Переведеня </a> </li>
+				<li>
+					<span class="glyphicon glyphicon-edit"></span> 
+					<a href="/hol/admission/patient?hno={{patient.history_no}}"> Редагування </a>
 					|
 					<small>
 						<a href="http://localhost/history/inedit/id/{{patientHistory.historyId}}"> 
@@ -177,7 +179,8 @@
 						HOL1 </a> 
 					</small>
 				</li>
-				<li><span class="glyphicon glyphicon-share"></span> Виписка 
+				<li><span class="glyphicon glyphicon-share"></span> 
+				<a href="/hol/epicrise?hno={{patient.history_no}}"> Виписка </a>
 				|
 				<small>
 					<a href="http://localhost/history/edit/id/{{patientHistory.historyId}}"> 
@@ -201,7 +204,7 @@
 		<ol class="list-inline navbar-right">
 			<li>
 				<span class="glyphicon glyphicon-transfer"></span>
-				<a ng-click="patientHistory.perevid = !patientHistory.perevid "> Переведеня </a>
+				<a ng-click="patientHistory.collapseMovePatient = !patientHistory.collapseMovePatient "> Переведеня </a>
 			</li>
 			<li><a href="/hol/admission/patient?hno={{patient.history_no}}">
 				<span class="glyphicon glyphicon-edit"></span> Редагування </a>

@@ -84,8 +84,22 @@
 						<div th:replace="hol1 :: departmentChoiceDialog" />
 						collapseMovePatient
 					</div>
-					<div collapse="patient.collapsed">
-						<div class="well well-lg">
+					<!-- 
+					<div collapse="patient.collapsed" class="well well-lg">
+					 -->
+					<div collapse="patient.collapsed" class="well">
+						<div class="navbar-right">
+							<button ng-click="openPatientShortHistory(patient)" 
+								title="Відкрити іс.хв." class="btn btn-default btn-xs">
+								<span class="glyphicon glyphicon-floppy-open"></span>
+							</button>
+							<button ng-click="openPatientInfo(patient)"  title="Зведена інформація" class="btn btn-default btn-xs">
+								<b>∑</b>
+							</button>
+							<button ng-click="movePatient(patient)" title="Переведеня" class="btn btn-default btn-xs">
+								<span class="glyphicon glyphicon-transfer"></span> 
+							</button>
+						</div>
 						<div ng-if="!patient.patientHistory"> Інформація считується </div>
 						<div ng-if="patient.patientHistory">
 							<h4>№: {{patient.history_no}} {{patient.name}}</h4>
@@ -182,7 +196,6 @@
 								</div>
 							</div>
 						</div> 
-					</div>
 					</div>
 				</li>
 			</ul>
