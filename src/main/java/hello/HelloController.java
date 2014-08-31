@@ -3,7 +3,6 @@ package hello;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -132,6 +131,11 @@ public class HelloController {
 		return "hol/admission/icd10Editor1";
 	}
 
+	@RequestMapping(value="/hol/admission/patientOld1", method=RequestMethod.GET)
+	public String hol_admission_patientOld1() {
+		logger.info("\n Start /hol/admission/patientOld1");
+		return "hol/admission/patientOld1";
+	}
 	@RequestMapping(value="/hol/admission/patient", method=RequestMethod.GET)
 	public String hol_admission_patient() {
 		logger.info("\n Start /hol/admission/patient");
@@ -255,6 +259,19 @@ public class HelloController {
 		return icd10Class;
 	}
 
+	private HistoryHolDb getShortPatientHistoryTemplate() {
+		HistoryHolDb historyHolDb = new HistoryHolDb();
+		List<PatientDepartmentMovement> patientDepartmentMovements = new ArrayList<PatientDepartmentMovement>();
+		patientDepartmentMovements.add(new PatientDepartmentMovement());
+		historyHolDb.setPatientDepartmentMovements(patientDepartmentMovements);
+		List<HistoryTreatmentAnalysis> historyTreatmentAnalysises = new ArrayList<HistoryTreatmentAnalysis>();
+		historyHolDb.setHistoryTreatmentAnalysises(historyTreatmentAnalysises);
+		DiagnosisOnAdmission diagnosisOnAdmission = new DiagnosisOnAdmission();
+		historyHolDb.setDiagnosisOnAdmission(diagnosisOnAdmission);
+		PatientHolDb patientHolDb = new PatientHolDb();
+		historyHolDb.setPatientHolDb(patientHolDb);
+		return historyHolDb;
+	}
 	private HistoryHolDb getShortPatientHistoryById(int historyId) {
 		HistoryHolDb historyHolDb = cuwyDbService1.getHistoryHolDbById(historyId);
 		System.out.println(1);
@@ -313,11 +330,19 @@ public class HelloController {
 	@RequestMapping(value = "/savePatientHistory", method = RequestMethod.POST)
 	public @ResponseBody HistoryHolDb savePatientHistory(@RequestBody HistoryHolDb historyHolDb) {
 		logger.info("\n savePatientHistory patientHistory = "+historyHolDb);
-		logger.info("\n HistoryId = "+historyHolDb.getHistoryId()
+		int historyId = historyHolDb.getHistoryId();
+		logger.info("\n HistoryId = "+historyId
 				+"\n PatientId = "+historyHolDb.getPatientId()
 				+"\n HistoryNo = "+historyHolDb.getHistoryNo());
+		if(0==historyId) {
+			logger.info("\n HistoryId = "+historyId
+					+"\n PatientId = "+historyHolDb.getPatientId()
+					+"\n HistoryNo = "+historyHolDb.getHistoryNo());
+			cuwyDbService1.insertPatientHolDb(historyHolDb.getPatientHolDb());
+		}else{
+			cuwyDbService1.updatePatientHolDb(historyHolDb.getPatientHolDb());
+		}
 		String patientPhoneHome = historyHolDb.getPatientHolDb().getPatientPhoneHome();
-		cuwyDbService1.savePatientHolDb(historyHolDb.getPatientHolDb());
 		logger.info("\n patientPhoneHome = "+patientPhoneHome);
 		String patientPhoneMobil = historyHolDb.getPatientHolDb().getPatientPhoneMobil();
 		logger.info("\n patientPhoneMobil = "+patientPhoneMobil);
@@ -330,14 +355,17 @@ public class HelloController {
 		return getShortPatientHistory_old(historyNo);
 	}
 
+	@RequestMapping(value = "/hol/history_id_undefined", method = RequestMethod.GET)
+	public @ResponseBody HistoryHolDb getHolPatientHistoryById() throws IOException {
+		logger.info("\n Start /hol/history_id_undefined");
+		HistoryHolDb shortPatientHistory = getShortPatientHistoryTemplate();
+		return shortPatientHistory;
+	}
+
 	@RequestMapping(value = "/hol/history_id_{historyId}", method = RequestMethod.GET)
 	public @ResponseBody HistoryHolDb getHolPatientHistoryById(@PathVariable Integer historyId) throws IOException {
 		logger.info("\n Start /hol/history_id_"+historyId);
 		HistoryHolDb shortPatientHistory = getShortPatientHistoryById(historyId);
-		Date patientDob = shortPatientHistory.getPatientHolDb().getPatientDob();
-		String format = new SimpleDateFormat("dd-MM-yyyy").format(patientDob);
-		logger.info("\n patientDob2 = "+format);
-		shortPatientHistory.getPatientHolDb().setPatientDob2(format);
 		return shortPatientHistory;
 	}
 
@@ -347,9 +375,6 @@ public class HelloController {
 //		PatientHistory patientHistory = getShortPatientHistory(historyNo);
 		HistoryHolDb shortPatientHistory = getShortPatientHistory(historyNo);
 		Date patientDob = shortPatientHistory.getPatientHolDb().getPatientDob();
-		String format = new SimpleDateFormat("dd-MM-yyyy").format(patientDob);
-		logger.info("\n patientDob2 = "+format);
-		shortPatientHistory.getPatientHolDb().setPatientDob2(format);
 		return shortPatientHistory;
 	}
 

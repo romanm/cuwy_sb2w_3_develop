@@ -1,4 +1,4 @@
-var historyFile = "/hol/history_no_"+parameters.hno;
+var historyFile = "/hol/history_id_"+parameters.hid;
 
 console.log("historyFile = "+historyFile);
 
@@ -16,10 +16,21 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	};
 	$scope.patientHistory = {};
 
-	if(parameters.hno){
+	if(parameters.hid){
 		$http({
 			method : 'GET',
 			url : historyFile
+		}).success(function(data, status, headers, config) {
+			$scope.patientHistory = data;
+			$scope.patientEditing.departmentId = $scope.patientHistory.patientDepartmentMovements[0].departmentId;
+			$scope.patientEditing.departmentName = $scope.patientHistory.patientDepartmentMovements[0].departmentName;
+		}).error(function(data, status, headers, config) {
+		});
+	}else{
+		console.log("null $scope.patientHistory ");
+		$http({
+			method : 'GET',
+			url : "/hol/history_id_undefined"
 		}).success(function(data, status, headers, config) {
 			$scope.patientHistory = data;
 			$scope.patientEditing.departmentId = $scope.patientHistory.patientDepartmentMovements[0].departmentId;
@@ -52,8 +63,66 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 		return $index < districts.length/3*2 && $index > districts.length/3
 	}
 
+	$scope.validateForm = {
+		formHasError:false,
+		patientSurname:{
+			fieldHasError:false
+		},
+		patientPersonalName:{
+			fieldHasError:false
+		}
+	}
+
+	$scope.validatePersonalName = function(){
+		var field = $scope.newPatientForm.patientPersonalName;
+		$scope.validField2(field);
+	}
+
+	validField3 = function(field, isEdited){
+		if($scope.validateForm[field.$name]){
+			$scope.validateForm[field.$name].fieldHasError = isEdited && (!field.$viewValue || field.$viewValue.length == 0);
+			console.log("$scope.validateForm["+field.$name+"].fieldHasError = "+$scope.validateForm[field.$name].fieldHasError);
+			$scope.validateForm.formHasError = $scope.validateForm[field.$name].fieldHasError;
+			changeFormValidClass(field);
+		}
+	}
+
+	$scope.validField2 = function(field){
+		validField3(field, field.$dirty);
+	}
+
+	validForm2 = function(){
+		angular.forEach($scope.newPatientForm.$error.required, function(field, index) {
+			validField3(field, true);
+		})
+	}
+
+	changeFormValidClass = function(field){
+		var fieldEl = $("#"+field.$name);
+		var formGroupEl = $(fieldEl[0].parentElement);
+		var fieldIconEl = $(fieldEl[0].nextElementSibling);
+		if(!fieldIconEl.hasClass("form-control-feedback")){
+			fieldIconEl = $(fieldIconEl.nextElementSibling);
+		}
+		formGroupEl.removeClass("has-success has-warning has-error");
+		fieldIconEl.removeClass("glyphicon-remove glyphicon-ok glyphicon-warning-sign");
+		if($scope.validateForm[field.$name].fieldHasError){
+			formGroupEl.addClass("has-error");
+			fieldIconEl.addClass("glyphicon-remove");
+		}else if(field.$error.maxlength || field.$error.minlength){
+			formGroupEl.addClass("has-warning");
+			fieldIconEl.addClass("glyphicon-warning-sign");
+		}else{
+			formGroupEl.addClass("has-success");
+			fieldIconEl.addClass("glyphicon-ok");
+		}
+	}
+
 	$scope.savePatientHistory = function(){
 		console.log("savePatientHistory");
+		validForm2();
+		if($scope.validateForm.formHasError)
+			return;
 		var postNewPatien = $http({
 			method : 'POST',
 			data : $scope.patientHistory,
@@ -62,7 +131,7 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 			$scope.patientHistory = data;
 		}).error(function(data, status, headers, config) {
 		});
-
+		return true;
 	}
 
 	$scope.patientEditing = {
@@ -81,6 +150,7 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	$scope.changeDiagnose = function(){
 		console.log("changeDiagnose");
 	}
+
 	$scope.getCountryDistricts = function(){
 		$($scope.addresses).each(function () {
 			if(this.countryName == $scope.patientEditing.country){
@@ -190,6 +260,10 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 		return isNoCountryInDb;
 	}
 
+	$scope.isWarning = function(field, art){
+		console.log(" field.$error["+art+"] = " + field.$error[art]);
+	}
+
 	$scope.isLastNameValid = function(field, art){
 		var isRequired = field.$error.required && field.$dirty;
 		if(isRequired){
@@ -227,10 +301,39 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 		}
 	}
 
+	checkShowEditField2 = function(field, isInvalid, groupValidClass, iconValidClass){
+		var fieldEl = $("#"+field.$name);
+		var fieldIconEl = $(fieldEl[0].nextElementSibling);
+		console.log(fieldIconEl);
+			var formGroupEl = fieldIconEl.parent();
+			console.log(isInvalid);
+			console.log(formGroupEl);
+			formGroupEl.removeClass("has-success has-warning has-error");
+			fieldIconEl.removeClass("glyphicon-remove glyphicon-ok glyphicon-warning-sign");
+			if(isInvalid){
+				formGroupEl.addClass("has-"+groupValidClass);
+				fieldIconEl.addClass("glyphicon-"+iconValidClass);
+				console.log(formGroupEl);
+			}else{
+				formGroupEl.addClass("has-success");
+				if(field.$dirty){
+					fieldIconEl.addClass("glyphicon-ok");
+				}
+			}
+		if(fieldIconEl.hasClass("glyphicon")){
+		}
+	}
+
+	$scope.open = function($event) {
+		$event.preventDefault();
+		$event.stopPropagation();
+		$scope.opened = true;
+	};
+
+	$scope.dateOptions = {
+		formatYear: 'yyyy',
+		startingDay: 1
+	};
+
 } ] );
 
-$(function() {
-	$('#dob').datepicker({
-		format : 'dd-mm-yyyy'
-	});
-});

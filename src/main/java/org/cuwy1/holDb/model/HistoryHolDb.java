@@ -1,7 +1,6 @@
 package org.cuwy1.holDb.model;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 import org.cuwy1.hol.model.DiagnosisOnAdmission;

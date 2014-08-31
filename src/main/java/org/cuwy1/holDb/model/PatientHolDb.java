@@ -1,21 +1,48 @@
 package org.cuwy1.holDb.model;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class PatientHolDb {
+	@Override
+	public String toString() {
+		return String.format(
+				"PatientHolDb {patientId = %d"
+				+ ", patientSurname = '%s', patientPersonalName = '%s', patientPatronymic = '%s'"
+				+ "\n"
+				+ ", patientGender = %d, patientDob = '%s'"
+				+ ", countryId = %d, districtId = '%d', regionId = %d, localityId = '%d'"
+				+ "\n"
+				+ ", patientStreet = '%s', patientHouse = '%s', patientJob = '%s'"
+				+ ", patientPhoneHome = '%s' , patientPhoneMobil = '%s' , patientFlat = '%s'"
+				+ "\n"
+				+ ", patientBlood = '%s' , patientBj = '%s' "
+				+ "}",
+				patientId, patientSurname, patientPersonalName, patientPatronymic
+				, patientGender, patientDob
+				, countryId, districtId, regionId, localityId
+				, patientStreet, patientHouse, patientJob
+				, patientPhoneHome , patientPhoneMobil , patientFlat
+				, patientBlood, patientBj
+				);
+	}
 	public PatientHolDb(){}
 	private int patientId;
-	private int patientGender;
 	private String patientSurname;
 	private String patientPersonalName;
 	private String patientPatronymic;
-	private Date patientDob;
-	private String patientDob2;
-	private String patientPhoneHome;
-	private String patientPhoneMobil;
-	private String patientJob;
+	private int patientGender;
+	private Timestamp patientDob;
+	private int countryId;
+	private int districtId;
+	private int regionId;
+	private int localityId;
 	private String patientStreet;
 	private String patientHouse;
+	private String patientJob;
+
+	private String patientPhoneHome;
+	private String patientPhoneMobil;
 	private String patientBlood;
 	private boolean patientRh;
 	private int patientRh2;
@@ -196,14 +223,6 @@ public class PatientHolDb {
 		this.patientHbs = patientHbs;
 	}
 
-	public Date getPatientDob() {
-		return patientDob;
-	}
-
-	public void setPatientDob(Date patientDob) {
-		this.patientDob = patientDob;
-	}
-
 	public Date getPatientRwDate() {
 		return patientRwDate;
 	}
@@ -228,11 +247,35 @@ public class PatientHolDb {
 		this.patientBj = patientBj;
 	}
 
-	public String getPatientDob2() {
-		return patientDob2;
+	public Timestamp getPatientDob() {
+		return patientDob;
 	}
 
-	public void setPatientDob2(String patientDob2) {
-		this.patientDob2 = patientDob2;
+	public void setPatientDob(Timestamp patientDob) {
+		this.patientDob = patientDob;
+	}
+	public int getCountryId() {
+		return countryId;
+	}
+	public void setCountryId(int countryId) {
+		this.countryId = countryId;
+	}
+	public int getDistrictId() {
+		return districtId;
+	}
+	public void setDistrictId(int districtId) {
+		this.districtId = districtId;
+	}
+	public int getRegionId() {
+		return regionId;
+	}
+	public void setRegionId(int regionId) {
+		this.regionId = regionId;
+	}
+	public int getLocalityId() {
+		return localityId;
+	}
+	public void setLocalityId(int localityId) {
+		this.localityId = localityId;
 	}
 }

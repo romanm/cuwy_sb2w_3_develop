@@ -20,8 +20,8 @@
 			HOL1 </a> 
 		</small>
 	</div>
-	<div class="container">
 		<form name="newPatientForm" role="form">
+	<div class="container">
 			<h4>{{title}} № {{patientHistory.historyNo}}</h4>
 			<hr/>
 			<div>
@@ -29,12 +29,15 @@
 			<div class="row">
 			<div class="col-xs-3">
 				<div class="form-group has-success has-feedback required">
-					<label class="control-label sr-only" for="patientSurname"></label>
+					<label class="control-label sr-only" for="patientSurname0"></label>
 					<input type="text" class="form-control input-sm" placeholder="Прізвище" auto-focus=""
-					id="patientSurname" name="patientSurname" ng-model="patientHistory.patientHolDb.patientSurname" required=""
+					id="patientSurname" name="patientSurname" 
+					ng-model="patientHistory.patientHolDb.patientSurname" required=""
+					ng-blur="validField2(newPatientForm.patientSurname)"
+					ng-change="validField2(newPatientForm.patientSurname)"
 					tooltip-html-unsafe="Прізвище &lt;b class='required-tooltip'>*&lt;/b>" />
 					<span class="glyphicon form-control-feedback"></span>
-					<span class="control-label" ng-show="isRequired(newPatientForm.patientSurname)">
+					<span class="control-label ng-hide" data-validate="" ng-show="validateForm.patientSurname.fieldHasError" >
 					Прізвище є обов'язковим і не може бути порожнім!</span>
 				</div>
 			</div>
@@ -44,13 +47,18 @@
 					<input type="text" class="form-control input-sm" placeholder="Ім’я" 
 					id="patientPersonalName" name="patientPersonalName" ng-model="patientHistory.patientHolDb.patientPersonalName" 
 					required="" ng-minlength="2" ng-maxlength="10"
+					ng-blur="validField2(newPatientForm.patientPersonalName)"
+					ng-change="validField2(newPatientForm.patientPersonalName)"
 					tooltip-html-unsafe="Ім’я &lt;b class='required-tooltip'>*&lt;/b>" />
 					<span class="glyphicon form-control-feedback"></span>
-					<span class="control-label" ng-show="isLastNameValid(newPatientForm.patientPersonalName,'minlength')">
+					<span class="control-label" ng-show="newPatientForm.patientPersonalName.$error['minlength']">
 					Занадто коротке?!</span>
-					<span class="control-label" ng-show="isLastNameValid(newPatientForm.patientPersonalName,'maxlength')">
+					<span class="control-label" ng-show="newPatientForm.patientPersonalName.$error['maxlength']">
 					Занадто довге?!</span>
-					<span class="control-label" ng-show="isLastNameValid(newPatientForm.patientPersonalName)">
+					<!-- 
+					<span class="control-label" ng-show="showValidPatientPersonalName || isLastNameValid(newPatientForm.patientPersonalName)">
+					 -->
+					<span class="control-label" data-validate="" ng-show="validateForm.patientPersonalName.fieldHasError">
 					Ім’я є обов'язковим і не може бути порожнім!</span>
 				</div>
 				<div class="form-group-xs has-success has-feedback required-simple"
@@ -80,12 +88,16 @@
 			</div>
 			<div class="col-xs-3">
 				<div class="form-group-xs has-success has-feedback required"
-				tooltip-html-unsafe="Дата народження &lt;b class='required-tooltip'>*&lt;/b>"
+					title="Дата народження *"
 				>
 				<div class="input-group">
 					<div class="input-group-addon">д.н.</div>
-					<input id="dob" ng-model="patientHistory.patientHolDb.patientDob2"
-					class="form-control input-sm" type="text" placeholder="дд-мм-рррр"/>
+					<input id="dob" ng-model="patientHistory.patientHolDb.patientDob"
+					class="form-control input-sm" type="text" placeholder="дд-мм-рррр"
+					ng-click="open($event)"
+					datepicker-popup="dd-MM-yyyy" is-open="opened"
+					datepicker-options="dateOptions" ng-required="true"
+					/>
 				</div>
 				</div>
 			</div>
@@ -585,7 +597,6 @@
 				</div>
 			</fieldset>
 		</div>
-		</form>
 			<br/><br/><br/><br/>
 			<br/><br/><br/><br/>
 			<br/><br/><br/><br/>
@@ -602,6 +613,7 @@
 			<br/>
 		</div>
 	</nav>
+		</form>
 	<div th:replace="hol1 :: js-lib" />
 	<script src="/db/icd10uaGroups.json.js"></script>
 	<script src="/js/admissionPatientCtrl.js"></script>

@@ -1,9 +1,11 @@
 package hello;
 
+import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -427,44 +429,79 @@ public class CuwyDbService1 {
 			});
 	}
 
-	public void savePatientHolDb(final PatientHolDb patientHolDb) {
-		String sql = "UPDATE patient "
-				+ "SET patient_phone_1 = ?"
+	public void insertPatientHolDb(final PatientHolDb patientHolDb) {
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		System.out.println("year = "+year);
+		System.out.println(patientHolDb);
+		int nextId = nextPatientId();
+		System.out.println(nextId);
+		System.out.println(patientHolDb);
+		patientHolDb.setPatientId(nextId);
+		String sql="INSERT INTO patient "
+				+ "( patient_surname, patient_name, patient_patronnymic, patient_gender, patient_dob"
+				+ ", country_id, district_id, region_id, locality_id, patient_street, patient_house, patient_job"
+				+ ", patient_phone_1, patient_phone_2 , patient_flat"
+				+ ", patient_blood, patient_rh, patient_bj "
+				+ ", patient_id"
+				+ ") VALUES "
+				+ "( ?,?,?,?,?"
+				+ ", ?,?,?,?,?,?,?"
+				+ ", ?,?,?"
+				+ ", ?,?,?,?"
+				+ ") ";
+		logger.info("\n"+sql+patientHolDb.getPatientId());
+		jdbcTemplate.update(sql, new PatientPSSetter(patientHolDb));
+	}
+	public void updatePatientHolDb(final PatientHolDb patientHolDb) {
+		String sql = "UPDATE patient SET "
+				+ " patient_surname = ?, patient_name = ?, patient_patronnymic = ?, patient_gender = ?, patient_dob = ? "
+				+ ", country_id = ?, district_id = ?, region_id = ?, locality_id = ?, patient_street = ?, patient_house = ?, patient_job = ? "
+
+				+ ", patient_phone_1 = ?"
 				+ ", patient_phone_2 = ? "
-				+ ", patient_surname = ? "
-				+ ", patient_name = ? "
-				+ ", patient_patronnymic = ? "
-				+ ", patient_gender = ? "
-				+ ", patient_street = ? "
-				+ ", patient_house = ? "
 				+ ", patient_flat = ? "
-				+ ", patient_job = ? "
 				+ ", patient_blood = ? "
 				+ ", patient_rh = ? "
 				+ ", patient_bj = ? "
 				+ " WHERE patient_id = ?";
 		logger.info("\n"+sql+patientHolDb.getPatientId());
-		jdbcTemplate.update(sql, new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setString(1, patientHolDb.getPatientPhoneHome());
-				ps.setString(2, patientHolDb.getPatientPhoneMobil());
-				ps.setString(3, patientHolDb.getPatientSurname());
-				ps.setString(4, patientHolDb.getPatientPersonalName());
-				ps.setString(5, patientHolDb.getPatientPatronymic());
-				ps.setBoolean(6, patientHolDb.getPatientGender()==1?true:false);
-				ps.setString(7, patientHolDb.getPatientStreet());
-				ps.setString(8, patientHolDb.getPatientHouse());
-				ps.setString(9, patientHolDb.getPatientFlat());
-				ps.setString(10, patientHolDb.getPatientJob());
-				ps.setString(11, patientHolDb.getPatientBlood());
-				patientHolDb.setPatientRh(patientHolDb.getPatientRh2() == 1 ? true : false);
-				ps.setBoolean(12, patientHolDb.getPatientRh());
-				String patientBj = patientHolDb.getPatientBj();
-				ps.setString(13, patientBj.equals("")?null:patientBj);
-				ps.setInt(14, patientHolDb.getPatientId());
-			}
-		});
+		jdbcTemplate.update(sql, new PatientPSSetter(patientHolDb));
+	}
+
+	class PatientPSSetter implements PreparedStatementSetter{
+		private PatientHolDb patientHolDb;
+
+		public PatientPSSetter(PatientHolDb patientHolDb) {
+			this.patientHolDb = patientHolDb;
+		}
+
+		@Override
+		public void setValues(PreparedStatement ps) throws SQLException {
+			ps.setString(1, patientHolDb.getPatientSurname());
+			ps.setString(2, patientHolDb.getPatientPersonalName());
+			ps.setString(3, patientHolDb.getPatientPatronymic());
+			ps.setBoolean(4, patientHolDb.getPatientGender()==1?true:false);
+			ps.setTimestamp(5, patientHolDb.getPatientDob());
+			
+			ps.setInt(6, patientHolDb.getCountryId());
+			ps.setInt(7, patientHolDb.getDistrictId());
+			ps.setInt(8, patientHolDb.getRegionId());
+			ps.setInt(9, patientHolDb.getLocalityId());
+			ps.setString(10, patientHolDb.getPatientStreet());
+			ps.setString(11, patientHolDb.getPatientHouse());
+			ps.setString(12, patientHolDb.getPatientJob());
+			
+			ps.setString(13, patientHolDb.getPatientPhoneHome());
+			ps.setString(14, patientHolDb.getPatientPhoneMobil());
+			ps.setString(15, patientHolDb.getPatientFlat());
+			ps.setString(16, patientHolDb.getPatientBlood());
+			patientHolDb.setPatientRh(patientHolDb.getPatientRh2() == 1 ? true : false);
+			ps.setBoolean(17, patientHolDb.getPatientRh());
+			String patientBj = patientHolDb.getPatientBj();
+			ps.setString(18, "".equals(patientBj)?null:patientBj);
+			ps.setInt(19, patientHolDb.getPatientId());
+		}
+
 	}
 
 	private class PatientHolDbRowMapper<T> implements RowMapper<T>{
@@ -482,7 +519,7 @@ public class CuwyDbService1 {
 			patientHolDb.setPatientPersonalName(rs.getString("patient_name"));
 			patientHolDb.setPatientGender(rs.getBoolean("patient_gender")?1:0);
 			patientHolDb.setPatientPatronymic(rs.getString("patient_patronnymic"));
-			patientHolDb.setPatientDob(rs.getDate("patient_dob"));
+			patientHolDb.setPatientDob(rs.getTimestamp("patient_dob"));
 			patientHolDb.setPatientStreet(rs.getString("patient_street"));
 			patientHolDb.setPatientHouse(rs.getString("patient_house"));
 			patientHolDb.setPatientFlat(rs.getString("patient_flat"));
@@ -751,7 +788,13 @@ public class CuwyDbService1 {
 		return countPatientsProMonth;
 	}
 
-
-	
+	public int nextPatientId() {
+		String sql = "select patient_id+1 nextId from patient order by patient_id desc limit 1";
+		logger.info("\n"+sql);
+		List<Map<String, Object>> nextPatientId
+		= jdbcTemplate.queryForList(sql);
+		BigInteger nextId = (BigInteger) nextPatientId.get(0).get("nextId");
+		return nextId.intValue();
+	}
 
 }
