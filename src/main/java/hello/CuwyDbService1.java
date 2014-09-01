@@ -436,6 +436,10 @@ public class CuwyDbService1 {
 		int nextId = nextPatientId();
 		System.out.println(nextId);
 		System.out.println(patientHolDb);
+		if(null == patientHolDb.getPatientHouse())
+			patientHolDb.setPatientHouse("-");
+		if(null == patientHolDb.getPatientStreet())
+			patientHolDb.setPatientStreet("-");
 		patientHolDb.setPatientId(nextId);
 		String sql="INSERT INTO patient "
 				+ "( patient_surname, patient_name, patient_patronnymic, patient_gender, patient_dob"
@@ -692,6 +696,14 @@ public class CuwyDbService1 {
 		List<Map<String, Object>> countPatientsProMonth 
 		= jdbcTemplate.queryForList(sql, new Object[] { year });
 		return countPatientsProMonth;
+	}
+
+	public List<Map<String, Object>> seekLocality(Integer regionId) {
+		String sql = "SELECT * FROM locality WHERE region_id = ? ";
+		logger.info("\n"+sql.replaceFirst("\\?", ""+regionId));
+		List<Map<String, Object>> countPatientsProWeek 
+		= jdbcTemplate.queryForList(sql, new Object[] { regionId });
+		return countPatientsProWeek;
 	}
 
 	public List<Map<String, Object>> patientsYearWeekRsList(Integer year, Integer week) {

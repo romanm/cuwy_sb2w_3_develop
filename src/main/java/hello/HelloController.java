@@ -651,6 +651,13 @@ public class HelloController {
 		return countPatientsProWeeks;
 	}
 
+	@RequestMapping(value = "/locality_{regionId}", method = RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> seekLocality(@PathVariable Integer regionId) {
+		logger.warn(" regionId = "+ regionId);
+		List<Map<String, Object>> countPatientsProMonth = cuwyDbService1.seekLocality(regionId);
+		return countPatientsProMonth;
+	}
+
 	@RequestMapping(value = "/countPatientsProMonth_{year}", method = RequestMethod.GET)
 	public @ResponseBody List<Map<String, Object>> countPatientsProMonth(@PathVariable Integer year) {
 		List<Map<String, Object>> countPatientsProMonth = cuwyDbService1.countPatientsProMonth(year);

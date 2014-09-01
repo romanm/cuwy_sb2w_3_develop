@@ -35,6 +35,8 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 			$scope.patientHistory = data;
 			$scope.patientEditing.departmentId = $scope.patientHistory.patientDepartmentMovements[0].departmentId;
 			$scope.patientEditing.departmentName = $scope.patientHistory.patientDepartmentMovements[0].departmentName;
+			$scope.patientHistory.patientHolDb.countryId = 1;
+			$scope.patientHistory.patientHolDb.districtId = 1;
 		}).error(function(data, status, headers, config) {
 		});
 	}
@@ -70,6 +72,27 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 		},
 		patientPersonalName:{
 			fieldHasError:false
+		},
+		patientPatronymic:{
+			fieldHasError:false
+		},
+		patientHouse:{
+			fieldHasError:false
+		},
+		region:{
+			fieldHasError:false
+		},
+		district:{
+			fieldHasError:false
+		},
+		localityName:{
+			fieldHasError:false
+		},
+		patientDob:{
+			fieldHasError:false
+		},
+		patientJob:{
+			fieldHasError:false
 		}
 	}
 
@@ -79,6 +102,8 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	}
 
 	validField3 = function(field, isEdited){
+		console.log(field);
+		console.log($scope.validateForm[field.$name]);
 		if($scope.validateForm[field.$name]){
 			$scope.validateForm[field.$name].fieldHasError = isEdited && (!field.$viewValue || field.$viewValue.length == 0);
 			console.log("$scope.validateForm["+field.$name+"].fieldHasError = "+$scope.validateForm[field.$name].fieldHasError);
@@ -123,13 +148,15 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 		validForm2();
 		if($scope.validateForm.formHasError)
 			return;
-		var postNewPatien = $http({
+		//var postNewPatien = 
+		$http({
 			method : 'POST',
 			data : $scope.patientHistory,
 			url : '/savePatientHistory'
 		}).success(function(data, status, headers, config){
 			$scope.patientHistory = data;
 		}).error(function(data, status, headers, config) {
+			$scope.error = data;
 		});
 		return true;
 	}
@@ -170,6 +197,64 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	}
 
 	$scope.getDistrictRegions();
+
+	$scope.collapseLocalityField = true;
+	$scope.supportLocalityField = function(){
+		$scope.collapseLocalityField = true;
+		if($scope.patientEditing.localityName){
+			$scope.collapseLocalityField = !($scope.patientEditing.localityName.length > 0);
+			if(!$scope.localityRegion){
+				//seek all regions
+			}else{
+				console.log("$scope.patientEditing.localityName = "+$scope.patientEditing.localityName);
+				for(var i = 0 ; i < $scope.localityRegion.length ; i++ ){
+					if($scope.localityRegion[i].locality_name == $scope.patientEditing.localityName){
+						console.log("$scope.localityRegion[i].locality_name = "+$scope.localityRegion[i].locality_name 
+						+ " " + ($scope.localityRegion[i].locality_name == $scope.patientEditing.localityName));
+						$scope.collapseLocalityField = true;
+						return ;
+					}
+				}
+			}
+		}
+	}
+	$scope.setLocality = function(locality){
+		$scope.patientEditing.localityName = locality.locality_name;
+		$scope.patientEditing.localityType = locality.locality_type;
+		$scope.patientHistory.patientHolDb.localityId =  locality.locality_id;
+		$scope.validateForm.localityName.fieldHasError = false;
+		$scope.collapseLocalityField = false;
+	}
+	$scope.setLocalityRegion = function(){
+		var regionId = $scope.patientHistory.patientHolDb.regionId;
+		$http({
+			method : 'GET',
+			url : "/locality_"+regionId
+		}).success(function(data, status, headers, config) {
+			$scope.localityRegion = data;
+		}).error(function(data, status, headers, config) {
+		});
+	}
+	$scope.setCountry = function(country){
+		$scope.patientEditing.country = country.countryName;
+		$scope.patientHistory.patientHolDb.countryId = country.countryId;
+	}
+
+	$scope.setRegion = function(region){
+		$scope.patientEditing.region = region.regionName;
+		$scope.patientHistory.patientHolDb.regionId = region.regionId;
+		$scope.validateForm.region.fieldHasError = false;
+		$scope.collapseRegionListe = true;
+		$scope.validField2($scope.newPatientForm.region)
+		$scope.setLocalityRegion();
+	}
+
+	$scope.setDistrict = function(district){
+		console.log(district);
+		$scope.patientEditing.district = district.districtName;
+		$scope.patientHistory.patientHolDb.districtId = district.districtId;
+		console.log($scope.patientHistory.patientHolDb);
+	}
 
 	$scope.writeToModel = function(fieldName, value){
 		$scope.patientEditing[fieldName] = value;
@@ -334,6 +419,18 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 		formatYear: 'yyyy',
 		startingDay: 1
 	};
+
+	$scope.tooltipHtml = function(){
+		var msgs = $scope.error.message.split(";");
+		var errorHtml = "<ul>";
+		angular.forEach(msgs, function(msg, index) {
+			if(msg.indexOf("SQL")<0){
+				errorHtml += "<li>"+msg+"</li>";
+			}
+		})
+		errorHtml += "</ul>";
+		return errorHtml;
+	}
 
 } ] );
 
