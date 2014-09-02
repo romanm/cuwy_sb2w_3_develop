@@ -27,7 +27,6 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 		}).error(function(data, status, headers, config) {
 		});
 	}else{
-		console.log("null $scope.patientHistory ");
 		$http({
 			method : 'GET',
 			url : "/hol/history_id_undefined"
@@ -44,7 +43,6 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	$scope.collapseDiagnoseTreeFilter = true;
 	$scope.changeTreeFilterView = true;
 	$scope.openIcd10FilterDialog = function(){
-		console.log("----openIcd10FilterDialog--------"+$scope.collapseDiagnoseTreeFilter);
 		$scope.collapseDiagnoseTreeFilter = false;
 		$scope.changeTreeFilterView = true;
 	}
@@ -93,6 +91,9 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 		},
 		patientJob:{
 			fieldHasError:false
+		},
+		department:{
+			fieldHasError:false
 		}
 	}
 
@@ -102,11 +103,8 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	}
 
 	validField3 = function(field, isEdited){
-		console.log(field);
-		console.log($scope.validateForm[field.$name]);
 		if($scope.validateForm[field.$name]){
 			$scope.validateForm[field.$name].fieldHasError = isEdited && (!field.$viewValue || field.$viewValue.length == 0);
-			console.log("$scope.validateForm["+field.$name+"].fieldHasError = "+$scope.validateForm[field.$name].fieldHasError);
 			$scope.validateForm.formHasError = $scope.validateForm[field.$name].fieldHasError;
 			changeFormValidClass(field);
 		}
@@ -144,7 +142,6 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	}
 
 	$scope.savePatientHistory = function(){
-		console.log("savePatientHistory");
 		validForm2();
 		if($scope.validateForm.formHasError)
 			return;
@@ -206,11 +203,8 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 			if(!$scope.localityRegion){
 				//seek all regions
 			}else{
-				console.log("$scope.patientEditing.localityName = "+$scope.patientEditing.localityName);
 				for(var i = 0 ; i < $scope.localityRegion.length ; i++ ){
 					if($scope.localityRegion[i].locality_name == $scope.patientEditing.localityName){
-						console.log("$scope.localityRegion[i].locality_name = "+$scope.localityRegion[i].locality_name 
-						+ " " + ($scope.localityRegion[i].locality_name == $scope.patientEditing.localityName));
 						$scope.collapseLocalityField = true;
 						return ;
 					}
@@ -250,10 +244,8 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	}
 
 	$scope.setDistrict = function(district){
-		console.log(district);
 		$scope.patientEditing.district = district.districtName;
 		$scope.patientHistory.patientHolDb.districtId = district.districtId;
-		console.log($scope.patientHistory.patientHolDb);
 	}
 
 	$scope.writeToModel = function(fieldName, value){
@@ -265,6 +257,7 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 
 	$scope.writeDirect = function(direct){
 		$scope.patientEditing.direct = direct.direct_name;
+		$scope.patientHistory.directId = direct.direct_id;
 		$scope.supportDirectField();
 	}
 
@@ -314,7 +307,6 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	}
 
 	$scope.openCountryFormGroup = function(){
-		console.log($scope.patientEditing.country);
 		$scope.patientEditing.countryCollapsed = !$scope.patientEditing.countryCollapsed;
 		if(false && !$scope.patientEditing.countryCollapsed){
 			$http({
@@ -389,16 +381,12 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	checkShowEditField2 = function(field, isInvalid, groupValidClass, iconValidClass){
 		var fieldEl = $("#"+field.$name);
 		var fieldIconEl = $(fieldEl[0].nextElementSibling);
-		console.log(fieldIconEl);
 			var formGroupEl = fieldIconEl.parent();
-			console.log(isInvalid);
-			console.log(formGroupEl);
 			formGroupEl.removeClass("has-success has-warning has-error");
 			fieldIconEl.removeClass("glyphicon-remove glyphicon-ok glyphicon-warning-sign");
 			if(isInvalid){
 				formGroupEl.addClass("has-"+groupValidClass);
 				fieldIconEl.addClass("glyphicon-"+iconValidClass);
-				console.log(formGroupEl);
 			}else{
 				formGroupEl.addClass("has-success");
 				if(field.$dirty){

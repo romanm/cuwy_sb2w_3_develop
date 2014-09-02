@@ -1,13 +1,15 @@
 cuwyApp.controller('departmentCtrl', [ '$scope', '$http',function ($scope, $http) {
 	
 	$scope.writeDepartment = function(department){
-		$scope.patientEditing.departmentId = department.department_id;
+		$scope.patientHistory.historyDepartmentIn = department.department_id;
 		$scope.patientEditing.departmentName = department.department_name;
 		/*
 		$scope.patientHistory.patientDepartmentMovements[0].departmentId = department.department_id;
 		$scope.patientHistory.patientDepartmentMovements[0].departmentName = department.department_name;
 		console.log($scope.patientHistory.patientDepartmentMovements[0]);
 		*/
+		console.log($scope.patientHistory);
+		console.log($scope.patientHistory.historyDepartmentIn);
 	}
 
 }]);

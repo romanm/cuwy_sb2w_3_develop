@@ -92,17 +92,35 @@
 				<div class="form-group-xs has-success has-feedback required"
 					title="Дата народження *"
 				>
-				<div class="input-group">
-					<div class="input-group-addon">д.н.</div>
-					<input id="dob" ng-model="patientHistory.patientHolDb.patientDob" required=""
-					class="form-control input-sm" type="text" placeholder="дд-мм-рррр"
+					<label class="control-label sr-only" for="patientDob"></label>
+					<input id="patientDob" name="patientDob" 
+					ng-model="patientHistory.patientHolDb.patientDob" required=""
+					class="form-control input-sm" type="text" placeholder="д.н. (дд-мм-рррр)"
 					ng-click="open($event)"
+					ng-change="validField2(newPatientForm.patientDob)"
+					ng-blur="validField2(newPatientForm.patientDob)"
 					datepicker-popup="dd-MM-yyyy" is-open="opened"
 					datepicker-options="dateOptions" ng-required="true"
 					/>
-					<span class="control-label" ng-show="validateForm.patientHolDb.fieldHasError">
-					По батькові є обов'язковим і не може бути порожнім!</span>
+					<span class="glyphicon form-control-feedback"></span>
+					<span class="control-label" ng-show="validateForm.patientDob.fieldHasError">
+					Дата народження є обов'язковим і не може бути порожнім!</span>
+				<!-- 
+				<div class="input-group">
+					<div class="input-group-addon">д.н.</div>
+					<input id="patientDob" name="patientDob" 
+					ng-model="patientHistory.patientHolDb.patientDob" required=""
+					class="form-control input-sm" type="text" placeholder="дд-мм-рррр"
+					ng-click="open($event)"
+					ng-change="validField2(newPatientForm.patientDob)"
+					ng-blur="validField2(newPatientForm.patientDob)"
+					datepicker-popup="dd-MM-yyyy" is-open="opened"
+					datepicker-options="dateOptions" ng-required="true"
+					/>
 				</div>
+				<span class="control-label" ng-show="validateForm.patientDob.fieldHasError">
+				По батькові є обов'язковим і не може бути порожнім!</span>
+				 -->
 				</div>
 			</div>
 			</div>
@@ -371,7 +389,7 @@
 					tooltip-html-unsafe="Місце роботи &lt;b class='required-tooltip'>*&lt;/b>"
 					/>
 					<span class="glyphicon form-control-feedback"></span>
-					<span class="control-label ng-hide" ng-show="validateForm.patientJob.fieldHasError" >
+					<span class="control-label ng-hide" ng-show="validateForm.patientJob.fieldHasError">
 					Місце роботи є обов'язковим і не може бути порожнім!</span>
 				</div>
 			</div>
@@ -512,12 +530,12 @@
 					<div class="form-group-xs has-success has-feedback required-simple"
 					tooltip-html-unsafe="Ургентно / Планово &lt;b class='required-tooltip'>*&lt;/b>"
 					>
-						<label class="radio-inline"> 
-							<input type="radio" name="urgentPlan" ng-model="patientEditing.urgentPlan" value="plan"/>
+						<label class="radio-inline">
+							<input type="radio" name="historyUrgent" ng-model="patientHistory.historyUrgent" value="0"/>
 							Ургентно
 						</label>
-						<label class="radio-inline"> 
-							<input type="radio" name="urgentPlan" ng-model="patientEditing.urgentPlan" value="urgent"/>
+						<label class="radio-inline">
+							<input type="radio" name="historyUrgent" ng-model="patientHistory.historyUrgent" value="1"/>
 							Планово
 						</label>
 					</div>

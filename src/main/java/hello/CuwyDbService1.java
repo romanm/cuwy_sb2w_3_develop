@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -243,7 +244,25 @@ public class CuwyDbService1 {
 		= jdbcTemplate.queryForList(sql, new Object[] { year, week });
 		return countPatientsProMonth;
 	}
+	class HistoryHolDbPSSetter implements PreparedStatementSetter{
+		private HistoryHolDb historyHolDb;
+		public HistoryHolDbPSSetter(HistoryHolDb historyHolDb) {
+			this.historyHolDb = historyHolDb;
+		}
 
+		@Override
+		public void setValues(PreparedStatement ps) throws SQLException {
+			ps.setInt(1, historyHolDb.getHistoryNo());
+			ps.setInt(2, historyHolDb.getHistoryUrgent());
+			ps.setInt(3, historyHolDb.getPatientHolDb().getPatientId());
+			ps.setInt(4, historyHolDb.getDirectId());
+			ps.setInt(5, historyHolDb.getHistoryDepartmentIn());
+			ps.setInt(6, historyHolDb.getHistoryAgeYear());
+			ps.setInt(7, historyHolDb.getHistoryAgeMonth());
+			ps.setInt(8, historyHolDb.getHistoryAgeDay());
+			ps.setInt(9, historyHolDb.getHistoryId());
+		}
+	}
 	class HistoryHolDbRowMapper<T> implements RowMapper<T>{
 		private Map<Integer, HistoryHolDb> mapHistoryOfPatient;
 
@@ -260,6 +279,8 @@ public class CuwyDbService1 {
 			historyHolDb.setHistoryId(rs.getInt("history_id"));
 			historyHolDb.setHistoryNo(rs.getInt("history_no"));
 			historyHolDb.setPatientId(rs.getInt("patient_id"));
+			historyHolDb.setDirectId(rs.getInt("direct_id"));
+			historyHolDb.setHistoryDepartmentIn(rs.getInt("history_department_in"));
 			historyHolDb.setHistoryIn(rs.getTimestamp("history_in"));
 			if(mapHistoryOfPatient != null)
 				mapHistoryOfPatient.put(historyHolDb.getPatientId(), historyHolDb);
@@ -340,7 +361,7 @@ public class CuwyDbService1 {
 		return jdbcTemplate.query(
 				sqlPatientDepartmentMovement, new Object[] { historyId }, 
 				new PatientDepartmentMovementRowMapper()
-				);
+			);
 	}
 	private class PatientDepartmentMovementRowMapper<T> implements RowMapper<T>{
 		private Map<Integer, HistoryHolDb> mapHistoryOfPatient;
@@ -429,18 +450,34 @@ public class CuwyDbService1 {
 			});
 	}
 
-	public void insertPatientHolDb(final PatientHolDb patientHolDb) {
+	String sql = "INSERT INTO history "
+			+ "( history_in, history_no, history_urgent, patient_id, direct_id, history_department_in "
+			+ ", history_age_year, history_age_month, history_age_day "
+			+ ", history_id "
+			+ ") VALUES "
+			+ "( NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//		+ "( now(),'15025',0,32111,1,1,66,0,0)";
+	public void insertHistoryHolDb(final HistoryHolDb historyHolDb) {
 		int year = Calendar.getInstance().get(Calendar.YEAR);
-		System.out.println("year = "+year);
-		System.out.println(patientHolDb);
-		int nextId = nextPatientId();
-		System.out.println(nextId);
-		System.out.println(patientHolDb);
+		System.out.println("year = " + year);
+		int nextHistoryNo = nextHistoryNo(2014);
+		int nextHistoryId = getAutoIncrement("history");
+		historyHolDb.setHistoryNo(nextHistoryNo);
+		historyHolDb.setHistoryId(nextHistoryId);
+		historyHolDb.setHistoryAgeYear(historyHolDb.getPatientHolDb().patientAge());
+		historyHolDb.setHistoryAgeMonth(historyHolDb.getPatientHolDb().patientMonth());
+		historyHolDb.setHistoryAgeDay(historyHolDb.getPatientHolDb().patientDay());
+		jdbcTemplate.update(sql, new HistoryHolDbPSSetter(historyHolDb));
+	}
+
+	public void insertPatientHolDb(final PatientHolDb patientHolDb) {
 		if(null == patientHolDb.getPatientHouse())
 			patientHolDb.setPatientHouse("-");
 		if(null == patientHolDb.getPatientStreet())
 			patientHolDb.setPatientStreet("-");
-		patientHolDb.setPatientId(nextId);
+//		int nextId = nextPatientId();
+		int nextPatientId = getAutoIncrement("patient");
+		patientHolDb.setPatientId(nextPatientId);
 		String sql="INSERT INTO patient "
 				+ "( patient_surname, patient_name, patient_patronnymic, patient_gender, patient_dob"
 				+ ", country_id, district_id, region_id, locality_id, patient_street, patient_house, patient_job"
@@ -454,8 +491,9 @@ public class CuwyDbService1 {
 				+ ", ?,?,?,?"
 				+ ") ";
 		logger.info("\n"+sql+patientHolDb.getPatientId());
-		jdbcTemplate.update(sql, new PatientPSSetter(patientHolDb));
+		jdbcTemplate.update(sql, new PatientHolDbPSSetter(patientHolDb));
 	}
+
 	public void updatePatientHolDb(final PatientHolDb patientHolDb) {
 		String sql = "UPDATE patient SET "
 				+ " patient_surname = ?, patient_name = ?, patient_patronnymic = ?, patient_gender = ?, patient_dob = ? "
@@ -469,13 +507,13 @@ public class CuwyDbService1 {
 				+ ", patient_bj = ? "
 				+ " WHERE patient_id = ?";
 		logger.info("\n"+sql+patientHolDb.getPatientId());
-		jdbcTemplate.update(sql, new PatientPSSetter(patientHolDb));
+		jdbcTemplate.update(sql, new PatientHolDbPSSetter(patientHolDb));
 	}
 
-	class PatientPSSetter implements PreparedStatementSetter{
+	class PatientHolDbPSSetter implements PreparedStatementSetter{
 		private PatientHolDb patientHolDb;
 
-		public PatientPSSetter(PatientHolDb patientHolDb) {
+		public PatientHolDbPSSetter(PatientHolDb patientHolDb) {
 			this.patientHolDb = patientHolDb;
 		}
 
@@ -800,13 +838,41 @@ public class CuwyDbService1 {
 		return countPatientsProMonth;
 	}
 
+	String sqlNextPatientId = "SELECT patient_id+1 nextId FROM patient ORDER BY patient_id DESC LIMIT 1";
+	String sqlNextYearHistoryId = 
+			"SELECT history_no + 1 nextId FROM history WHERE YEAR(history_in) = ? ORDER BY history_no DESC LIMIT 1";
 	public int nextPatientId() {
-		String sql = "select patient_id+1 nextId from patient order by patient_id desc limit 1";
-		logger.info("\n"+sql);
-		List<Map<String, Object>> nextPatientId
-		= jdbcTemplate.queryForList(sql);
-		BigInteger nextId = (BigInteger) nextPatientId.get(0).get("nextId");
+		return readNextId(sqlNextPatientId);
+	}
+	public int nextHistoryNo(int year) {
+		return readNextIdDouble(sqlNextYearHistoryId.replaceFirst("\\?", ""+year));
+	}
+	public int getAutoIncrement(String tableName) {
+		String sql = "SELECT AUTO_INCREMENT FROM  INFORMATION_SCHEMA.TABLES "
+				+ " WHERE TABLE_SCHEMA = 'hol' AND   TABLE_NAME = '?' ";
+		String sql2 = sql.replaceFirst("\\?", tableName);
+		logger.info("\n"+sql2);
+		List<Map<String, Object>> nextIdList
+			= jdbcTemplate.queryForList(sql2);
+//		= jdbcTemplate.queryForList(sql, new Object[] { tableName });
+		BigInteger nextId = (BigInteger) nextIdList.get(0).values().toArray()[0];
 		return nextId.intValue();
 	}
+
+	private int readNextId(String sql) {
+		logger.info("\n"+sql);
+		List<Map<String, Object>> nextIdList
+		= jdbcTemplate.queryForList(sql);
+		BigInteger nextId = (BigInteger) nextIdList.get(0).get("nextId");
+		return nextId.intValue();
+	}
+	private int readNextIdDouble(String sql) {
+		logger.info("\n"+sql);
+		List<Map<String, Object>> nextIdList
+		= jdbcTemplate.queryForList(sql);
+		Double nextId = (Double) nextIdList.get(0).get("nextId");
+		return nextId.intValue();
+	}
+
 
 }

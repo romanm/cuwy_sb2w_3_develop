@@ -261,6 +261,7 @@ public class HelloController {
 
 	private HistoryHolDb getShortPatientHistoryTemplate() {
 		HistoryHolDb historyHolDb = new HistoryHolDb();
+		historyHolDb.setHistoryUrgent(1);
 		List<PatientDepartmentMovement> patientDepartmentMovements = new ArrayList<PatientDepartmentMovement>();
 		patientDepartmentMovements.add(new PatientDepartmentMovement());
 		historyHolDb.setPatientDepartmentMovements(patientDepartmentMovements);
@@ -272,12 +273,13 @@ public class HelloController {
 		historyHolDb.setPatientHolDb(patientHolDb);
 		return historyHolDb;
 	}
+
 	private HistoryHolDb getShortPatientHistoryById(int historyId) {
 		HistoryHolDb historyHolDb = cuwyDbService1.getHistoryHolDbById(historyId);
-		System.out.println(1);
 		addShortPatientHistory(historyHolDb);
 		return historyHolDb;
 	}
+
 	private HistoryHolDb getShortPatientHistory(int historyNo) {
 		HistoryHolDb historyHolDb = cuwyDbService1.getHistoryHolDbByNo(historyNo);
 		addShortPatientHistory(historyHolDb);
@@ -338,7 +340,12 @@ public class HelloController {
 			logger.info("\n HistoryId = "+historyId
 					+"\n PatientId = "+historyHolDb.getPatientId()
 					+"\n HistoryNo = "+historyHolDb.getHistoryNo());
+			int nextHistoryNo = cuwyDbService1.nextHistoryNo(2014);
+			int nextHistoryId = cuwyDbService1.getAutoIncrement("history");
+			int nextPatientId = cuwyDbService1.getAutoIncrement("patient");
+			System.out.println(nextHistoryNo+"/"+nextHistoryId+"/"+nextPatientId);
 			cuwyDbService1.insertPatientHolDb(historyHolDb.getPatientHolDb());
+			cuwyDbService1.insertHistoryHolDb(historyHolDb);
 		}else{
 			cuwyDbService1.updatePatientHolDb(historyHolDb.getPatientHolDb());
 		}

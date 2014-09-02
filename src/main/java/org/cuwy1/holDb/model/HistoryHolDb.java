@@ -10,7 +10,8 @@ import org.cuwy1.hol.model.PatientDepartmentMovement;
 public class HistoryHolDb {
 	private boolean perevid = false;
 	private PatientHolDb patientHolDb;
-	private int historyId,historyNo, patientId;
+	private int historyId, historyNo, historyUrgent, patientId, directId, historyDepartmentIn,
+	historyAgeYear, historyAgeMonth, historyAgeDay ;
 	private Timestamp historyIn;
 	private List<PatientDepartmentMovement> patientDepartmentMovements;
 	private List<HistoryTreatmentAnalysis> historyTreatmentAnalysises;
@@ -86,6 +87,54 @@ public class HistoryHolDb {
 
 	public void setPerevid(boolean perevid) {
 		this.perevid = perevid;
+	}
+
+	public int getDirectId() {
+		return directId;
+	}
+
+	public void setDirectId(int directId) {
+		this.directId = directId;
+	}
+
+	public int getHistoryDepartmentIn() {
+		return historyDepartmentIn;
+	}
+
+	public void setHistoryDepartmentIn(int historyDepartmentIn) {
+		this.historyDepartmentIn = historyDepartmentIn;
+	}
+
+	public int getHistoryUrgent() {
+		return historyUrgent;
+	}
+
+	public void setHistoryUrgent(int historyUrgent) {
+		this.historyUrgent = historyUrgent;
+	}
+
+	public int getHistoryAgeYear() {
+		return historyAgeYear;
+	}
+
+	public void setHistoryAgeYear(int historyAgeYear) {
+		this.historyAgeYear = historyAgeYear;
+	}
+
+	public int getHistoryAgeMonth() {
+		return historyAgeMonth;
+	}
+
+	public void setHistoryAgeMonth(int historyAgeMonth) {
+		this.historyAgeMonth = historyAgeMonth;
+	}
+
+	public int getHistoryAgeDay() {
+		return historyAgeDay;
+	}
+
+	public void setHistoryAgeDay(int historyAgeDay) {
+		this.historyAgeDay = historyAgeDay;
 	}
 
 }

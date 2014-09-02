@@ -1,6 +1,7 @@
 package org.cuwy1.holDb.model;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 
 public class PatientHolDb {
@@ -247,6 +248,39 @@ public class PatientHolDb {
 		this.patientBj = patientBj;
 	}
 
+	public int patientDay() {
+		Calendar patientDobCalendar = patientDobCalendar();
+		Calendar now = Calendar.getInstance();
+		int res = now.get(Calendar.DAY_OF_MONTH) - patientDobCalendar.get(Calendar.DAY_OF_MONTH);
+		return res;
+	}
+	public int patientMonth() {
+		Calendar patientDobCalendar = patientDobCalendar();
+		Calendar now = Calendar.getInstance();
+		int res = now.get(Calendar.MONTH) - patientDobCalendar.get(Calendar.MONTH);
+		if (patientDobCalendar.get(Calendar.MONTH) == now.get(Calendar.MONTH)
+			&& patientDobCalendar.get(Calendar.DAY_OF_MONTH) > now.get(Calendar.DAY_OF_MONTH)
+		) {
+			res--;
+		}
+		return res;
+	}
+	public int patientAge() {
+		Calendar patientDobCalendar = patientDobCalendar();
+		Calendar now = Calendar.getInstance();
+		int res = now.get(Calendar.YEAR) - patientDobCalendar.get(Calendar.YEAR);
+		if ((patientDobCalendar.get(Calendar.MONTH) > now.get(Calendar.MONTH))
+				|| (patientDobCalendar.get(Calendar.MONTH) == now.get(Calendar.MONTH)
+				&& patientDobCalendar.get(Calendar.DAY_OF_MONTH) > now.get(Calendar.DAY_OF_MONTH))) {
+			res--;
+		}
+		return res;
+	}
+	public Calendar patientDobCalendar() {
+		Calendar dobCalendar = Calendar.getInstance();
+		dobCalendar.setTime(patientDob);
+		return dobCalendar;
+	}
 	public Timestamp getPatientDob() {
 		return patientDob;
 	}
