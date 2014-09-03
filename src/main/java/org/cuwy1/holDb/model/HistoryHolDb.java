@@ -8,15 +8,30 @@ import org.cuwy1.hol.model.HistoryTreatmentAnalysis;
 import org.cuwy1.hol.model.PatientDepartmentMovement;
 
 public class HistoryHolDb {
-	private boolean perevid = false;
-	private PatientHolDb patientHolDb;
 	private int historyId, historyNo, historyUrgent, patientId, directId, historyDepartmentIn,
 	historyAgeYear, historyAgeMonth, historyAgeDay ;
 	private Timestamp historyIn;
+	private PatientHolDb patientHolDb;
+	private boolean perevid = false;
 	private List<PatientDepartmentMovement> patientDepartmentMovements;
 	private List<HistoryTreatmentAnalysis> historyTreatmentAnalysises;
 	private DiagnosisOnAdmission diagnosisOnAdmission;
 
+	@Override
+	public String toString() {
+		return String.format(
+				"\n HistoryHolDb {"
+				+ "historyId = '%s', historyNo = '%s', historyUrgent = '%s'"
+				+ "\n, patientId = '%s', directId = '%s', historyDepartmentIn = '%s'"
+				+ "\n, historyAgeYear = '%s', historyAgeMonth = '%s', historyAgeDay = '%s'"
+				+ "\n, patientHolDb = {%s}"
+				+ ", diagnosisOnAdmission = {%s}"
+				+ "}",
+				historyId, historyNo, historyUrgent, patientId, directId, historyDepartmentIn,
+				historyAgeYear, historyAgeMonth, historyAgeDay
+				, patientHolDb, diagnosisOnAdmission
+				);
+	}
 	public int getHistoryId() {
 		return historyId;
 	}

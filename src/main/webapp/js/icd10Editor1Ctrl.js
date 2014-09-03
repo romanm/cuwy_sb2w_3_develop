@@ -35,6 +35,16 @@ cuwyApp.controller('icd10Ctrl', [ '$scope', '$http',function ($scope, $http) {
 		}
 	}
 
+	setDiagnosisOnAdmission = function() {
+		console.log($scope.icd10Selected);
+		$scope.patientHistory.diagnosisOnAdmission.icdId = $scope.icd10Selected.icdId;
+		$scope.patientHistory.diagnosisOnAdmission.icdCode = $scope.icd10Selected.icdCode;
+		$scope.patientHistory.diagnosisOnAdmission.icdName = $scope.icd10Selected.icdName;
+		$scope.patientHistory.diagnosisOnAdmission.icdStart = $scope.icd10Selected.icdStart;
+		$scope.patientHistory.diagnosisOnAdmission.icdEnd = $scope.icd10Selected.icdEnd;
+		console.log($scope.patientHistory.diagnosisOnAdmission);
+	}
+
 	$scope.clickItem = function(icd10Class) {
 		console.log("======clickItem=======");
 		var icd10SelectedOld = $scope.icd10Selected;
@@ -77,6 +87,7 @@ cuwyApp.controller('icd10Ctrl', [ '$scope', '$http',function ($scope, $http) {
 		action : function() {
 			console.log("code: RETURNKEY");
 			$scope.patientEditing.historyDiagnos = $scope.icd10Selected.icdName;
+			setDiagnosisOnAdmission();
 		}
 	});
 

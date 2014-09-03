@@ -244,6 +244,28 @@ public class CuwyDbService1 {
 		= jdbcTemplate.queryForList(sql, new Object[] { year, week });
 		return countPatientsProMonth;
 	}
+	class DiagnosisOnAdmissionPSSetter implements PreparedStatementSetter{
+
+		private DiagnosisOnAdmission diagnosisOnAdmission;
+
+		public DiagnosisOnAdmissionPSSetter(
+				DiagnosisOnAdmission diagnosisOnAdmission) {
+			this.diagnosisOnAdmission = diagnosisOnAdmission;
+		}
+
+		@Override
+		public void setValues(PreparedStatement ps) throws SQLException {
+			logger.info(diagnosisOnAdmission.toString());
+			logger.warn(diagnosisOnAdmission.toString());
+			ps.setInt(1, diagnosisOnAdmission.getHistoryId());
+			ps.setInt(2, diagnosisOnAdmission.getDiagnosId());
+			ps.setInt(3, diagnosisOnAdmission.getPersonalDepartmentId());
+			ps.setInt(4, diagnosisOnAdmission.getIcdId());
+			ps.setInt(5, diagnosisOnAdmission.getIcdStart());
+			ps.setInt(6, diagnosisOnAdmission.getIcdEnd());
+		}
+		
+	}
 	class HistoryHolDbPSSetter implements PreparedStatementSetter{
 		private HistoryHolDb historyHolDb;
 		public HistoryHolDbPSSetter(HistoryHolDb historyHolDb) {
@@ -415,7 +437,7 @@ public class CuwyDbService1 {
 	public DiagnosisOnAdmission getDiagnosisOnAdmission(int historyId) {
 		String sql = "SELECT * FROM history_diagnos hd, icd i"
 				+ " WHERE 2 = hd.diagnos_id AND i.icd_id = hd.icd_id AND history_id=?";
-		logger.info("\n"+sql+historyId);
+		logger.info("\n"+sql.replaceFirst("\\?", ""+historyId));
 		return jdbcTemplate.queryForObject(
 				sql, new Object[] { historyId }, 
 				new RowMapper<DiagnosisOnAdmission>(){
@@ -426,6 +448,12 @@ public class CuwyDbService1 {
 						diagnosisOnAdmission.setHistoryDiagnosDate(rs.getTimestamp("history_diagnos_date"));
 						diagnosisOnAdmission.setIcdCode(rs.getString("icd_code"));
 						diagnosisOnAdmission.setIcdName(rs.getString("icd_name"));
+						diagnosisOnAdmission.setDiagnosId(rs.getInt("diagnos_id"));
+						diagnosisOnAdmission.setHistoryId(rs.getInt("history_id"));
+						diagnosisOnAdmission.setIcdId(rs.getInt("icd_id"));
+						diagnosisOnAdmission.setIcdStart(rs.getInt("icd_start"));
+						diagnosisOnAdmission.setIcdEnd(rs.getInt("icd_end"));
+						diagnosisOnAdmission.setPersonalDepartmentId(rs.getInt("personal_department_id"));
 						return diagnosisOnAdmission;
 					}
 				});
@@ -450,7 +478,18 @@ public class CuwyDbService1 {
 			});
 	}
 
-	String sql = "INSERT INTO history "
+	String sqlinsertHistoryDiagnos = "INSERT INTO history_diagnos "
+			+ "(history_id, history_diagnos_date, diagnos_id, personal_department_id"
+			+ ",icd_id,icd_start,icd_end"
+			+ ") VALUES "
+			+ "(?,now(),?,?"
+			+ ",?,?,?"
+			+ ")";
+	public void insertDiagnosisOnAdmission(final DiagnosisOnAdmission diagnosisOnAdmission) {
+		System.out.println(diagnosisOnAdmission);
+		jdbcTemplate.update(sqlinsertHistoryDiagnos, new DiagnosisOnAdmissionPSSetter(diagnosisOnAdmission));
+	}
+	String sqlInsertHistory = "INSERT INTO history "
 			+ "( history_in, history_no, history_urgent, patient_id, direct_id, history_department_in "
 			+ ", history_age_year, history_age_month, history_age_day "
 			+ ", history_id "
@@ -467,7 +506,7 @@ public class CuwyDbService1 {
 		historyHolDb.setHistoryAgeYear(historyHolDb.getPatientHolDb().patientAge());
 		historyHolDb.setHistoryAgeMonth(historyHolDb.getPatientHolDb().patientMonth());
 		historyHolDb.setHistoryAgeDay(historyHolDb.getPatientHolDb().patientDay());
-		jdbcTemplate.update(sql, new HistoryHolDbPSSetter(historyHolDb));
+		jdbcTemplate.update(sqlInsertHistory, new HistoryHolDbPSSetter(historyHolDb));
 	}
 
 	public void insertPatientHolDb(final PatientHolDb patientHolDb) {

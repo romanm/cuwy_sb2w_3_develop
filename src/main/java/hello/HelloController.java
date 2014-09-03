@@ -268,6 +268,7 @@ public class HelloController {
 		List<HistoryTreatmentAnalysis> historyTreatmentAnalysises = new ArrayList<HistoryTreatmentAnalysis>();
 		historyHolDb.setHistoryTreatmentAnalysises(historyTreatmentAnalysises);
 		DiagnosisOnAdmission diagnosisOnAdmission = new DiagnosisOnAdmission();
+		diagnosisOnAdmission.setDiagnosId(2);
 		historyHolDb.setDiagnosisOnAdmission(diagnosisOnAdmission);
 		PatientHolDb patientHolDb = new PatientHolDb();
 		historyHolDb.setPatientHolDb(patientHolDb);
@@ -345,7 +346,15 @@ public class HelloController {
 			int nextPatientId = cuwyDbService1.getAutoIncrement("patient");
 			System.out.println(nextHistoryNo+"/"+nextHistoryId+"/"+nextPatientId);
 			cuwyDbService1.insertPatientHolDb(historyHolDb.getPatientHolDb());
+			System.out.println(historyHolDb);
 			cuwyDbService1.insertHistoryHolDb(historyHolDb);
+			DiagnosisOnAdmission diagnosisOnAdmission = historyHolDb.getDiagnosisOnAdmission();
+			diagnosisOnAdmission.setHistoryId(historyHolDb.getHistoryId());
+			diagnosisOnAdmission.setPersonalDepartmentId(118);
+			diagnosisOnAdmission.setDiagnosId(1);
+			cuwyDbService1.insertDiagnosisOnAdmission(diagnosisOnAdmission);
+			diagnosisOnAdmission.setDiagnosId(2);
+			cuwyDbService1.insertDiagnosisOnAdmission(diagnosisOnAdmission);
 		}else{
 			cuwyDbService1.updatePatientHolDb(historyHolDb.getPatientHolDb());
 		}

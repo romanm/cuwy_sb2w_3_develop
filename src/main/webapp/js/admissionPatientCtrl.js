@@ -94,7 +94,11 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 		},
 		department:{
 			fieldHasError:false
+		},
+		historyDiagnos:{
+			fieldHasError:false
 		}
+
 	}
 
 	$scope.validatePersonalName = function(){

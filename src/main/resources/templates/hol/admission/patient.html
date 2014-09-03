@@ -484,15 +484,18 @@
 						<input type="text" class="form-control input-sm" placeholder="Діагноз МКБ" 
 						id="historyDiagnos" name="historyDiagnos" ng-model="patientEditing.historyDiagnos" required=""
 						ng-change="openIcd10FilterDialog()"
+						ng-blur="validField2(newPatientForm.historyDiagnos)"
 						tooltip-html-unsafe="Діагноз &lt;b class='required-tooltip'>*&lt;/b>"
 						/>
 						<span class="glyphicon form-control-feedback"></span>
-						<span class="control-label" ng-show="isRequired(newPatientForm.historyDiagnos)">
+						<span class="control-label ng-hide" ng-show="validateForm.historyDiagnos.fieldHasError" >
 						Діагноз є обов'язковим і не може бути порожнім!</span>
 					</div>
 				</div>
 				<div class="col-xs-1">
-					<button class="btn btn-default btn-sm" ng-click="openIcd10TreeDialog()">
+					<button class="btn btn-default btn-sm" 
+						ng-blur="validField2(newPatientForm.historyDiagnos)"
+					ng-click="openIcd10TreeDialog()">
 						<span class="glyphicon glyphicon-th-list"></span>
 						<span class="caret"></span>
 					</button>
@@ -506,7 +509,7 @@
 						tooltip-html-unsafe="Діагноз  додаток &lt;b class='required-tooltip'>*&lt;/b>"
 						/>
 						<span class="glyphicon form-control-feedback"></span>
-						<span class="control-label" ng-show="isRequired(newPatientForm.historyDiagnos)">
+						<span class="control-label" ng-show="isRequired(newPatientForm.historyDiagnosAdditional)">
 						Діагноз додаток є обов'язковим і не може бути порожнім!</span>
 					</div>
 				</div>
