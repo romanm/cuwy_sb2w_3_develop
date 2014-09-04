@@ -60,6 +60,11 @@
 			<div class="col-md-12 tab-content" id="patientsTabContent" >
 				<div class="row tab-pane fade in active" id="of_date">
 					<div class="col-xs-3">
+						<datepicker ng-model="dt" min-date="minDate"
+						 show-weeks="true" class="well well-sm"></datepicker>
+						 {{dt}}
+					</div>
+					<div class="col-xs-3">
 						<fieldset><legend>по неділях {{today.getMonthUa(monthNr - 1 )}} {{year}}</legend>
 						<table class="table table-striped">
 							<thead>
@@ -232,6 +237,7 @@
 	cuwyApp.controller('AdmissionStatisticCtrl', [ '$scope', '$http', function ($scope, $http) {
 		$scope.title = "Журнал обліку хворих";
 		$scope.today = new Date();
+		$scope.dt = new Date();
 		console.log($scope.today.getMonthUa(1));
 		$scope.year = $scope.today.getFullYear();
 		console.log($scope.year);
