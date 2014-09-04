@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="EpicriseCtrl">
+<head>
+<style type="text/css"></style>
+<meta charset="utf-8"/>
+<link rel="stylesheet" href="/css/bootstrap.css"></link>
+<link rel='stylesheet prefetch' href='/css/font-awesome.min.css'>
+<link rel="stylesheet" href="/css/datepicker.css"></link>
+	<title>ХОЛ::
+	{{patientHistory.patientDepartmentMovements
+		[patientHistory.patientDepartmentMovements.length -1]
+		.departmentName}}
+	</title>
+	<style type="text/css">
+		body {
+			padding-top: 60px;
+			padding-bottom: 60px;
+		}
+		.required-tooltip {font-size:150%;color: red;}
+		.required:after {
+			content: "*"; position:absolute; color: red;
+			top:-4px;right:-8px;
+		}
+		.required-simple:after {
+			content: "*"; position:absolute; color: red;
+		}
+		.record { }
+		.record-highlight-parent { border: 1px dotted green; }
+		.record-highlight { background-color: green; color: #fff; }
+		.row h2 { margin-top: 0px; }
+		hr.shortPatienHistory { margin: 0px; border-width: 3px 0 0;}
+		@media print {
+			.breadcrumb, .no-print {
+				display: none !important;
+			}
+		}
+	</style>
+</head>
+<body>
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+<div class="container">
+	<div class="navbar-header">
+		<ol class="breadcrumb">
+			<li><a href="/home.html"><span class="glyphicon glyphicon-home"></span> ХОЛ</a></li>
+			<li>
+				<a href="/hol/department.html?dep=22" class="ng-binding">
+				Реанімаційне
+				</a>
+			</li>
+			<li class="active">
+			ІХ::Короткий перегляд
+			</li>
+		</ol>
+	</div>
+	<div class="collapse navbar-collapse">
+		<ul class="nav navbar-nav navbar-right">
+			<li class="dropdown"><a title="Premium Bootstrap Themes &amp; Templates" data-toggle="dropdown" class="dropdown-toggle" href="#" aria-haspopup="true" aria-expanded="false"><i class="fa fa-star text-yellow"></i> меню <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a href="/hol/history.html?hno=15026">Короткий перегляд</a></li>
+					<li><a href="/hol/admission/statistic.html">Журнал обліку хворих</a></li>
+					<li class="divider"></li>
+					<li><a href="/hol/operation/add-op.html">
+							Заявка на додавання операції до словника</a></li>
+					<li><a href="/hol/operation/liste-op.html">
+							Список операцій</a></li>
+					<li><a href="/hol/operation/liste-complication.html">
+							Список післяопераційних ускладнень</a></li>
+				</ul></li>
+		</ul>
+	</div>
+</div>
+</nav>
+	<div class="container">
+		<fieldset style="border: 1px dotted BlueViolet ; padding:3px;">
+			<legend>Діагнози</legend>
+			
+			<div class="row">
+				<div class="col-xs-1">Діагноз:</div>
+				<div class="col-xs-5">
+					<div class="form-group has-success has-feedback required">
+						<label class="control-label sr-only" for="direct">Діагноз</label>
+						<input type="text" class="form-control input-sm" placeholder="Діагноз МКБ" 
+						id="historyDiagnos" name="historyDiagnos" ng-model="patientEditing.historyDiagnos" required=""
+						ng-change="openIcd10FilterDialog()"
+						ng-blur="validField2(newPatientForm.historyDiagnos)"
+						tooltip-html-unsafe="Діагноз &lt;b class='required-tooltip'>*&lt;/b>"
+						/>
+						<span class="glyphicon form-control-feedback"></span>
+						<span class="control-label ng-hide" ng-show="validateForm.historyDiagnos.fieldHasError" >
+						Діагноз є обов'язковим і не може бути порожнім!</span>
+					</div>
+				</div>
+				<div class="col-xs-1">
+					<button class="btn btn-default btn-sm" 
+						ng-blur="validField2(newPatientForm.historyDiagnos)"
+						ng-click="openIcd10TreeDialog()">
+						<span class="glyphicon glyphicon-th-list"></span>
+						<span class="caret"></span>
+					</button>
+				</div>
+				<div class="col-xs-5">
+					<div class="form-group has-feedback ">
+						<label class="control-label sr-only" for="direct">Діагноз додаток</label>
+						<input type="text" class="form-control input-sm" placeholder="Діагноз додаток" 
+						id="historyDiagnosAdditional" name="historyDiagnosAdditional" ng-model="patientEditing.historyDiagnosAdditional"
+						ng-change="changeDiagnoseAdditional()"
+						tooltip-html-unsafe="Діагноз  додаток &lt;b class='required-tooltip'>*&lt;/b>"
+						/>
+						<span class="glyphicon form-control-feedback"></span>
+						<span class="control-label" ng-show="isRequired(newPatientForm.historyDiagnosAdditional)">
+						Діагноз додаток є обов'язковим і не може бути порожнім!</span>
+					</div>
+				</div>
+			</div>
+			
+			
+		</fieldset>
+	</div>
+	<div class="container">
+		<fieldset style="border: 1px dotted Blue ; padding:3px;">
+			<legend>Операції</legend>
+		</fieldset>
+	</div>
+	<div class="container">
+		<fieldset style="border: 1px dotted Aqua ; padding:3px;">
+			<legend>Лікування, обстеження, аналізи, рекомендації ...</legend>
+			<fieldset ng-repeat="historyTreatmentAnalysis in patientHistory.historyTreatmentAnalysises ">
+				<legend ng-click="historyTreatmentAnalysis.closeEdit = !historyTreatmentAnalysis.closeEdit"
+				>{{historyTreatmentAnalysis.historyTreatmentAnalysisName}}
+					<span ng-if="!historyTreatmentAnalysis.closeEdit" 
+					class="glyphicon glyphicon-chevron-right"></span>
+					<span ng-if="historyTreatmentAnalysis.closeEdit" 
+					class="glyphicon glyphicon-chevron-down"></span>
+				</legend>
+				<div class="row">
+					<div class="col-md-8">
+						<span ng-bind-html="historyTreatmentAnalysis.historyTreatmentAnalysisText"></span>
+					</div>
+				</div>
+				<div class="row well" collapse="!historyTreatmentAnalysis.closeEdit" >
+					<div class="col-md-6">
+						<div class="app">
+							<div text-angular="text-angular" name="htmlcontent{{$index}}" 
+							ng-model="historyTreatmentAnalysis.historyTreatmentAnalysisText"
+							></div>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+		</fieldset>
+	</div>
+	<div class="container">
+		<fieldset style="border: 1px dotted Chartreuse ; padding:3px;">
+			<legend>Листки непрацездатності</legend>
+		</fieldset>
+	</div>
+	<nav role="navigation" class="navbar navbar-default navbar-fixed-bottom">
+		<div class="container">
+		Text
+		<!-- 
+		<ul class="nav navbar-nav navbar-right">
+		 -->
+		<ol class="list-inline navbar-right">
+			<li>
+				<span class="glyphicon glyphicon-transfer"></span>
+				<a ng-click="patientHistory.collapseMovePatient = !patientHistory.collapseMovePatient "> Переведеня </a>
+			</li>
+			<li>
+				<span class="glyphicon glyphicon-edit"></span> 
+				<a href="/hol/admission/patient?hno=">
+					Редагування </a>
+			</li>
+			<li>
+				<span class="glyphicon glyphicon-share"></span>
+				<a href="/hol/epicrise?hno="> Виписка </a>
+			</li>
+		</ol>
+		</div>
+	</nav>
+</body>
+<script src="/js/jquery-2.1.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/angular.min.js"></script>
+<script src="/js/angular-sanitize.min.js"></script>
+<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
+<script src="/js/bootstrap-datepicker.js"></script>
+<script src='/js/textAngular-sanitize.min.js'></script>
+<script src='/js/textAngular.min.js'></script>
+<script src="/db/config.json.js"></script>
+<script src="/js/cuwy1.directives.js"></script>
+<script src="/js/cuwy1.controller.js"></script>
+<script type="text/javascript">
+var historyFile = "/hol/history_id_"+parameters.hid;
+cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', function ($scope, $http) {
+
+$http({
+	method : 'GET',
+	url : historyFile
+}).success(function(data, status, headers, config) {
+	$scope.patientHistory = data;
+}).error(function(data, status, headers, config) {
+});
+
+} ] );
+</script>
+</html>

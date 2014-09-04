@@ -9,6 +9,7 @@ import org.cuwy1.hol.model.PatientDepartmentMovement;
 
 public class HistoryHolDb {
 	private int historyId, historyNo, historyUrgent, patientId, directId, historyDepartmentIn,
+	historyDepartmentId,
 	historyAgeYear, historyAgeMonth, historyAgeDay ;
 	private Timestamp historyIn;
 	private PatientHolDb patientHolDb;
@@ -150,6 +151,12 @@ public class HistoryHolDb {
 
 	public void setHistoryAgeDay(int historyAgeDay) {
 		this.historyAgeDay = historyAgeDay;
+	}
+	public int getHistoryDepartmentId() {
+		return historyDepartmentId;
+	}
+	public void setHistoryDepartmentId(int historyDepartmentId) {
+		this.historyDepartmentId = historyDepartmentId;
 	}
 
 }

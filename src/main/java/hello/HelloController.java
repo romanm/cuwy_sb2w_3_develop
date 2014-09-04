@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -114,6 +115,11 @@ public class HelloController {
 		return "hol/epicrise";
 	}
 
+	@RequestMapping(value="/hol/epicrise_{historyId}", method=RequestMethod.GET)
+	public String getEpicriseById(@PathVariable Integer historyId) {
+		logger.info("\n Start /hol/epicrise_"+historyId);
+		return "hol/epicrise";
+	}
 	@RequestMapping(value="/hol/history_{historyId}", method=RequestMethod.GET)
 	public String getHistoryById(@PathVariable Integer historyId) {
 		logger.info("\n Start /hol/history_"+historyId);
@@ -341,11 +347,15 @@ public class HelloController {
 			logger.info("\n HistoryId = "+historyId
 					+"\n PatientId = "+historyHolDb.getPatientId()
 					+"\n HistoryNo = "+historyHolDb.getHistoryNo());
+			cuwyDbService1.insertPatientHolDb(historyHolDb.getPatientHolDb());
+			historyHolDb.setHistoryDepartmentId(22);
+			int year = Calendar.getInstance().get(Calendar.YEAR);
+			System.out.println("year = " + year);
 			int nextHistoryNo = cuwyDbService1.nextHistoryNo(2014);
+			historyHolDb.setHistoryNo(nextHistoryNo);
 			int nextHistoryId = cuwyDbService1.getAutoIncrement("history");
 			int nextPatientId = cuwyDbService1.getAutoIncrement("patient");
 			System.out.println(nextHistoryNo+"/"+nextHistoryId+"/"+nextPatientId);
-			cuwyDbService1.insertPatientHolDb(historyHolDb.getPatientHolDb());
 			System.out.println(historyHolDb);
 			cuwyDbService1.insertHistoryHolDb(historyHolDb);
 			DiagnosisOnAdmission diagnosisOnAdmission = historyHolDb.getDiagnosisOnAdmission();

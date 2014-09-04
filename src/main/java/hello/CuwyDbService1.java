@@ -4,9 +4,7 @@ import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -279,10 +277,11 @@ public class CuwyDbService1 {
 			ps.setInt(3, historyHolDb.getPatientHolDb().getPatientId());
 			ps.setInt(4, historyHolDb.getDirectId());
 			ps.setInt(5, historyHolDb.getHistoryDepartmentIn());
-			ps.setInt(6, historyHolDb.getHistoryAgeYear());
-			ps.setInt(7, historyHolDb.getHistoryAgeMonth());
-			ps.setInt(8, historyHolDb.getHistoryAgeDay());
-			ps.setInt(9, historyHolDb.getHistoryId());
+			ps.setInt(6, historyHolDb.getHistoryDepartmentId());
+			ps.setInt(7, historyHolDb.getHistoryAgeYear());
+			ps.setInt(8, historyHolDb.getHistoryAgeMonth());
+			ps.setInt(9, historyHolDb.getHistoryAgeDay());
+			ps.setInt(10, historyHolDb.getHistoryId());
 		}
 	}
 	class HistoryHolDbRowMapper<T> implements RowMapper<T>{
@@ -418,7 +417,10 @@ public class CuwyDbService1 {
 	}
 
 	public List<HistoryTreatmentAnalysis> getHistoryTreatmentAnalysises(int historyId) {
-		String sql ="SELECT * FROM history_treatment_analysis WHERE history_id=?";
+//		String sql ="SELECT * FROM history_treatment_analysis WHERE history_id=?";
+		String sql ="SELECT ta.treatment_analysis_name, hta.* "
+				+ " FROM history_treatment_analysis hta, treatment_analysis ta "
+				+ " WHERE ta.treatment_analysis_id=hta.treatment_analysis_id and hta.history_id = ?";
 		logger.info("\n"+sql+historyId);
 		return jdbcTemplate.query(
 			sql, new Object[] { historyId }, 
@@ -428,6 +430,7 @@ public class CuwyDbService1 {
 						throws SQLException {
 					HistoryTreatmentAnalysis historyTreatmentAnalysis = new HistoryTreatmentAnalysis();
 					historyTreatmentAnalysis.setHistoryTreatmentAnalysisText(rs.getString("history_treatment_analysis_text"));
+					historyTreatmentAnalysis.setHistoryTreatmentAnalysisName(rs.getString("treatment_analysis_name"));
 					historyTreatmentAnalysis.setHistoryTreatmentAnalysisDatetime(rs.getTimestamp("history_treatment_analysis_datetime"));
 					return historyTreatmentAnalysis;
 				}
@@ -490,18 +493,16 @@ public class CuwyDbService1 {
 		jdbcTemplate.update(sqlinsertHistoryDiagnos, new DiagnosisOnAdmissionPSSetter(diagnosisOnAdmission));
 	}
 	String sqlInsertHistory = "INSERT INTO history "
-			+ "( history_in, history_no, history_urgent, patient_id, direct_id, history_department_in "
+			+ "( history_in, history_no, history_urgent, patient_id, direct_id"
+			+ ", history_department_in "
+			+ ", history_department_id "
 			+ ", history_age_year, history_age_month, history_age_day "
 			+ ", history_id "
 			+ ") VALUES "
-			+ "( NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			+ "( NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 //		+ "( now(),'15025',0,32111,1,1,66,0,0)";
 	public void insertHistoryHolDb(final HistoryHolDb historyHolDb) {
-		int year = Calendar.getInstance().get(Calendar.YEAR);
-		System.out.println("year = " + year);
-		int nextHistoryNo = nextHistoryNo(2014);
 		int nextHistoryId = getAutoIncrement("history");
-		historyHolDb.setHistoryNo(nextHistoryNo);
 		historyHolDb.setHistoryId(nextHistoryId);
 		historyHolDb.setHistoryAgeYear(historyHolDb.getPatientHolDb().patientAge());
 		historyHolDb.setHistoryAgeMonth(historyHolDb.getPatientHolDb().patientMonth());
