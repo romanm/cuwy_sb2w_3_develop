@@ -135,7 +135,7 @@
 					<div class="form-group has-success has-feedback required">
 						<label class="control-label sr-only" for="direct">Операція</label>
 						<input type="text" class="form-control input-sm" placeholder="Операція" 
-						id="historyDiagnos" name="historyDiagnos" ng-model="patientEditing.operation" required=""
+						id="historyDiagnos" name="historyDiagnos" ng-model="patientEditing.operationName" required=""
 						ng-change="openIcd10FilterDialog()"
 						ng-blur="validField2(newPatientForm.historyDiagnos)"
 						tooltip-html-unsafe="Операція &lt;b class='required-tooltip'>*&lt;/b>"
@@ -166,7 +166,7 @@
 							>
 							{{operationGroup.operationGroupName}}
 							</span>
-							<ul ng-if="selectedOperationGroup == operationGroup">
+							<ul ng-if="selectedOperationGroup == operationGroup && selectedOperationGroup.open">
 								<li ng-repeat = "operationSubgroup in operationGroup.operationSubGroupChilds">
 								<span ng-if="selectedOperationSubgroup != operationSubgroup" class="glyphicon glyphicon-folder-close"></span>
 								<span ng-if="selectedOperationSubgroup == operationSubgroup" class="glyphicon glyphicon-folder-open"></span>
@@ -176,11 +176,12 @@
 								>
 									{{operationSubgroup.operationSubgroupName}}
 								</span>
-								<ul ng-if="selectedOperationSubgroup == operationSubgroup">
+								<ul ng-if="selectedOperationSubgroup == operationSubgroup && selectedOperationSubgroup.open">
 									<li ng-repeat = "operation in operationSubgroup.operationChilds" >
 										<span ng-if="selectedOperation != operation" class="glyphicon glyphicon-minus"></span>
 										<span ng-if="selectedOperation == operation" class="glyphicon glyphicon-ok"></span>
 										<span ng-click="clickOperation(operation)"
+											ng-dblclick="setPatientEditOperation(operation)"
 											ng-class="{'record-highlight': selectedOperationItem == operation}"
 										>
 										{{operation.operationCode}}. {{operation.operationName}}
@@ -313,24 +314,36 @@ cuwyApp.controller('operationCtrl', [ '$scope', '$http',function ($scope, $http)
 
 	$scope.clickOperationGroup = function(operationGroup) {
 		$scope.selectedOperationGroup = operationGroup;
+		$scope.selectedOperationGroup.open = true;
 		$scope.selectedOperationItem = operationGroup;
 		$scope.deepIndex = 0;
 	}
 	$scope.clickOperationSubgroup = function(operationSubgroup){
 		$scope.selectedOperationSubgroup = operationSubgroup;
+		$scope.selectedOperationSubgroup.open = true;
 		$scope.selectedOperationItem = operationSubgroup;
 		$scope.deepIndex = 1;
 	}
 	$scope.clickOperation = function(operation){
 		$scope.selectedOperation = operation;
+		$scope.selectedOperation.open = true;
 		$scope.selectedOperationItem = operation;
 		$scope.deepIndex = 2;
+	}
+	$scope.setPatientEditOperation = function(operation){
+		$scope.patientEditing.operation = operation;
+		$scope.patientEditing.operationName = 
+			$scope.patientEditing.operation.operationCode
+			+". "
+			+$scope.patientEditing.operation.operationName;
 	}
 	setDeepSelectedOperationItem = function(){
 		if($scope.deepIndex == 1){
 			$scope.selectedOperationItem = $scope.selectedOperationGroup.operationSubGroupChilds[0];
+			$scope.selectedOperationSubgroup = $scope.selectedOperationItem;
 		}else if($scope.deepIndex == 2){
 			$scope.selectedOperationItem = $scope.selectedOperationSubgroup.operationChilds[0];
+			$scope.selectedOperation = $scope.selectedOperationItem;
 		}
 	}
 	setSelectedOperationItem = function(){
@@ -378,27 +391,35 @@ cuwyApp.controller('operationCtrl', [ '$scope', '$http',function ($scope, $http)
 
 	$scope.keys = [];
 	$scope.keys.push({
+		code : KeyCodes.RETURNKEY,
+		action : function() {
+			console.log("RETURNKEY "+$scope.deepIndex);
+			$scope.setPatientEditOperation($scope.selectedOperationItem);
+		}
+	});
+	$scope.keys.push({
 		code : KeyCodes.RIGHTARROW,
 		action : function() {
-			console.log("RIGHTARROW "+$scope.deepIndex);
-			if($scope.deepIndex < 2)
+			if($scope.deepIndex < 2){
 				$scope.deepIndex++;
-			console.log("RIGHTARROW "+$scope.deepIndex);
+				$scope.selectedOperationItem.open = true;
+			}
 			setDeepSelectedOperationItem();
 		}
 	});
 	$scope.keys.push({
 		code : KeyCodes.LEFTARROW,
 		action : function() {
-			console.log("LEFTARROW "+$scope.deepIndex);
 			if($scope.deepIndex > 0)
 				$scope.deepIndex--;
 			setSelectedOperationItem();
+			$scope.selectedOperationItem.open = false;
 		}
 	});
 	$scope.keys.push({
 		code : KeyCodes.UPARROW,
 		action : function() {
+			$scope.selectedOperationItem.open = false;
 			var selectedOperationItemListe = getSelectedOperationItemListe();
 			var previousSelectedIndex = selectedOperationItemListe.indexOf($scope.selectedOperationItem)-1;
 			if(previousSelectedIndex < 0)
@@ -411,13 +432,12 @@ cuwyApp.controller('operationCtrl', [ '$scope', '$http',function ($scope, $http)
 	$scope.keys.push({
 		code : KeyCodes.DOWNARROW,
 		action : function() {
+			$scope.selectedOperationItem.open = false;
 			var selectedOperationItemListe = getSelectedOperationItemListe();
 			var nextSelectedIndex = selectedOperationItemListe.indexOf($scope.selectedOperationItem)+1;
-			console.log("DOWNARROW "+nextSelectedIndex);
 			if(nextSelectedIndex == selectedOperationItemListe.length)
 				nextSelectedIndex = 0;
 			$scope.selectedOperationItem = selectedOperationItemListe[nextSelectedIndex];
-			console.log($scope.selectedOperationItem);
 			setSelectedOperationParent();
 		}
 	});
