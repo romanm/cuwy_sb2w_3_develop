@@ -94,12 +94,14 @@
 	</div>
 </nav>
 
-<div th:fragment="icd10ChoiceDialog" class="row well" collapse="collapseDiagnoseTreeFilter" ng-controller="icd10Ctrl" >
+<div th:fragment="icd10ChoiceDialog" class="row well" collapse="collapseDiagnoseTreeFilter" 
+		ng-controller="icd10Ctrl" >
+
 	<div class="col-xs-9">
 	<button type="button" class="btn btn-default"
 			ng-click="setChangeTreeFilterView()"
 		>
-			<span class="glyphicon glyphicon glyphicon-{{changeTreeFilterView?'list':'filter'}}"></span>
+		<span class="glyphicon glyphicon glyphicon-{{changeTreeFilterView?'list':'filter'}}"></span>
 	</button>
 	<div class="{{changeTreeFilterView?'show':'hidden'}}">
 		filter

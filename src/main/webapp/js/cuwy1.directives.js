@@ -78,7 +78,7 @@ Date.prototype.addMonths2 = function (num) {
     return value;
 }
 
-var cuwyApp = angular.module('cuwyApp', ['ui.bootstrap', 'ngSanitize']);
+var cuwyApp = angular.module('cuwyApp', ['ui.bootstrap', 'ngSanitize', 'textAngular']);
 
 cuwyApp.directive('autoFocus', function($timeout) {
 	return {

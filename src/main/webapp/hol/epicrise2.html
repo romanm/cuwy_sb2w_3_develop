@@ -36,7 +36,7 @@
 		}
 	</style>
 </head>
-<body>
+<body key-trap="">
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top">
 <div class="container">
 	<div class="navbar-header">
@@ -48,13 +48,20 @@
 				</a>
 			</li>
 			<li class="active">
-			ІХ::Короткий перегляд
+			ІХ <u>{{patientHistory.historyNo}}</u> ::Виписка::
+			<span>
+				{{patientHistory.patientHolDb.patientSurname}}, 
+				{{patientHistory.patientHolDb.patientPersonalName}} 
+				{{patientHistory.patientHolDb.patientPatronymic}} 
+			</span>
 			</li>
 		</ol>
 	</div>
 	<div class="collapse navbar-collapse">
 		<ul class="nav navbar-nav navbar-right">
-			<li class="dropdown"><a title="Premium Bootstrap Themes &amp; Templates" data-toggle="dropdown" class="dropdown-toggle" href="#" aria-haspopup="true" aria-expanded="false"><i class="fa fa-star text-yellow"></i> меню <b class="caret"></b></a>
+			<li class="dropdown"><a title="Premium Bootstrap Themes &amp; Templates" 
+			data-toggle="dropdown" class="dropdown-toggle" href="#" aria-haspopup="true" 
+			aria-expanded="false"><i class="fa fa-star text-yellow"></i> меню <b class="caret"></b></a>
 				<ul class="dropdown-menu">
 					<li><a href="/hol/history.html?hno=15026">Короткий перегляд</a></li>
 					<li><a href="/hol/admission/statistic.html">Журнал обліку хворих</a></li>
@@ -112,33 +119,130 @@
 					</div>
 				</div>
 			</div>
-			
-			
 		</fieldset>
 	</div>
 	<div class="container">
 		<fieldset style="border: 1px dotted Blue ; padding:3px;">
-			<legend>Операції</legend>
+			<legend ng-click="collapseOperation = !collapseOperation">Операції
+			<a href="#">
+				<span ng-if="!collapseOperation" class="glyphicon glyphicon-chevron-right"></span>
+				<span ng-if="collapseOperation" class="glyphicon glyphicon-chevron-down"></span>
+			</a>
+			</legend>
+			<div ng-show="collapseOperation">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group has-success has-feedback required">
+						<label class="control-label sr-only" for="direct">Операція</label>
+						<input type="text" class="form-control input-sm" placeholder="Операція" 
+						id="historyDiagnos" name="historyDiagnos" ng-model="patientEditing.operation" required=""
+						ng-change="openIcd10FilterDialog()"
+						ng-blur="validField2(newPatientForm.historyDiagnos)"
+						tooltip-html-unsafe="Операція &lt;b class='required-tooltip'>*&lt;/b>"
+						/>
+						<span class="glyphicon form-control-feedback"></span>
+						<span class="control-label ng-hide" ng-show="validateForm.historyDiagnos.fieldHasError" >
+						Операція є обов'язковим і не може бути порожнім!</span>
+					</div>
+					
+				</div>
+				<div class="col-md-1">
+					<button class="btn btn-default btn-sm" 
+							ng-click="collapseOperationDialog = !collapseOperationDialog">
+						<span class="glyphicon glyphicon-th-list"></span>
+						<span class="caret"></span>
+					</button>
+				</div>
+			</div>
+			<div class="row" collapse="!collapseOperationDialog" ng-controller="operationCtrl">
+				<div class="col-md-7 well">
+					<ul>
+						<li ng-repeat = "operationGroup in operationTree">
+							<span ng-if="selectedOperationGroup != operationGroup" class="glyphicon glyphicon-folder-close"></span>
+							<span ng-if="selectedOperationGroup == operationGroup" class="glyphicon glyphicon-folder-open"></span>
+							<span ng-click="clickOperationGroup(operationGroup)"
+								ng-class="{'record-highlight': selectedOperationItem == operationGroup
+								, 'record-highlight-parent': selectedOperationGroup == operationGroup}"
+							>
+							{{operationGroup.operationGroupName}}
+							</span>
+							<ul ng-if="selectedOperationGroup == operationGroup">
+								<li ng-repeat = "operationSubgroup in operationGroup.operationSubGroupChilds">
+								<span ng-if="selectedOperationSubgroup != operationSubgroup" class="glyphicon glyphicon-folder-close"></span>
+								<span ng-if="selectedOperationSubgroup == operationSubgroup" class="glyphicon glyphicon-folder-open"></span>
+								<span ng-click="clickOperationSubgroup(operationSubgroup)"
+									ng-class="{'record-highlight': selectedOperationItem == operationSubgroup
+									, 'record-highlight-parent': selectedOperationSubgroup == operationSubgroup}"
+								>
+									{{operationSubgroup.operationSubgroupName}}
+								</span>
+								<ul ng-if="selectedOperationSubgroup == operationSubgroup">
+									<li ng-repeat = "operation in operationSubgroup.operationChilds" >
+										<span ng-if="selectedOperation != operation" class="glyphicon glyphicon-minus"></span>
+										<span ng-if="selectedOperation == operation" class="glyphicon glyphicon-ok"></span>
+										<span ng-click="clickOperation(operation)"
+											ng-class="{'record-highlight': selectedOperationItem == operation}"
+										>
+										{{operation.operationCode}}. {{operation.operationName}}
+										</span>
+									</li>
+								</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+			
+			</div>
 		</fieldset>
 	</div>
 	<div class="container">
 		<fieldset style="border: 1px dotted Aqua ; padding:3px;">
-			<legend>Лікування, обстеження, аналізи, рекомендації ...</legend>
+			<legend>Лікування, обстеження, аналізи, рекомендації ...
+			<button type="button" ng-click="epicrisisTherapyMenuAdd = !epicrisisTherapyMenuAdd" class="btn btn-default">
+				Додати
+				<span ng-show="!epicrisisTherapyMenuAdd" class="glyphicon glyphicon-plus"></span>
+				<span ng-show="epicrisisTherapyMenuAdd" class="glyphicon glyphicon-minus"></span>
+			</button>
+			<span ng-show="epicrisisTherapyMenuAdd">
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown"><a title="Premium Bootstrap Themes &amp; Templates" 
+				data-toggle="dropdown" class="dropdown-toggle" href="#" aria-haspopup="true" 
+				aria-expanded="false"> додати новий розділ виписки <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li ng-repeat = "treatmentAnalys in configHol.treatmentAnalysis| filter:'false'"
+						ng-click="addTreatmentGroup(treatmentAnalys)"
+						>
+						<a href="#">
+							{{treatmentAnalys.treatment_analysis_name}}
+						</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+			
+			</span>
+			</legend>
 			<fieldset ng-repeat="historyTreatmentAnalysis in patientHistory.historyTreatmentAnalysises ">
-				<legend ng-click="historyTreatmentAnalysis.closeEdit = !historyTreatmentAnalysis.closeEdit"
-				>{{historyTreatmentAnalysis.historyTreatmentAnalysisName}}
+				<legend ng-click="accordionEpicrisis($index)">
+				{{historyTreatmentAnalysis.historyTreatmentAnalysisName}}
+				<a href="#">
 					<span ng-if="!historyTreatmentAnalysis.closeEdit" 
 					class="glyphicon glyphicon-chevron-right"></span>
 					<span ng-if="historyTreatmentAnalysis.closeEdit" 
 					class="glyphicon glyphicon-chevron-down"></span>
+				</a>
 				</legend>
-				<div class="row">
+				<div class="row" collapse="historyTreatmentAnalysis.closeEdit" >
 					<div class="col-md-8">
-						<span ng-bind-html="historyTreatmentAnalysis.historyTreatmentAnalysisText"></span>
+						<span ng-bind-html="historyTreatmentAnalysis.historyTreatmentAnalysisText"
+						ng-click="accordionEpicrisis($index)"
+						></span>
 					</div>
 				</div>
 				<div class="row well" collapse="!historyTreatmentAnalysis.closeEdit" >
-					<div class="col-md-6">
+					<div class="col-md-10">
 						<div class="app">
 							<div text-angular="text-angular" name="htmlcontent{{$index}}" 
 							ng-model="historyTreatmentAnalysis.historyTreatmentAnalysisText"
@@ -156,14 +260,23 @@
 	</div>
 	<nav role="navigation" class="navbar navbar-default navbar-fixed-bottom">
 		<div class="container">
-		Text
+		<button type="button" ng-click="alertInWork()" class="btn btn-default">
+			<span class="glyphicon glyphicon-floppy-disk"></span>
+			Зберегти
+		</button>
 		<!-- 
 		<ul class="nav navbar-nav navbar-right">
 		 -->
 		<ol class="list-inline navbar-right">
 			<li>
+				<span class="glyphicon glyphicon-eye-open"></span>
+				<a href="/hol/history_{{patientHistory.historyId}}">
+					Перегляд </a>
+			</li>
+			<li>
 				<span class="glyphicon glyphicon-transfer"></span>
-				<a ng-click="patientHistory.collapseMovePatient = !patientHistory.collapseMovePatient "> Переведеня </a>
+				<a ng-click="patientHistory.collapseMovePatient = !patientHistory.collapseMovePatient "> 
+				Переведеня </a>
 			</li>
 			<li>
 				<span class="glyphicon glyphicon-edit"></span> 
@@ -187,11 +300,150 @@
 <script src='/js/textAngular-sanitize.min.js'></script>
 <script src='/js/textAngular.min.js'></script>
 <script src="/db/config.json.js"></script>
+<script src="/db/operationTree.json.js"></script>
 <script src="/js/cuwy1.directives.js"></script>
 <script src="/js/cuwy1.controller.js"></script>
 <script type="text/javascript">
+cuwyApp.controller('operationCtrl', [ '$scope', '$http',function ($scope, $http) {
+	console.log("operationCtrl");
+	$scope.deepIndex = 0;
+	$scope.selectedOperationItem = $scope.operationTree[0];
+	$scope.selectedOperationGroup = $scope.operationTree[0];
+	$scope.selectedOperationSubgroup = $scope.operationTree[$scope.operationTree.length - 1].operationSubGroupChilds[0];
+
+	$scope.clickOperationGroup = function(operationGroup) {
+		$scope.selectedOperationGroup = operationGroup;
+		$scope.selectedOperationItem = operationGroup;
+		$scope.deepIndex = 0;
+	}
+	$scope.clickOperationSubgroup = function(operationSubgroup){
+		$scope.selectedOperationSubgroup = operationSubgroup;
+		$scope.selectedOperationItem = operationSubgroup;
+		$scope.deepIndex = 1;
+	}
+	$scope.clickOperation = function(operation){
+		$scope.selectedOperation = operation;
+		$scope.selectedOperationItem = operation;
+		$scope.deepIndex = 2;
+	}
+	setDeepSelectedOperationItem = function(){
+		if($scope.deepIndex == 1){
+			$scope.selectedOperationItem = $scope.selectedOperationGroup.operationSubGroupChilds[0];
+		}else if($scope.deepIndex == 2){
+			$scope.selectedOperationItem = $scope.selectedOperationSubgroup.operationChilds[0];
+		}
+	}
+	setSelectedOperationItem = function(){
+		if($scope.deepIndex == 0){
+			$scope.selectedOperationItem = $scope.selectedOperationGroup;
+		}else if($scope.deepIndex == 1){
+			$scope.selectedOperationItem = $scope.selectedOperationSubgroup;
+		}
+	}
+	setSelectedOperationParent = function(){
+		if($scope.deepIndex == 0){
+			$scope.selectedOperationGroup = $scope.selectedOperationItem;
+		}else if($scope.deepIndex == 1){
+			$scope.selectedOperationSubgroup = $scope.selectedOperationItem;
+		}else if($scope.deepIndex == 2){
+			$scope.selectedOperation = $scope.selectedOperationItem;
+		}
+	}
+	getSelectedOperationItemListe = function(){
+		if($scope.operationTree.indexOf($scope.selectedOperationItem) >= 0){
+			$scope.deepIndex = 0;
+			return $scope.operationTree;
+		}
+		if($scope.selectedOperationGroup.operationSubGroupChilds.indexOf($scope.selectedOperationItem) >= 0){
+			$scope.deepIndex = 1;
+			return $scope.selectedOperationGroup.operationSubGroupChilds;
+		}
+		if($scope.selectedOperationSubgroup.operationChilds.indexOf($scope.selectedOperationItem) >= 0){
+			$scope.deepIndex = 2;
+			return $scope.selectedOperationSubgroup.operationChilds;
+		}
+	}
+
+	var KeyCodes = {
+			UPARROW : 38,
+			DOWNARROW : 40,
+			LEFTARROW : 37,
+			RIGHTARROW : 39,
+			RETURNKEY : 13,
+		BACKSPACE : 8,
+		TABKEY : 9,
+		ESCAPE : 27,
+		SPACEBAR : 32,
+	};
+
+	$scope.keys = [];
+	$scope.keys.push({
+		code : KeyCodes.RIGHTARROW,
+		action : function() {
+			console.log("RIGHTARROW "+$scope.deepIndex);
+			if($scope.deepIndex < 2)
+				$scope.deepIndex++;
+			console.log("RIGHTARROW "+$scope.deepIndex);
+			setDeepSelectedOperationItem();
+		}
+	});
+	$scope.keys.push({
+		code : KeyCodes.LEFTARROW,
+		action : function() {
+			console.log("LEFTARROW "+$scope.deepIndex);
+			if($scope.deepIndex > 0)
+				$scope.deepIndex--;
+			setSelectedOperationItem();
+		}
+	});
+	$scope.keys.push({
+		code : KeyCodes.UPARROW,
+		action : function() {
+			var selectedOperationItemListe = getSelectedOperationItemListe();
+			var previousSelectedIndex = selectedOperationItemListe.indexOf($scope.selectedOperationItem)-1;
+			if(previousSelectedIndex < 0)
+				previousSelectedIndex = selectedOperationItemListe.length-1;
+			$scope.selectedOperationItem = selectedOperationItemListe[previousSelectedIndex];
+			setSelectedOperationParent();
+		}
+	});
+
+	$scope.keys.push({
+		code : KeyCodes.DOWNARROW,
+		action : function() {
+			var selectedOperationItemListe = getSelectedOperationItemListe();
+			var nextSelectedIndex = selectedOperationItemListe.indexOf($scope.selectedOperationItem)+1;
+			console.log("DOWNARROW "+nextSelectedIndex);
+			if(nextSelectedIndex == selectedOperationItemListe.length)
+				nextSelectedIndex = 0;
+			$scope.selectedOperationItem = selectedOperationItemListe[nextSelectedIndex];
+			console.log($scope.selectedOperationItem);
+			setSelectedOperationParent();
+		}
+	});
+
+	$scope.$on('keydown', function(msg, obj) {
+		var code = obj.code;
+		$scope.keys.forEach(function(o) {
+			if (o.code !== code) {
+				return;
+			}
+			o.action();
+			$scope.$apply();
+		});
+	});
+
+} ] );
+</script>
+<script type="text/javascript">
 var historyFile = "/hol/history_id_"+parameters.hid;
 cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', function ($scope, $http) {
+	console.log("EpicriseCtrl");
+
+	$scope.patientEditing = {};
+	$scope.operationTree = operationTree;
+	$scope.configHol = configHol;
+	console.log("EpicriseCtrl");
 
 $http({
 	method : 'GET',
@@ -200,6 +452,23 @@ $http({
 	$scope.patientHistory = data;
 }).error(function(data, status, headers, config) {
 });
+
+$scope.addTreatmentGroup = function(treatmentAnalys){
+	console.log(treatmentAnalys);
+}
+$scope.accordionEpicrisis = function(edIndex){
+	angular.forEach($scope.patientHistory.historyTreatmentAnalysises, function(hta, index) {
+		if(index == edIndex){
+			hta.closeEdit = !hta.closeEdit;
+		}else{
+			hta.closeEdit = false;
+		}
+	});
+}
+
+$scope.alertInWork = function(){
+	alert("В процесі - розробка триває ");
+}
 
 } ] );
 </script>

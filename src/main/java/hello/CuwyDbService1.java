@@ -21,6 +21,9 @@ import org.cuwy1.hol.model.RegionHol;
 import org.cuwy1.holDb.model.HistoryHolDb;
 import org.cuwy1.holDb.model.PatientHolDb;
 import org.cuwy1.icd10.Icd10UaClass;
+import org.cuwy1.operation.Operation;
+import org.cuwy1.operation.OperationGroup;
+import org.cuwy1.operation.OperationSubGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -57,6 +60,20 @@ public class CuwyDbService1 {
 				new Icd2TreeMapper(icd10Class));
 		return icd10Class;
 	}
+	String sqlOperationGroup = "SELECT * FROM operation_group";
+	String sqlOperationSubGroup = "select * from operation_subgroup";
+	String sqlOperation = "SELECT * FROM operation";
+	public List<OperationGroup> getOperationTree() {
+		logger.info("\n "+sqlOperationGroup+"\n "+sqlOperationSubGroup+"\n "+sqlOperation);
+		Map<Integer, OperationGroup> operationGroupMap = new HashMap<Integer, OperationGroup>();
+		Map<Integer, OperationSubGroup> operationSubGroupMap = new HashMap<Integer, OperationSubGroup>();
+		Operation operationTreeRoot = new Operation();
+		List<OperationGroup> operationGroups
+			= jdbcTemplate.query( sqlOperationGroup, new OperationGroupMapper(operationGroupMap));
+		jdbcTemplate.query( sqlOperationSubGroup, new OperationSubGroupMapper(operationGroupMap,operationSubGroupMap));
+		jdbcTemplate.query( sqlOperation, new OperationMapper(operationSubGroupMap));
+		return operationGroups;
+	}
 	public Icd10UaClass getIcd10UaGroups() {
 		Icd10UaClass icd10UaRoot = new Icd10UaClass();
 		String sql = "SELECT * FROM icd i1 WHERE i1.icd_code not like '%.%'";
@@ -66,6 +83,74 @@ public class CuwyDbService1 {
 				sql,
 				new Icd2TreeMapper(icd10UaRoot));
 		return icd10UaRoot;
+	}
+	class OperationSubGroupMapper<T> implements RowMapper<T>{
+
+		private Map<Integer, OperationGroup> operationGroupMap;
+		private Map<Integer, OperationSubGroup> operationSubGroupMap;
+
+		public OperationSubGroupMapper(Map<Integer, OperationGroup> operationGroupMap,
+				Map<Integer, OperationSubGroup> operationSubGroupMap) {
+			this.operationSubGroupMap = operationSubGroupMap;
+			this.operationGroupMap = operationGroupMap;
+		}
+
+		@Override
+		public T mapRow(ResultSet rs, int arg1) throws SQLException {
+			OperationSubGroup operationSubGroup = new OperationSubGroup();
+			operationSubGroup.setOperationSubgroupId(rs.getInt("operation_subgroup_id"));
+			operationSubGroup.setOperationGroupId(rs.getInt("operation_group_id"));
+			operationSubGroup.setOperationSubgroupSort(rs.getInt("operation_subgroup_sort"));
+			operationSubGroup.setOperationSubgroupName(rs.getString("operation_subgroup_name"));
+			OperationGroup operationGroup = operationGroupMap.get(operationSubGroup.getOperationGroupId());
+			if(null == operationGroup.getOperationSubGroupChilds())
+				operationGroup.setOperationSubGroupChilds(new ArrayList<OperationSubGroup>());
+			operationGroup.getOperationSubGroupChilds().add(operationSubGroup);
+			operationSubGroupMap.put(operationSubGroup.getOperationSubgroupId(), operationSubGroup);
+			return (T) operationSubGroup;
+		}
+		
+	}
+	class OperationGroupMapper<T> implements RowMapper<T>{
+		private Map<Integer, OperationGroup> operationGroupMap;
+		public OperationGroupMapper(Map<Integer, OperationGroup> operationGroupMap) {
+			this.operationGroupMap = operationGroupMap;
+		}
+
+		@Override
+		public T mapRow(ResultSet rs, int index) throws SQLException {
+			OperationGroup operationGroup = new OperationGroup();
+			operationGroup.setOperationGroupId(rs.getInt("operation_group_id"));
+			operationGroup.setOperationGroupName(rs.getString("operation_group_name"));
+			operationGroup.setOperationGroupSort(rs.getInt("operation_group_sort"));
+			operationGroupMap.put(operationGroup.getOperationGroupId(), operationGroup);
+			return (T) operationGroup;
+		}
+		
+	}
+	class OperationMapper<T> implements RowMapper<T>{
+
+		private Map<Integer, OperationSubGroup> operationSubGroupMap;
+
+		public OperationMapper(Map<Integer, OperationSubGroup> operationSubGroupMap) {
+			this.operationSubGroupMap = operationSubGroupMap;
+		}
+
+		@Override
+		public T mapRow(ResultSet rs, int index) throws SQLException {
+			Operation operation = new Operation();
+			operation.setOperationId(rs.getInt("operation_id"));
+			operation.setOperationSubgroupId(rs.getInt("operation_subgroup_id"));
+			operation.setOperationCode(rs.getString("operation_code"));
+			operation.setOperationName(rs.getString("operation_name"));
+			operation.setOperationUrgent(rs.getBoolean("operation_urgent"));
+			OperationSubGroup operationSubGroup = operationSubGroupMap.get(operation.getOperationSubgroupId());
+			if(null == operationSubGroup.getOperationChilds())
+				operationSubGroup.setOperationChilds(new ArrayList<Operation>());
+			operationSubGroup.getOperationChilds().add(operation);
+			return (T) operation;
+		}
+		
 	}
 	class Icd2TreeMapper<T> implements RowMapper<T>{
 
@@ -143,6 +228,14 @@ public class CuwyDbService1 {
 		return jdbcTemplate.queryForObject(
 				"SELECT * FROM department WHERE department_id = ?", 
 				new Object[] { id }, new DepartmentHolRowMapper());
+	}
+	public List<Map<String, Object>> getTreatmentAnalysis() {
+		String sql = "SELECT "
+				+ " treatment_analysis_id,treatment_analysis_name,treatment_analysis_type "
+				+ " FROM treatment_analysis "
+				;
+		List<Map<String, Object>> directsHol = jdbcTemplate.queryForList(sql);
+		return directsHol;
 	}
 	public List<Map<String, Object>> getDirectsHol() {
 		String sql = "select * from direct";
@@ -913,6 +1006,5 @@ public class CuwyDbService1 {
 		Double nextId = (Double) nextIdList.get(0).get("nextId");
 		return nextId.intValue();
 	}
-
 
 }

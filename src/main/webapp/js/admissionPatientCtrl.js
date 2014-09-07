@@ -4,7 +4,7 @@ console.log("historyFile = "+historyFile);
 
 cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope, $http) {
 
-	$scope.title = "Створити історію хвороби";
+	$scope.title = "Приймальне :: Створити історію хвороби";
 	$scope.addresses = configHol.countries;
 	$scope.directs = configHol.directs;
 	$scope.departmentsHol = configHol.departments;

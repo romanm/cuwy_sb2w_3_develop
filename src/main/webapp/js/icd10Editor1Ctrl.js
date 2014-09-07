@@ -70,15 +70,15 @@ cuwyApp.controller('icd10Ctrl', [ '$scope', '$http',function ($scope, $http) {
 	console.log("cuwyAppCtrl");
 
 	var KeyCodes = {
+			UPARROW : 38,
+			DOWNARROW : 40,
+			LEFTARROW : 37,
+			RIGHTARROW : 39,
+			RETURNKEY : 13,
 		BACKSPACE : 8,
 		TABKEY : 9,
-		RETURNKEY : 13,
 		ESCAPE : 27,
 		SPACEBAR : 32,
-		LEFTARROW : 37,
-		UPARROW : 38,
-		RIGHTARROW : 39,
-		DOWNARROW : 40,
 	};
 
 	$scope.keys = [];
@@ -103,6 +103,7 @@ cuwyApp.controller('icd10Ctrl', [ '$scope', '$http',function ($scope, $http) {
 			console.log("LEFTARROW " + $scope.focusDeepIndex);
 		}
 	});
+
 	$scope.keys.push({
 		code : KeyCodes.RIGHTARROW,
 		action : function() {

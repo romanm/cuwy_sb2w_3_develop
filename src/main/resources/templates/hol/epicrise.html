@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="cuwyApp" ng-controller="HistoryCtrl">
+<html ng-app="cuwyApp" ng-controller="EpicriseCtrl">
 <head>
 	<title>ХОЛ::
 	{{patientHistory.patientDepartmentMovements
@@ -11,4 +11,18 @@
 <body>
 epicrise
 </body>
+<script type="text/javascript">
+var historyFile = "/hol/history_id_"+parameters.hid;
+cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', function ($scope, $http) {
+
+$http({
+	method : 'GET',
+	url : historyFile
+}).success(function(data, status, headers, config) {
+	$scope.patientHistory = data;
+}).error(function(data, status, headers, config) {
+});
+
+} ] );
+</script>
 </html>

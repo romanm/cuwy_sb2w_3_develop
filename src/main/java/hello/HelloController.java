@@ -31,6 +31,8 @@ import org.cuwy1.icd10.Icd10Class;
 import org.cuwy1.icd10.Icd10UaClass;
 import org.cuwy1.model1.Department;
 import org.cuwy1.model1.PatientDiagnosis;
+import org.cuwy1.operation.Operation;
+import org.cuwy1.operation.OperationGroup;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -201,6 +203,12 @@ public class HelloController {
 		List<Map<String, Object>> icd10UaAllToFile = cuwyDbService1.icd10UaAllToFile();
 		writeToJsDbFile("var icd10uaAll = ", icd10UaAllToFile, icd10uaAllFileName);
 		return icd10UaAllToFile;
+	}
+	@RequestMapping(value = "/operationTree/toFile", method = RequestMethod.GET)
+	public @ResponseBody List<OperationGroup> getOperationTreeToFile() {
+		List<OperationGroup> operationTree = cuwyDbService1.getOperationTree();
+		writeToJsDbFile("var operationTree = ", operationTree, operationTreeFileName);
+		return operationTree;
 	}
 	@RequestMapping(value = "/icd10uaGroups/toFile", method = RequestMethod.GET)
 	public @ResponseBody Icd10UaClass getIcd10UaGroupsToFile() {
@@ -556,6 +564,7 @@ public class HelloController {
 	String configJsFileName = "config.json.js";
 	String icd10uaAllFileName = "icd10uaAll.json.js";
 	String icd10uaGroupsFileName = "icd10uaGroups.json.js";
+	String operationTreeFileName = "operationTree.json.js";
 	String icd10FileName = "icd102010en.xml";
 
 	@RequestMapping(value = "/config/create_file", method = RequestMethod.GET)
@@ -564,9 +573,11 @@ public class HelloController {
 		List<CountryHol> readCountries = cuwyDbService1.readCountries();
 		List<DepartmentHol> departmentHol = cuwyDbService1.getDepartmentsHol();
 		List<Map<String, Object>> directsHol = cuwyDbService1.getDirectsHol();
+		List<Map<String, Object>> treatmentAnalysis = cuwyDbService1.getTreatmentAnalysis();
 		configHol.setCountries(readCountries);
 		configHol.setDepartments(departmentHol);
 		configHol.setDirects(directsHol);
+		configHol.setTreatmentAnalysis(treatmentAnalysis);
 //		writeToJsonDbFile(readCountries, addressesJsonFileName);
 		writeToJsDbFile("var configHol = ", configHol, configJsFileName);
 		return configHol;
