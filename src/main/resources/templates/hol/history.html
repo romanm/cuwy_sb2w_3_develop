@@ -154,6 +154,18 @@
 				</div>
 				<hr class="shortPatienHistory" />
 				<div ng-show="patientHistory.historyTreatmentAnalysises.length > 0">
+				<div ng-if="patientHistory.operationHistorys">
+					<h3>Операції</h3>
+					<div ng-repeat="operation in patientHistory.operationHistorys">
+					{{operation.operation_history_start | date:'dd.MM.yyyy HH:mm'}}
+					-
+					{{operation.operation_history_end | date:'HH:mm'}}
+						<span
+							title="{{operation.operation_group_name}}/{{operation.operation_subgroup_name}}"
+						>{{operation.operation_name}}.</span>
+						<span>{{operation.operation_additional}}</span>
+					</div>
+				</div>
 				<h3>Епикриз</h3>
 				<!-- 
 				<u><b>Перебіг хвороби</b></u>:
@@ -236,6 +248,7 @@
 		</div>
 	</nav>
 	<div th:replace="hol1 :: js-lib" />
+	<script src="/db/operationTree.json.js"></script>
 	<script src="/js/historyCtrl.js"></script>
 </body>
 </html>

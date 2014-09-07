@@ -331,6 +331,7 @@ cuwyApp.controller('operationCtrl', [ '$scope', '$http',function ($scope, $http)
 		$scope.deepIndex = 2;
 	}
 	$scope.setPatientEditOperation = function(operation){
+		console.log($scope.selectedOperationGroup);
 		$scope.patientEditing.operation = operation;
 		$scope.patientEditing.operationName = 
 			$scope.patientEditing.operation.operationCode

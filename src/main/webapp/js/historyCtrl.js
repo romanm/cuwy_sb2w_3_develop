@@ -1,8 +1,10 @@
 var historyFile = window.location.pathname.replace(/history_/,"history_id_");
 
-cuwyApp.controller('HistoryCtrl', [ '$scope', '$http', function ($scope, $http) {
+cuwyApp.controller('HistoryCtrl', [ '$scope', '$http', '$filter', function ($scope, $http, $filter) {
 
+	$scope.operationTree = operationTree;
 	$scope.departmentsHol = configHol.departments;
+
 	$scope.patientEditing = {}
 	$scope.patient = {
 		name: 'Patient name',

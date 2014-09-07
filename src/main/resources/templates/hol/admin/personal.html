@@ -39,7 +39,7 @@
 		$scope.title = "Працівники";
 		$scope.addresses = addresses;
 		$scope.filterPersonalList = function(){
-			return $filter('filter')($scope.personalList, $scope.query)
+			return $filter('filter')($scope.personalList, $scope.query);
 		}
 		$scope.openCountry = function(country)	{ country.openCountry = !country.openCountry; }
 		$scope.openDistrict = function(district){ district.openDistrict = !district.openDistrict; }

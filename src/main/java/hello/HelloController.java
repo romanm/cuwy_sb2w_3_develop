@@ -400,7 +400,13 @@ public class HelloController {
 	public @ResponseBody HistoryHolDb getHolPatientHistoryById(@PathVariable Integer historyId) throws IOException {
 		logger.info("\n Start /hol/history_id_"+historyId);
 		HistoryHolDb shortPatientHistory = getShortPatientHistoryById(historyId);
+		getOperation(shortPatientHistory);
 		return shortPatientHistory;
+	}
+
+	private void getOperation(HistoryHolDb shortPatientHistory) {
+		List<Map<String, Object>> operationHistorys = cuwyDbService1.getOperationHistorys(shortPatientHistory);
+		shortPatientHistory.setOperationHistorys(operationHistorys);
 	}
 
 	@RequestMapping(value = "/hol/history_no_{historyNo}", method = RequestMethod.GET)

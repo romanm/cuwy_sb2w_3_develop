@@ -2,6 +2,7 @@ package org.cuwy1.holDb.model;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import org.cuwy1.hol.model.DiagnosisOnAdmission;
 import org.cuwy1.hol.model.HistoryTreatmentAnalysis;
@@ -17,6 +18,7 @@ public class HistoryHolDb {
 	private List<PatientDepartmentMovement> patientDepartmentMovements;
 	private List<HistoryTreatmentAnalysis> historyTreatmentAnalysises;
 	private DiagnosisOnAdmission diagnosisOnAdmission;
+	private List<Map<String, Object>> operationHistorys;
 
 	@Override
 	public String toString() {
@@ -158,5 +160,10 @@ public class HistoryHolDb {
 	public void setHistoryDepartmentId(int historyDepartmentId) {
 		this.historyDepartmentId = historyDepartmentId;
 	}
-
+	public List<Map<String, Object>> getOperationHistorys() {
+		return operationHistorys;
+	}
+	public void setOperationHistorys(List<Map<String, Object>> operationHistorys) {
+		this.operationHistorys = operationHistorys;
+	}
 }

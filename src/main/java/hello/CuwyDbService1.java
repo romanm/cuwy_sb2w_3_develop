@@ -1007,4 +1007,18 @@ public class CuwyDbService1 {
 		return nextId.intValue();
 	}
 
+	public List<Map<String, Object>> getOperationHistorys(HistoryHolDb shortPatientHistory) {
+		String sql = "SELECT og.operation_group_name, osg.operation_subgroup_name, o.operation_name, oh.* "
+				+ "\n"
+				+ " FROM operation_history oh, operation_group og, operation_subgroup osg, operation o "
+				+ "\n"
+				+ " WHERE og.operation_group_id=oh.operation_group_id "
+				+ " AND osg.operation_subgroup_id=oh.operation_subgroup_id "
+				+ " AND o.operation_id=oh.operation_id and oh.history_id = ?";
+		logger.info("\n"+sql.replaceFirst("\\?", ""+shortPatientHistory.getHistoryId()));
+		List<Map<String, Object>> lmso
+			= jdbcTemplate.queryForList(sql, new Object[] { shortPatientHistory.getHistoryId()});
+		return lmso;
+	}
+
 }
