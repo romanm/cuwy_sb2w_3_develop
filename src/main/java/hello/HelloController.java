@@ -31,7 +31,6 @@ import org.cuwy1.icd10.Icd10Class;
 import org.cuwy1.icd10.Icd10UaClass;
 import org.cuwy1.model1.Department;
 import org.cuwy1.model1.PatientDiagnosis;
-import org.cuwy1.operation.Operation;
 import org.cuwy1.operation.OperationGroup;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -303,17 +302,21 @@ public class HelloController {
 
 	private void addShortPatientHistory(HistoryHolDb historyHolDb) {
 		System.out.println(1);
+		int historyId = historyHolDb.getHistoryId();
+		System.out.println(historyId);
 		List<PatientDepartmentMovement> patientDepartmentMovements
-		= cuwyDbService1.getPatientDepartmentMovements(historyHolDb.getHistoryId());
+			= cuwyDbService1.getPatientDepartmentMovements(historyId);
+		System.out.println(patientDepartmentMovements);
 		System.out.println(2);
 		historyHolDb.setPatientDepartmentMovements(patientDepartmentMovements);
 		List<HistoryTreatmentAnalysis> historyTreatmentAnalysises
-		= cuwyDbService1.getHistoryTreatmentAnalysises(historyHolDb.getHistoryId());
+		= cuwyDbService1.getHistoryTreatmentAnalysises(historyId);
 		historyHolDb.setHistoryTreatmentAnalysises(historyTreatmentAnalysises);
 		DiagnosisOnAdmission diagnosisOnAdmission
-		= cuwyDbService1.getDiagnosisOnAdmission(historyHolDb.getHistoryId());
+		= cuwyDbService1.getDiagnosisOnAdmission(historyId);
 		historyHolDb.setDiagnosisOnAdmission(diagnosisOnAdmission);
 		PatientHolDb patientHolDb = cuwyDbService1.getPatientHolDb(historyHolDb.getPatientId());
+		System.out.println(patientHolDb);
 		historyHolDb.setPatientHolDb(patientHolDb);
 	}
 
@@ -429,6 +432,7 @@ public class HelloController {
 		DepartmentHol departmentHol = cuwyDbService1.getDepartmentsHol(departmentId);
 		List<PatientDiagnosisHol> departmentsHolPatientsDiagnose 
 		= cuwyDbService1.getDepartmentsHolPatientsDiagnose(departmentId);
+		System.out.println(departmentsHolPatientsDiagnose);
 		departmentHol.setPatientesDiagnosisHol(departmentsHolPatientsDiagnose);
 		return departmentHol;
 	}
@@ -459,6 +463,8 @@ public class HelloController {
 		drugBooking.setNumber(2);
 		drugBooking.setNumberUnits("амп");
 		drugsBooking.add(drugBooking);
+
+		drugsBooking.add(new DrugBooking());
 
 		drugBooking = new DrugBooking();
 		drugBooking.setTrade("Наропін");
@@ -499,7 +505,7 @@ public class HelloController {
 		procedureBooking.setDrugsBooking(drugsBooking);
 
 		List<ConsumptionMaterialBooking> consumptionMaterialsBooking = new ArrayList<ConsumptionMaterialBooking>();
-		
+
 		ConsumptionMaterialBooking consumptionMaterialBooking = new ConsumptionMaterialBooking();
 		consumptionMaterialBooking.setName("Крапельниця");
 		consumptionMaterialBooking.setNumber(2);
@@ -652,12 +658,14 @@ public class HelloController {
 		return emp;
 	}
 
+	/*
 	@RequestMapping(value = "/patients_department_year_{year}_week_{week}", method = RequestMethod.GET)
 	public @ResponseBody List<Map<String, Object>> patientsDepartmentYearWeek(
 			@PathVariable Integer year, @PathVariable Integer week) {
 		List<Map<String, Object>> historysDepartment = cuwyDbService1.getHistorysDepartmentYearWeek(year, week);
 		return historysDepartment;
 	}
+ * */
 	@RequestMapping(value = "/patients_department_{departmentId}_year_{year}_week_{week}", method = RequestMethod.GET)
 	public @ResponseBody PatientsAdmission patientsDepartmentYearWeek(
 			@PathVariable Integer year, @PathVariable Integer week, @PathVariable Integer departmentId) {

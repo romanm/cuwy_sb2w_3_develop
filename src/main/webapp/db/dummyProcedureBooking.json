@@ -12,6 +12,16 @@
     "numberUnits" : "амп",
     "replacement" : null
   }, {
+    "generic" : null,
+    "trade" : null,
+    "doseConcentrationNumber" : 0.0,
+    "doseConcentrationUnit" : null,
+    "doseNumber" : 0,
+    "doseUnit" : null,
+    "number" : 0,
+    "numberUnits" : null,
+    "replacement" : null
+  }, {
     "generic" : "Ропівакаін",
     "trade" : "Наропін",
     "doseConcentrationNumber" : 7.5,

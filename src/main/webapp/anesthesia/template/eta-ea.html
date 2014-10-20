@@ -54,6 +54,7 @@
 						<td>
 						<span tooltip="{{drug.generic}}" tooltip-popup-delay='{{tooltipPopupDelay}}'>
 							{{drug.trade}}
+							{{drug.trade == null?"&nbsp;":""}}
 						</span>
 						<span ng-repeat="replacementDrug in drug.replacement">
 							/ {{replacementDrug.trade}}
@@ -62,11 +63,11 @@
 						<td>
 					{{drug.doseConcentrationNumber==0?"":drug.doseConcentrationNumber}}
 					{{drug.doseConcentrationUnit}}
-					{{drug.doseNumber}}
+					{{drug.doseNumber==0?"":drug.doseNumber}}
 					{{drug.doseUnit}}
 						</td>
 						<td>
-					{{drug.number}}
+					{{drug.number==0?"":drug.number}}
 					{{drug.numberUnits}}
 						</td>
 					</tr>
@@ -95,23 +96,26 @@
 				</table>
 				<table class="table">
 					<tbody>
-					<tr ng-repeat="drug in booking.drugsBooking">
+					<tr ng-repeat="drug in booking.drugsBooking"
+						ng-context-menu="menuEditTaskList"
+					>
 						<td>
 						<span tooltip="{{drug.generic}}" tooltip-popup-delay='{{tooltipPopupDelay}}'>
 							{{drug.trade}}
+							{{drug.trade == null?"&nbsp;":""}}
 						</span>
-					{{drug.doseConcentrationNumber==0?"":drug.doseConcentrationNumber}}
-					{{drug.doseConcentrationUnit}}
-					<span ng-repeat="replacementDrug in drug.replacement">
-						/ {{replacementDrug.trade}}
-					</span>
+						<span ng-repeat="replacementDrug in drug.replacement">
+							/ {{replacementDrug.trade}}
+						</span>
 						</td>
 						<td>
-					{{drug.doseNumber}}
+					{{drug.doseConcentrationNumber==0?"":drug.doseConcentrationNumber}}
+					{{drug.doseConcentrationUnit}}
+					{{drug.doseNumber==0?"":drug.doseNumber}}
 					{{drug.doseUnit}}
 						</td>
 						<td>
-					{{drug.number}}
+					{{drug.number==0?"":drug.number}}
 					{{drug.numberUnits}}
 						</td>
 					</tr>
@@ -143,11 +147,12 @@
 				<table class="table">
 					<tbody>
 					<tr ng-repeat="drug in booking.drugsBooking"
-					ng-if="rowsBrake > $index"
+						ng-context-menu="menuEditTaskList"
 					>
 						<td>
 						<span tooltip="{{drug.generic}}" tooltip-popup-delay='{{tooltipPopupDelay}}'>
 							{{drug.trade}}
+							{{drug.trade == null?"&nbsp;":""}}
 						</span>
 						<span ng-repeat="replacementDrug in drug.replacement">
 							/ {{replacementDrug.trade}}
@@ -156,13 +161,11 @@
 						<td>
 					{{drug.doseConcentrationNumber==0?"":drug.doseConcentrationNumber}}
 					{{drug.doseConcentrationUnit}}
-						</td>
-						<td>
-					{{drug.doseNumber}}
+					{{drug.doseNumber==0?"":drug.doseNumber}}
 					{{drug.doseUnit}}
 						</td>
 						<td>
-					{{drug.number}}
+					{{drug.number==0?"":drug.number}}
 					{{drug.numberUnits}}
 						</td>
 					</tr>
@@ -173,11 +176,12 @@
 				<table class="table">
 					<tbody>
 					<tr ng-repeat="drug in booking.drugsBooking"
-					ng-if="$index >= rowsBrake"
+						ng-context-menu="menuEditTaskList"
 					>
 						<td>
 						<span tooltip="{{drug.generic}}" tooltip-popup-delay='{{tooltipPopupDelay}}'>
 							{{drug.trade}}
+							{{drug.trade == null?"&nbsp;":""}}
 						</span>
 						<span ng-repeat="replacementDrug in drug.replacement">
 							/ {{replacementDrug.trade}}
@@ -186,13 +190,11 @@
 						<td>
 					{{drug.doseConcentrationNumber==0?"":drug.doseConcentrationNumber}}
 					{{drug.doseConcentrationUnit}}
-						</td>
-						<td>
-					{{drug.doseNumber}}
+					{{drug.doseNumber==0?"":drug.doseNumber}}
 					{{drug.doseUnit}}
 						</td>
 						<td>
-					{{drug.number}}
+					{{drug.number==0?"":drug.number}}
 					{{drug.numberUnits}}
 						</td>
 					</tr>
@@ -206,6 +208,9 @@
 	<script src="/js/angular.min.js"></script>
 	<script src="/js/angular-sanitize.min.js"></script>
 	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
+	<script src="/js/bootstrap-datepicker.js"></script>
+	<script src='/js/textAngular-sanitize.min.js'></script>
+	<script src='/js/textAngular.min.js'></script>
 	<script src="/js/cuwy1.directives.js"></script>
 	<script type="text/javascript">
 
@@ -214,7 +219,8 @@
 			$scope.rowsBrake = 6;
 			$http({
 				method : "GET",
-				url : "/db/url-ans-ETA-EA-ProcedureBooking.json"
+				//url : "/db/url-ans-ETA-EA-ProcedureBooking.json"
+				url : "/db/dummyProcedureBooking.json"
 			}).success(function(data, status, headers, config) {
 				$scope.booking = data;
 			}).error(function(data, status, headers, config) {

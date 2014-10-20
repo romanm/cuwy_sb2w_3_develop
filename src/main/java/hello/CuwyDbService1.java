@@ -225,9 +225,12 @@ public class CuwyDbService1 {
 		}
 	}
 	public DepartmentHol getDepartmentsHol(int id) {
+//		return null;
 		return jdbcTemplate.queryForObject(
 				"SELECT * FROM department WHERE department_id = ?", 
 				new Object[] { id }, new DepartmentHolRowMapper());
+		/*
+		 * */
 	}
 	public List<Map<String, Object>> getTreatmentAnalysis() {
 		String sql = "SELECT "
@@ -322,6 +325,7 @@ public class CuwyDbService1 {
 		return patientsYearWeek;
 	}
 
+	/*
 	public List<Map<String, Object>> getHistorysDepartmentYearWeek(Integer year, Integer week) {
 		String sql = "SELECT department_name, department_id, cnt "
 				+ " FROM department d, ( "
@@ -335,6 +339,8 @@ public class CuwyDbService1 {
 		= jdbcTemplate.queryForList(sql, new Object[] { year, week });
 		return countPatientsProMonth;
 	}
+	 * */
+
 	class DiagnosisOnAdmissionPSSetter implements PreparedStatementSetter{
 
 		private DiagnosisOnAdmission diagnosisOnAdmission;
@@ -414,6 +420,9 @@ public class CuwyDbService1 {
 	public HistoryHolDb getHistoryHolDbByNo(int historyNo) {
 		String sql = "SELECT * FROM history WHERE history_out IS NULL AND history_no = ? ";
 		logger.info("\n"+sql.replaceFirst("\\?", ""+historyNo));
+		/*
+		return null;
+		 * */
 		return jdbcTemplate.queryForObject(
 				sql, new Object[] { historyNo }, 
 				new HistoryHolDbRowMapper()
@@ -717,7 +726,8 @@ public class CuwyDbService1 {
 			return (T) patientHolDb;
 		}
 	}
-
+/*
+ * */
 	public PatientHolDb getPatientHolDb(int patientId) {
 		String sql = "SELECT * FROM patient p WHERE patient_id = ?";
 		logger.info("\n"+sql+patientId);
@@ -981,7 +991,7 @@ public class CuwyDbService1 {
 		return readNextIdDouble(sqlNextYearHistoryId.replaceFirst("\\?", ""+year));
 	}
 	public int getAutoIncrement(String tableName) {
-		String sql = "SELECT AUTO_INCREMENT FROM  INFORMATION_SCHEMA.TABLES "
+		String sql = "SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES "
 				+ " WHERE TABLE_SCHEMA = 'hol' AND   TABLE_NAME = '?' ";
 		String sql2 = sql.replaceFirst("\\?", tableName);
 		logger.info("\n"+sql2);
