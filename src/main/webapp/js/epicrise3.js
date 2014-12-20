@@ -1,58 +1,5 @@
 
 var historyFile = "/hol/history_id_" + parameters.hid;
-var epicriseTemplate = {
-		head1s : [ 
-		{ id : "dz", name : "Діагнози"
-		}, { id : "op", name : "Орерації"
-		}, { id : "treatLab", name : "Лікування, обстеження, аналізи, рекомендації ..."
-			,onDemand : true
-		}, { id : "ans", name : "Перебіг хвороби"
-		}, { id : "treat", name : "Лікування"
-		}, { id : "zak", name : "ЗАК"
-		}, { id : "zas", name : "ЗАС"
-		}, { id : "biochim", name : "Біохімічний аналіз"
-		}, { id : "rek", name : "Рекомендовано/смерть/перевід"
-		}, { id : "nepraz", name : "Листки непрацездатності"
-		} ],
-		"Біохімічний аналіз" : [
-			{name : "Загальний білок"}
-			,{name : "Альбумін"}
-			,{name : "Глобулін"}
-			,{name : "Крефіцієнт"}
-			,{name : "Холестерин загальний"}
-			,{name : "Тригліцериди"}
-			,{name : "Холестерин високої щільності	"}
-			,{name : "β-ліпопротеїди"}
-			,{name : "Білірубін загальний"}
-			,{name : "Білірубін прямий"}
-			,{name : "Білірубін непрямий"}
-			,{name : "Калій"}
-			,{name : "Натрій"}
-			,{name : "Кальцій"}
-			,{name : "Магній"}
-			,{name : "Залізо"}
-			,{name : "Фосфор"}
-			,{name : "Хлор"}
-			,{name : "АлАт"}
-			,{name : "АсАт"}
-			,{name : "Фосфатаза лужна (ФЛ)"}
-			,{name : "α-амілаза"}
-			,{name : "Сечовина"}
-			,{name : "Креатинін"}
-			,{name : "Сечова кислота"}
-			,{name : "γ ГТП"}
-			,{name : "Тимолова"}
-		],
-		"ЗАК" : [
-		{name : "Гемоглобін"}
-		,{name : "Еритроцити"}
-		,{name : "Кольоровий показник"}
-		,{name : "Лейкоцити"}
-		,{name : "ШОЕ"}
-		,{name : "Тромбоцити"}
-		,{name : "Глюкоза натщесерце"}
-		]
-}
 
 cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', function ($scope, $http, $filter, $sce) {
 
@@ -70,7 +17,6 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 
 	initEpicrise = function(){
 		$scope.epicrise.patientHistory.historyTreatmentAnalysises.forEach(function(o) {
-			console.log(o);
 			$scope.epicrise[o.historyTreatmentAnalysisName] = {hol1:o};
 			initFromHol1($scope.epicrise[o.historyTreatmentAnalysisName]);
 		});
@@ -95,7 +41,17 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 		}
 	}
 
-	$scope.openToEdit = function(head1s, h1Index){
+	$scope.openLaborToEdit = function(laborBlock, laborName){
+		laborBlock.laborOpenToEdit=laborName;
+		if(!laborBlock.hol1LaborValues[laborName])
+		laborBlock.hol1LaborValues[laborName] = {value:""};
+		console.log($('#'+laborName));
+		//not work
+		$('#'+laborName).focus();
+		console.log(laborBlock);
+	}
+
+	$scope.editOpenClose = function(head1s, h1Index){
 		if(!$scope.epicrise[head1s[h1Index].name])
 		{
 			$scope.epicrise[head1s[h1Index].name] = {text:""};
@@ -104,8 +60,16 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 		var element = angular.element($scope.epicrise[head1s[h1Index].name].textHol1);
 		var trs = element.find("td.name");
 		var oldOpen = head1s[h1Index].open;
-
+		epicriseTemplate.head1s.forEach(function(o) {
+			o.open = false;
+		});
 		head1s[h1Index].open = !oldOpen;
+		if(!head1s[h1Index].open )
+		{
+			for(k in $scope.epicrise[head1s[h1Index].name].hol1LaborValues)
+				if($scope.epicrise[head1s[h1Index].name].hol1LaborValues[k].value == "")
+					delete $scope.epicrise[head1s[h1Index].name].hol1LaborValues[k];
+		}
 	}
 
 } ]);

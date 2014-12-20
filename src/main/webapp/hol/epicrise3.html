@@ -15,37 +15,54 @@
 	<div class="container">
 		<h1>epicrise3</h1>
 		<u> <i>
-				{{epicrise.patientHistory.patientHolDb.patientSurname}},
-				{{epicrise.patientHistory.patientHolDb.patientPersonalName}}
-				{{epicrise.patientHistory.patientHolDb.patientPatronymic}} </i>
+			{{epicrise.patientHistory.patientHolDb.patientSurname}},
+			{{epicrise.patientHistory.patientHolDb.patientPersonalName}}
+			{{epicrise.patientHistory.patientHolDb.patientPatronymic}} </i>
 		</u>
 		<div>
 			<div class="epicriseElement" data-ng-repeat-start="h1 in epicriseTemplate.head1s"
 				data-ng-init="h1Index = $index"
-				data-ng-click="openToEdit(epicriseTemplate.head1s, h1Index)">
-				<b> 
-				<span data-ng-show="h1.onDemand">+</span>
-				{{h1.name}} </b>
+				data-ng-click="editOpenClose(epicriseTemplate.head1s, h1Index)">
+				<b> <span data-ng-show="h1.onDemand">+</span> {{h1.name}} </b>
 				{{epicrise[h1.name].hol1.historyTreatmentAnalysisDatetime | date:'dd.MM.yyyy'}}
 				<span ng-bind-html="epicrise[h1.name].hol1.historyTreatmentAnalysisText"
 					data-ng-show="!epicrise[h1.name].hol1LaborValues"></span>
 				<!-- лабораторні данні -->
-				<span data-ng-repeat="laborName in epicriseTemplate[h1.name]">
+				<span
+					data-ng-repeat="laborTemplate in epicriseTemplate.epicriseBlock[h1.name]">
 					<span
-					data-ng-show="epicrise[h1.name].hol1LaborValues[laborName.name]">
-						{{laborName.name}}
-						{{epicrise[h1.name].hol1LaborValues[laborName.name].value}}
-						{{epicrise[h1.name].hol1LaborValues[laborName.name].unit}}<span
-						data-ng-show="!$last">,</span>
+					data-ng-show="epicrise[h1.name].hol1LaborValues[laborTemplate.name]">
+						{{laborTemplate.name}}
+						{{epicrise[h1.name].hol1LaborValues[laborTemplate.name].value}}
+						{{laborTemplate.unit}} <span data-ng-show="!$last">,</span>
 				</span>
 				</span>
 			</div>
 			<!-- лабораторні данні редактор -->
-			<div data-ng-repeat-end=""
+			<div class="well" data-ng-repeat-end=""
 				data-ng-show="epicriseTemplate.head1s[h1Index].open">
-				<span data-ng-show="epicriseTemplate[h1.name]"> </span> <span
-					data-ng-repeat="laborName in epicriseTemplate[h1.name]">
-					{{laborName.name}}<span data-ng-show="!$last">,</span>
+				<span data-ng-repeat="laborTemplate in epicriseTemplate.epicriseBlock[h1.name]">
+				<a
+					data-ng-show="laborTemplate.name != epicrise[h1.name].laborOpenToEdit"
+					data-ng-click="openLaborToEdit(epicrise[h1.name], laborTemplate.name)">
+						{{laborTemplate.name}}
+						{{epicrise[h1.name].hol1LaborValues[laborTemplate.name].value}} <span
+						data-ng-show="!epicrise[h1.name].hol1LaborValues[laborTemplate.name].value">
+							_________ </span> {{laborTemplate.unit}}
+				</a>
+				<form class="form-inline" role="form"
+					data-ng-show="laborTemplate.name == epicrise[h1.name].laborOpenToEdit">
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-addon">{{laborTemplate.name}}</div>
+							<input id="{{laborTemplate.name}}"
+								ng-model="epicrise[h1.name].hol1LaborValues[laborTemplate.name].value"
+								class="form-control" type="text" />
+							<div class="input-group-addon">{{laborTemplate.unit}}</div>
+						</div>
+					</div>
+				</form>
+				<span data-ng-show="!$last">,</span>
 				</span> <span ng-bind-html="epicrise[h1.name].textHol1"></span>
 			</div>
 		</div>
@@ -63,6 +80,7 @@
 	<script src="/db/operationTree.json.js"></script>
 	<script src="/js/cuwy1.directives.js"></script>
 	<script src="/js/cuwy1.controller.js"></script>
+	<script src="/js/epicriseTemplate.json.js"></script>
 	<script src="/js/epicrise3.js"></script>
 </body>
 </html>
