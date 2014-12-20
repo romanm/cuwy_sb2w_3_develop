@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="EpicriseCtrl">
+<head>
+<style type="text/css"></style>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="/css/bootstrap.css"></link>
+<link rel='stylesheet prefetch' href='/css/font-awesome.min.css'>
+<style type="text/css">
+.epicriseElement p {
+	display: inline;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<h1>epicrise3</h1>
+		<u> <i>
+				{{epicrise.patientHistory.patientHolDb.patientSurname}},
+				{{epicrise.patientHistory.patientHolDb.patientPersonalName}}
+				{{epicrise.patientHistory.patientHolDb.patientPatronymic}} </i>
+		</u>
+		<div>
+			<div class="epicriseElement" data-ng-repeat-start="h1 in epicriseTemplate.head1s"
+				data-ng-init="h1Index = $index"
+				data-ng-click="openToEdit(epicriseTemplate.head1s, h1Index)">
+				<b> 
+				<span data-ng-show="h1.onDemand">+</span>
+				{{h1.name}} </b>
+				{{epicrise[h1.name].hol1.historyTreatmentAnalysisDatetime | date:'dd.MM.yyyy'}}
+				<span ng-bind-html="epicrise[h1.name].hol1.historyTreatmentAnalysisText"
+					data-ng-show="!epicrise[h1.name].hol1LaborValues"></span>
+				<!-- лабораторні данні -->
+				<span data-ng-repeat="laborName in epicriseTemplate[h1.name]">
+					<span
+					data-ng-show="epicrise[h1.name].hol1LaborValues[laborName.name]">
+						{{laborName.name}}
+						{{epicrise[h1.name].hol1LaborValues[laborName.name].value}}
+						{{epicrise[h1.name].hol1LaborValues[laborName.name].unit}}<span
+						data-ng-show="!$last">,</span>
+				</span>
+				</span>
+			</div>
+			<!-- лабораторні данні редактор -->
+			<div data-ng-repeat-end=""
+				data-ng-show="epicriseTemplate.head1s[h1Index].open">
+				<span data-ng-show="epicriseTemplate[h1.name]"> </span> <span
+					data-ng-repeat="laborName in epicriseTemplate[h1.name]">
+					{{laborName.name}}<span data-ng-show="!$last">,</span>
+				</span> <span ng-bind-html="epicrise[h1.name].textHol1"></span>
+			</div>
+		</div>
+	</div>
+
+
+	<script src="/js/jquery-2.1.1.min.js"></script>
+	<script src="/js/angular.min.js"></script>
+	<script src="/js/angular-sanitize.min.js"></script>
+	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
+	<script src="/js/bootstrap-datepicker.js"></script>
+	<script src='/js/textAngular-sanitize.min.js'></script>
+	<script src='/js/textAngular.min.js'></script>
+	<script src="/db/config.json.js"></script>
+	<script src="/db/operationTree.json.js"></script>
+	<script src="/js/cuwy1.directives.js"></script>
+	<script src="/js/cuwy1.controller.js"></script>
+	<script src="/js/epicrise3.js"></script>
+</body>
+</html>

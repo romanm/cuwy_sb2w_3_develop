@@ -59,9 +59,11 @@
 	</div>
 	<div class="collapse navbar-collapse">
 		<ul class="nav navbar-nav navbar-right">
-			<li class="dropdown"><a title="Premium Bootstrap Themes &amp; Templates" 
+			<li class="dropdown"><a title="меню (dbl_click)" 
 			data-toggle="dropdown" class="dropdown-toggle" href="#" aria-haspopup="true" 
-			aria-expanded="false"><i class="fa fa-star text-yellow"></i> меню <b class="caret"></b></a>
+			aria-expanded="false">
+			<i class="fa fa-bars" ></i>
+			<b class="caret"></b></a>
 				<ul class="dropdown-menu">
 					<li><a href="/hol/history.html?hno=15026">Короткий перегляд</a></li>
 					<li><a href="/hol/admission/statistic.html">Журнал обліку хворих</a></li>
@@ -225,6 +227,7 @@
 			
 			</span>
 			</legend>
+			a12
 			<fieldset ng-repeat="historyTreatmentAnalysis in patientHistory.historyTreatmentAnalysises ">
 				<legend ng-click="accordionEpicrisis($index)">
 				{{historyTreatmentAnalysis.historyTreatmentAnalysisName}}
