@@ -1,6 +1,6 @@
 var historyFile = window.location.pathname.replace(/history_/,"history_id_");
 
-cuwyApp.controller('HistoryCtrl', [ '$scope', '$http', '$filter', function ($scope, $http, $filter) {
+cuwyApp.controller('HistoryCtrl', [ '$scope', '$http', '$filter', '$sce', function ($scope, $http, $filter, $sce) {
 
 	$scope.operationTree = operationTree;
 	$scope.departmentsHol = configHol.departments;
@@ -12,6 +12,8 @@ cuwyApp.controller('HistoryCtrl', [ '$scope', '$http', '$filter', function ($sco
 		patientHistory: null
 	};
 
+	initDeclareController($scope, $http, $sce, $filter);
+
 	$http({
 		method : 'GET',
 		url : historyFile
@@ -19,29 +21,6 @@ cuwyApp.controller('HistoryCtrl', [ '$scope', '$http', '$filter', function ($sco
 		$scope.patientHistory = data;
 	}).error(function(data, status, headers, config) {
 	});
-
-	$scope.calculateAge = function(birthDateStr) {
-		if(!birthDateStr)
-			return 0;
-		var birthDate = new Date(birthDateStr)
-			birthYear = birthDate.getFullYear(),
-			birthMonth = birthDate.getMonth(),
-			birthDay = birthDate.getDate();
-		var todayDate = new Date(),
-			todayYear = todayDate.getFullYear(),
-			todayMonth = todayDate.getMonth(),
-			todayDay = todayDate.getDate(),
-			age = todayYear - birthYear; 
-
-		if (todayMonth < birthMonth)
-		{
-			age--;
-		}else if (birthMonth === todayMonth && todayDay < birthDay)
-		{
-			age--;
-		}
-		return age;
-	};
 
 	$scope.menuMovePatient = [
 		['<span class="glyphicon glyphicon-transfer"></span> Переведеня', function ($itemScope) {

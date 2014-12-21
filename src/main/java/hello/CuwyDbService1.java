@@ -1,10 +1,14 @@
 package hello;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +35,9 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 @Component("cuwyDbService1")
 public class CuwyDbService1 {
@@ -1031,4 +1038,36 @@ public class CuwyDbService1 {
 		return lmso;
 	}
 
+	//---------------epicrise---------------------------------------------------
+	public Map<String, Object> saveEpicrise(Map<String, Object> epicrise) {
+		logger.info("\n"+epicrise);
+		saveEpicriseToFile(epicrise, 0);
+		return epicrise;
+	}
+	private void saveEpicriseToFile(final Map<String, Object> epicrise, int hId) {
+		final Date savedDate = new Date();
+		epicrise.put("savedDate", savedDate);
+		writeToJsonDbFile(epicrise, AppConfig.getEpicriseDbJsonName(hId));
+	}
+	//---------------epicrise------------------------------------------------END
+
+	void writeToJsonDbFile(Map java2jsonObject, String fileName) {
+		//delete old parameters and document tiles
+		java2jsonObject.remove("savedTs");
+		writeToJsonDbFile((Object) java2jsonObject, fileName);
+	}
+	void writeToJsonDbFile(Object java2jsonObject, String fileName) {
+		File file = new File(AppConfig.applicationFolderPfad 
+				+ AppConfig.innerDbFolderPfad + fileName);
+		logger.warn(""+file);
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectWriter writerWithDefaultPrettyPrinter = mapper.writerWithDefaultPrettyPrinter();
+		try {
+			//			logger.warn(writerWithDefaultPrettyPrinter.writeValueAsString(java2jsonObject));
+			FileOutputStream fileOutputStream = new FileOutputStream(file);
+			writerWithDefaultPrettyPrinter.writeValue(fileOutputStream, java2jsonObject);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -1,3 +1,4 @@
+
 parameters = {};
 if(window.location.search){
 	$.each(window.location.search.split("?")[1].split("&"), function(index, value){
@@ -78,7 +79,47 @@ Date.prototype.addMonths2 = function (num) {
     return value;
 }
 
+'use strict';
 var cuwyApp = angular.module('cuwyApp', ['ui.bootstrap', 'ngSanitize', 'textAngular']);
+
+initDeclareController = function($scope, $http, $sce, $filter){
+	console.log("--------initDeclareController--------------------");
+
+	saveWorkDoc = function(url, $scope, $http){
+		var docToSave = $scope.epicrise;
+		console.log(docToSave);
+		$http({ method : 'POST', data : docToSave, url : url
+		}).success(function(data, status, headers, config){
+			console.log(data);
+		}).error(function(data, status, headers, config) {
+			$scope.error = data;
+		});
+	}
+
+	$scope.calculateAge = function(birthDateStr) {
+		if(!birthDateStr)
+			return 0;
+		var birthDate = new Date(birthDateStr)
+			birthYear = birthDate.getFullYear(),
+			birthMonth = birthDate.getMonth(),
+			birthDay = birthDate.getDate();
+		var todayDate = new Date(),
+			todayYear = todayDate.getFullYear(),
+			todayMonth = todayDate.getMonth(),
+			todayDay = todayDate.getDate(),
+			age = todayYear - birthYear;
+
+		if (todayMonth < birthMonth)
+		{
+			age--;
+		}else if (birthMonth === todayMonth && todayDay < birthDay)
+		{
+			age--;
+		}
+		return age;
+	};
+
+};
 
 cuwyApp.directive('autoFocus', function($timeout) {
 	return {

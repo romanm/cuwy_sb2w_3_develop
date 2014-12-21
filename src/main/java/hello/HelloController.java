@@ -347,6 +347,14 @@ public class HelloController {
 		return patientHistory;
 	}
 
+	@RequestMapping(value = "/save/epicrise", method = RequestMethod.POST)
+	public  @ResponseBody Map<String, Object> saveEpicrise(@RequestBody Map<String, Object> epicrise) {
+		System.out.println("-------------------------------");
+		epicrise.put("server", "add from server");
+		epicrise = cuwyDbService1.saveEpicrise(epicrise);
+		System.out.println("-------------------------------");
+		return epicrise;
+	}
 	@RequestMapping(value = "/savePatientHistory", method = RequestMethod.POST)
 	public @ResponseBody HistoryHolDb savePatientHistory(@RequestBody HistoryHolDb historyHolDb) {
 		logger.info("\n savePatientHistory patientHistory = "+historyHolDb);
