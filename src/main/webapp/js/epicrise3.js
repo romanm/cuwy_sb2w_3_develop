@@ -28,10 +28,7 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 			if( rsp.name == groupElement.name){
 				rsp = groupElement;
 			}else{
-				var value = {};
-				value.historyTreatmentAnalysisDatetime = new Date();
-				initFromHol1(value, hol1Element.historyTreatmentAnalysisText);
-				groupElement.value = value;
+				addTextHtmlValue (groupElement, hol1Element.historyTreatmentAnalysisText);
 				$scope.epicrise.epicriseGroups.push(groupElement);
 			}
 		});
@@ -47,26 +44,12 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 		
 		
 	}
-	initEpicrise_old = function(){
-	/*
-		$scope.patientHistory.historyTreatmentAnalysises.forEach(function(hol1Element) {
-			$scope.epicrise[hol1Element.historyTreatmentAnalysisName] = {};
-			$scope.epicrise[hol1Element.historyTreatmentAnalysisName].historyTreatmentAnalysisDatetime = new Date();
-			initFromHol1($scope.epicrise[hol1Element.historyTreatmentAnalysisName], hol1Element);
-		});
-	*/
-		$scope.epicrise.groupsMap = {};
-		$scope.epicrise.epicriseGroups = [];
-		$scope.epicriseTemplate.head1s.forEach(function(h1, index) {
-			$scope.epicrise.epicriseGroups.push(createGroupElement(h1));
-			$scope.epicrise.groupsMap[h1.name] = index;
-		});
-		console.log($scope.patientHistory);
-		$scope.patientHistory.historyTreatmentAnalysises.forEach(function(hol1Element) {
-			epicriseElement = $scope.epicrise.epicriseGroups[$scope.epicrise.groupsMap[hol1Element.historyTreatmentAnalysisName]].value;
-			initFromHol1(epicriseElement, hol1Element);
-		});
-		console.log($scope.epicrise);
+
+	addTextHtmlValue = function(groupElement, textHtmlValue){
+		var value = {};
+		value.historyTreatmentAnalysisDatetime = new Date();
+		initFromHol1(value, textHtmlValue);
+		groupElement.value = value;
 	}
 
 	createGroupElement = function(h1Name){
@@ -104,14 +87,15 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 		}
 	}
 
-	$scope.openLaborToEdit = function(laborBlock, laborName){
-		laborBlock.laborOpenToEdit=laborName;
-		if(!laborBlock.laborValues[laborName])
-		laborBlock.laborValues[laborName] = {value:""};
+	$scope.openLaborToEdit = function(h1, laborName){
+		h1.laborOpenToEdit=laborName;
+		console.log(h1);
+		if(!h1.value.laborValues[laborName])
+		h1.value.laborValues[laborName] = {value:""};
 		console.log($('#'+laborName));
 		//not work
 		$('#'+laborName).focus();
-		console.log(laborBlock);
+		console.log(h1);
 	}
 
 	$scope.setSeekTag = function(tag){
@@ -131,13 +115,17 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 	}
 	var dayInMs = 1000*60*60*24;
 	$scope.changeBlockDate = function(dt, h1Index){
-		var epicriseBlockElement = $scope.epicrise[$scope.epicriseTemplate.head1s[h1Index].name];
-		epicriseBlockElement.historyTreatmentAnalysisDatetime=dt;
+		var epicriseBlockElement = $scope.epicrise.epicriseGroups[h1Index];
+		epicriseBlockElement.value.historyTreatmentAnalysisDatetime=dt;
 	}
 
 	$scope.addGroup = function(addGroup){
 		var middlePosition = ($scope.epicrise.epicriseGroups.length + $scope.epicrise.epicriseGroups.length%2)/2;
-		$scope.epicrise.epicriseGroups.splice(middlePosition,0,createGroupElement(addGroup));
+		var groupElement = createGroupElement(addGroup.name);
+		addTextHtmlValue(groupElement, "");
+		$scope.epicrise.epicriseGroups.splice(middlePosition,0,groupElement);
+		closeAllGroupEditors();
+		$scope.epicrise.epicriseGroups[middlePosition].open = true;
 	}
 
 	$scope.saveWorkDoc = function(){
@@ -146,6 +134,18 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 		console.log("-----------------");
 	}
 	$scope.editOpenClose = function(h1Index){
+		var oldOpen = $scope.epicrise.epicriseGroups[h1Index].open;
+		closeAllGroupEditors();
+		$scope.epicrise.epicriseGroups[h1Index].open = !oldOpen;
+		if(!$scope.epicrise.epicriseGroups[h1Index].open )
+		{
+			for(k in $scope.epicrise.epicriseGroups[h1Index].value.laborValues)
+				if($scope.epicrise.epicriseGroups[h1Index].value.laborValues[k].value == "")
+					delete $scope.epicrise.epicriseGroups[h1Index].value.laborValues[k];
+		}
+
+	}
+	$scope.editOpenCloseOld = function(h1Index){
 		var head1s = $scope.epicriseTemplate.head1s;
 		if(!$scope.epicrise[head1s[h1Index].name]) {
 			$scope.epicrise[head1s[h1Index].name] = {textHtml : " &nbsp; "};
@@ -157,9 +157,7 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 		var element = angular.element($scope.epicrise[head1s[h1Index].name].textHol1);
 		var trs = element.find("td.name");
 		var oldOpen = head1s[h1Index].open;
-		epicriseTemplate.head1s.forEach(function(o) {
-			o.open = false;
-		});
+		closeAllGroupEditors();
 		head1s[h1Index].open = !oldOpen;
 		if(!head1s[h1Index].open )
 		{
@@ -168,5 +166,11 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 					delete $scope.epicrise[head1s[h1Index].name].laborValues[k];
 		}
 	}
+
+	closeAllGroupEditors = function(){
+		$scope.epicrise.epicriseGroups.forEach(function(o) {
+			o.open = false;
+		});
+	};
 
 } ]);

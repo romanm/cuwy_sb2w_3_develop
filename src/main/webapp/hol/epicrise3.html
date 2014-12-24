@@ -71,9 +71,9 @@
 					<b> <span data-ng-show="h1.type == 'isOnDemand'">+</span>
 						{{h1.name}}
 				</b> <a href="#" class="no-print"> <span
-						data-ng-if="!epicriseTemplate.head1s[h1Index].open"
+						data-ng-if="!epicrise.epicriseGroups[h1Index].open"
 						class="glyphicon glyphicon-chevron-right"></span> <span
-						data-ng-if="epicriseTemplate.head1s[h1Index].open"
+						data-ng-if="epicrise.epicriseGroups[h1Index].open"
 						class="glyphicon glyphicon-chevron-down"></span>
 				</a> {{h1.value.historyTreatmentAnalysisDatetime | date:'dd.MM.yyyy'}}
 				</span>
@@ -95,13 +95,14 @@
 					data-ng-show="h1.value.laborValues[laborTemplate.name]">
 						{{laborTemplate.name}}
 						{{epicrise[h1.name].laborValues[laborTemplate.name].value}}
+						{{h1.value.laborValues[laborTemplate.name].value}} 
 						{{laborTemplate.unit}} <span data-ng-show="!$last">,</span>
 				</span>
 				</span>
 			</div>
 			<!-- редактор -->
 			<div class="row well no-print" data-ng-repeat-end=""
-				data-ng-show="epicriseTemplate.head1s[h1Index].open">
+				data-ng-show="epicrise.epicriseGroups[h1Index].open">
 				<hr data-ng-show="h1.type == 'isOnDemand'" />
 				<div class="col-xs-9">
 					<!-- данні текстового формату - редактор -->
@@ -143,20 +144,21 @@
 						<span
 							data-ng-repeat="laborTemplate in epicriseTemplate.epicriseBlock[h1.name] | filter : seekLabor">
 							<a
-							data-ng-show="laborTemplate.name != epicrise[h1.name].laborOpenToEdit"
-							data-ng-click="openLaborToEdit(epicrise[h1.name], laborTemplate.name)">
+							data-ng-show="laborTemplate.name != h1.laborOpenToEdit"
+							data-ng-click="openLaborToEdit(h1, laborTemplate.name)">
 								{{laborTemplate.name}}
-								{{epicrise[h1.name].laborValues[laborTemplate.name].value}} <span
-								data-ng-show="!epicrise[h1.name].laborValues[laborTemplate.name].value">
+								{{h1.value.laborValues[laborTemplate.name].value}} 
+								<span
+								data-ng-show="!h1.value.laborValues[laborTemplate.name].value">
 									_________ </span> {{laborTemplate.unit}}
 						</a>
 							<form class="form-inline" role="form"
-								data-ng-show="laborTemplate.name == epicrise[h1.name].laborOpenToEdit">
+								data-ng-show="laborTemplate.name == h1.laborOpenToEdit">
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon">{{laborTemplate.name}}</div>
 										<input id="{{laborTemplate.name}}"
-											ng-model="epicrise[h1.name].laborValues[laborTemplate.name].value"
+											ng-model="h1.value.laborValues[laborTemplate.name].value"
 											class="form-control" type="text" />
 										<div class="input-group-addon">{{laborTemplate.unit}}</div>
 									</div>
