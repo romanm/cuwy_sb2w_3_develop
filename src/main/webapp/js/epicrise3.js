@@ -5,8 +5,10 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 
 	console.log("EpicriseCtrl");
 	$scope.epicriseTemplate = epicriseTemplate;
-	$scope.dt = new Date();
+	$scope.seekTag = "";
 	$scope.epicrise = {};
+	$scope.epicrise.departmentHistoryOut = new Date();
+	$scope.dt = new Date();
 	console.log($scope.epicriseTemplate);
 
 	initDeclareController($scope, $http, $sce, $filter);
@@ -19,17 +21,68 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 	});
 
 	initEpicrise = function(){
+		$scope.epicrise.epicriseGroups = [];
+		var rsp = {name:"Рекомендовано/смерть/перевід"};
+		$scope.patientHistory.historyTreatmentAnalysises.forEach(function(hol1Element) {
+			var groupElement = createGroupElement(hol1Element.historyTreatmentAnalysisName);
+			if( rsp.name == groupElement.name){
+				rsp = groupElement;
+			}else{
+				var value = {};
+				value.historyTreatmentAnalysisDatetime = new Date();
+				initFromHol1(value, hol1Element.historyTreatmentAnalysisText);
+				groupElement.value = value;
+				$scope.epicrise.epicriseGroups.push(groupElement);
+			}
+		});
+		console.log($scope.epicrise);
+		var op = $scope.epicriseTemplate.head1s[1];
+		$scope.epicrise.epicriseGroups.splice(0,0,{name:op.name});
+		var dz = $scope.epicriseTemplate.head1s[0];
+		$scope.epicrise.epicriseGroups.splice(0,0,{name:dz.name});
+		var addGroup = $scope.epicriseTemplate.head1s[2];
+		$scope.epicrise.epicriseGroups.push(rsp);
+		var addGroup = {name:"Лікування, обстеження, аналізи, рекомендації ...", type : 'isOnDemand'};
+		$scope.epicrise.epicriseGroups.splice(2,0,addGroup);
+		
+		
+	}
+	initEpicrise_old = function(){
+	/*
 		$scope.patientHistory.historyTreatmentAnalysises.forEach(function(hol1Element) {
 			$scope.epicrise[hol1Element.historyTreatmentAnalysisName] = {};
 			$scope.epicrise[hol1Element.historyTreatmentAnalysisName].historyTreatmentAnalysisDatetime = new Date();
 			initFromHol1($scope.epicrise[hol1Element.historyTreatmentAnalysisName], hol1Element);
 		});
-		$scope.epicrise.patientHistory = $scope.patientHistory;
+	*/
+		$scope.epicrise.groupsMap = {};
+		$scope.epicrise.epicriseGroups = [];
+		$scope.epicriseTemplate.head1s.forEach(function(h1, index) {
+			$scope.epicrise.epicriseGroups.push(createGroupElement(h1));
+			$scope.epicrise.groupsMap[h1.name] = index;
+		});
+		console.log($scope.patientHistory);
+		$scope.patientHistory.historyTreatmentAnalysises.forEach(function(hol1Element) {
+			epicriseElement = $scope.epicrise.epicriseGroups[$scope.epicrise.groupsMap[hol1Element.historyTreatmentAnalysisName]].value;
+			initFromHol1(epicriseElement, hol1Element);
+		});
 		console.log($scope.epicrise);
 	}
 
-	initFromHol1 = function(epicriseElement, hol1Element){
-		var textHol1 = hol1Element.historyTreatmentAnalysisText;
+	createGroupElement = function(h1Name){
+		var type="isTextHtml";
+		if(epicriseTemplate.epicriseBlockConfig[h1Name]){
+			if(epicriseTemplate.epicriseBlockConfig[h1Name].isLabor){
+				var type="isLabor";
+			}else
+				if(epicriseTemplate.epicriseBlockConfig[h1Name].isOnDemand){
+					var type="isOnDemand";
+				}
+		}
+		return {name:h1Name, type:type};
+	}
+
+	initFromHol1 = function(epicriseElement, textHol1){
 		var element = angular.element(textHol1);
 		var trs = element.find("td.name");
 		if(trs.length > 0){
@@ -43,7 +96,6 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 				}
 			}
 			epicriseElement.laborValues = laborValues;
-			hol1Element.historyTreatmentAnalysisText = null;
 		}else{
 			epicriseElement.textHtml = textHol1;
 			if(textHol1 == "") {
@@ -62,9 +114,30 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 		console.log(laborBlock);
 	}
 
+	$scope.setSeekTag = function(tag){
+		$scope.seekTag = tag;
+		if("все" === tag) {
+			$scope.seekTag = "";
+		}
+	}
+
+	$scope.beetDays = function(){
+		var outDay = $scope.epicrise.departmentHistoryOut;
+		if($scope.patientHistory){
+			var inDay = $scope.patientHistory.patientDepartmentMovements[0].departmentHistoryIn;
+			var beetDaysRaw = (outDay - inDay)/dayInMs;
+			return Math.round(beetDaysRaw);
+		}
+	}
+	var dayInMs = 1000*60*60*24;
 	$scope.changeBlockDate = function(dt, h1Index){
 		var epicriseBlockElement = $scope.epicrise[$scope.epicriseTemplate.head1s[h1Index].name];
 		epicriseBlockElement.historyTreatmentAnalysisDatetime=dt;
+	}
+
+	$scope.addGroup = function(addGroup){
+		var middlePosition = ($scope.epicrise.epicriseGroups.length + $scope.epicrise.epicriseGroups.length%2)/2;
+		$scope.epicrise.epicriseGroups.splice(middlePosition,0,createGroupElement(addGroup));
 	}
 
 	$scope.saveWorkDoc = function(){

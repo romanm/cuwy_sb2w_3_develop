@@ -1040,7 +1040,6 @@ public class CuwyDbService1 {
 
 	//---------------epicrise---------------------------------------------------
 	public Map<String, Object> saveEpicrise(Map<String, Object> epicrise) {
-		logger.info("\n"+epicrise);
 		saveEpicriseToFile(epicrise, 0);
 		return epicrise;
 	}
