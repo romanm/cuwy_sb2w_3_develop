@@ -13,11 +13,17 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 
 	initDeclareController($scope, $http, $sce, $filter);
 
-
 	$http({ method : 'GET', url : history2File
 	}).success(function(data, status, headers, config) {
 		$scope.epicrise = data;
-		console.log($scope.epicrise);
+		$scope.patientHistory = $scope.epicrise.patientHistory;
+		if(!$scope.patientHistory){
+			$http({ method : 'GET', url : historyFile
+			}).success(function(data, status, headers, config) {
+				$scope.patientHistory = data;
+			}).error(function(data, status, headers, config) {
+			});
+		}
 	}).error(function(data, status, headers, config) {
 		readHol1();
 	});
@@ -43,7 +49,6 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 				$scope.epicrise.epicriseGroups.push(groupElement);
 			}
 		});
-		console.log($scope.epicrise);
 		var op = $scope.epicriseTemplate.head1s[1];
 		$scope.epicrise.epicriseGroups.splice(0,0,{name:op.name});
 		var dz = $scope.epicriseTemplate.head1s[0];
@@ -98,13 +103,10 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 
 	$scope.openLaborToEdit = function(h1, laborName){
 		h1.laborOpenToEdit=laborName;
-		console.log(h1);
 		if(!h1.value.laborValues[laborName])
 		h1.value.laborValues[laborName] = {value:""};
-		console.log($('#'+laborName));
 		//not work
 		$('#'+laborName).focus();
-		console.log(h1);
 	}
 
 	$scope.setSeekTag = function(tag){
@@ -116,9 +118,11 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 
 	$scope.beetDays = function(){
 		var outDay = $scope.epicrise.departmentHistoryOut;
+		var outDate = new Date(outDay);
 		if($scope.patientHistory){
 			var inDay = $scope.patientHistory.patientDepartmentMovements[0].departmentHistoryIn;
-			var beetDaysRaw = (outDay - inDay)/dayInMs;
+			var beetDaysRaw = (outDate - inDay)/dayInMs;
+//			var beetDaysRaw = (outDay - inDay)/dayInMs;
 			return Math.round(beetDaysRaw);
 		}
 	}
@@ -140,11 +144,16 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 	$scope.saveWorkDoc = function(){
 		console.log("-----------------");
 		$scope.epicrise.hid = parameters.hid;
+		$scope.epicrise.patientHistory = $scope.patientHistory;
 		saveWorkDoc("/save/epicrise", $scope, $http);
 		console.log("-----------------");
 	}
+
 	$scope.editOpenClose = function(h1Index){
 		var oldOpen = $scope.epicrise.epicriseGroups[h1Index].open;
+		if(!$scope.epicrise.epicriseGroups[h1Index].value){
+			addTextHtmlValue($scope.epicrise.epicriseGroups[h1Index], "");
+		}
 		$scope.dt = $scope.epicrise.epicriseGroups[h1Index].value.historyTreatmentAnalysisDatetime;
 		closeAllGroupEditors();
 		$scope.epicrise.epicriseGroups[h1Index].open = !oldOpen;
@@ -153,8 +162,8 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 				if($scope.epicrise.epicriseGroups[h1Index].value.laborValues[k].value == "")
 					delete $scope.epicrise.epicriseGroups[h1Index].value.laborValues[k];
 		}
-
 	}
+
 	$scope.editOpenCloseOld = function(h1Index){
 		var head1s = $scope.epicriseTemplate.head1s;
 		if(!$scope.epicrise[head1s[h1Index].name]) {
