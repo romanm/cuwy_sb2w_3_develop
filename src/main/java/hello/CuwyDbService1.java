@@ -1055,9 +1055,9 @@ public class CuwyDbService1 {
 		java2jsonObject.remove("savedTs");
 		writeToJsonDbFile((Object) java2jsonObject, fileName);
 	}
+
 	void writeToJsonDbFile(Object java2jsonObject, String fileName) {
-		File file = new File(AppConfig.applicationFolderPfad 
-				+ AppConfig.innerDbFolderPfad + fileName);
+		File file = new File(AppConfig.applicationFolderPfad + AppConfig.innerDbFolderPfad + fileName);
 		logger.warn(""+file);
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectWriter writerWithDefaultPrettyPrinter = mapper.writerWithDefaultPrettyPrinter();

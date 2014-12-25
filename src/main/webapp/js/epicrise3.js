@@ -1,5 +1,6 @@
 
 var historyFile = "/hol/history_id_" + parameters.hid;
+var history2File = "/hol2/history_id_" + parameters.hid;
 
 cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', function ($scope, $http, $filter, $sce) {
 
@@ -7,20 +8,30 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 	$scope.epicriseTemplate = epicriseTemplate;
 	$scope.seekTag = "";
 	$scope.epicrise = {};
-	$scope.epicrise.departmentHistoryOut = new Date();
 	$scope.dt = new Date();
 	console.log($scope.epicriseTemplate);
 
 	initDeclareController($scope, $http, $sce, $filter);
 
-	$http({ method : 'GET', url : historyFile
+
+	$http({ method : 'GET', url : history2File
 	}).success(function(data, status, headers, config) {
-		$scope.patientHistory = data;
-		initEpicrise();
+		$scope.epicrise = data;
+		console.log($scope.epicrise);
 	}).error(function(data, status, headers, config) {
+		readHol1();
 	});
 
+	readHol1 = function(){
+		$http({ method : 'GET', url : historyFile
+		}).success(function(data, status, headers, config) {
+			$scope.patientHistory = data;
+			initEpicrise();
+		}).error(function(data, status, headers, config) {
+		});
+	}
 	initEpicrise = function(){
+		$scope.epicrise.departmentHistoryOut = new Date();
 		$scope.epicrise.epicriseGroups = [];
 		var rsp = {name:"Рекомендовано/смерть/перевід"};
 		$scope.patientHistory.historyTreatmentAnalysises.forEach(function(hol1Element) {
@@ -128,6 +139,7 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 
 	$scope.saveWorkDoc = function(){
 		console.log("-----------------");
+		$scope.epicrise.hid = parameters.hid;
 		saveWorkDoc("/save/epicrise", $scope, $http);
 		console.log("-----------------");
 	}

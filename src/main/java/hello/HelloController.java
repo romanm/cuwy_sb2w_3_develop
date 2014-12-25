@@ -54,8 +54,8 @@ public class HelloController {
 
 	private static final Logger logger = LoggerFactory.getLogger(HelloController.class);
 
-	@Autowired
-	private CuwyDbService1 cuwyDbService1;
+	@Autowired private CuwyDbService1 cuwyDbService1;
+	@Autowired private Hol2Service hol2Service;
 	
 	@RequestMapping(value="/i", method=RequestMethod.GET)
 	public String index() {
@@ -352,6 +352,7 @@ public class HelloController {
 		System.out.println("-------------------------------");
 		epicrise.put("server", "add from server");
 		epicrise = cuwyDbService1.saveEpicrise(epicrise);
+		epicrise = hol2Service.saveEpicrise(epicrise);
 		System.out.println("-------------------------------");
 		return epicrise;
 	}
@@ -407,6 +408,12 @@ public class HelloController {
 		return shortPatientHistory;
 	}
 
+	@RequestMapping(value = "/hol2/history_id_{historyId}", method = RequestMethod.GET)
+	public @ResponseBody Map<String, Object> getHol2PatientHistoryById(@PathVariable Integer historyId) throws IOException {
+		logger.info("\n Start /hol2/history_id_"+historyId);
+		Map<String, Object> epicrise = hol2Service.readEpicrise(historyId);
+		return epicrise;
+	}
 	@RequestMapping(value = "/hol/history_id_{historyId}", method = RequestMethod.GET)
 	public @ResponseBody HistoryHolDb getHolPatientHistoryById(@PathVariable Integer historyId) throws IOException {
 		logger.info("\n Start /hol/history_id_"+historyId);

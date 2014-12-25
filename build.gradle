@@ -33,6 +33,7 @@ configurations {
 dependencies {
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 	compile("org.springframework:spring-jdbc")
+	compile("com.h2database:h2")
 	compile("mysql:mysql-connector-java:5.1.31")
 	compile("dom4j:dom4j:1.6.1")
 	compile("jaxen:jaxen:1.1.6")
