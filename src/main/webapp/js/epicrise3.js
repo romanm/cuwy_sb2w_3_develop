@@ -25,10 +25,10 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 		var rsp = {name:"Рекомендовано/смерть/перевід"};
 		$scope.patientHistory.historyTreatmentAnalysises.forEach(function(hol1Element) {
 			var groupElement = createGroupElement(hol1Element.historyTreatmentAnalysisName);
+			addTextHtmlValue (groupElement, hol1Element.historyTreatmentAnalysisText);
 			if( rsp.name == groupElement.name){
 				rsp = groupElement;
 			}else{
-				addTextHtmlValue (groupElement, hol1Element.historyTreatmentAnalysisText);
 				$scope.epicrise.epicriseGroups.push(groupElement);
 			}
 		});
@@ -41,8 +41,6 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 		$scope.epicrise.epicriseGroups.push(rsp);
 		var addGroup = {name:"Лікування, обстеження, аналізи, рекомендації ...", type : 'isOnDemand'};
 		$scope.epicrise.epicriseGroups.splice(2,0,addGroup);
-		
-		
 	}
 
 	addTextHtmlValue = function(groupElement, textHtmlValue){
@@ -135,10 +133,10 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 	}
 	$scope.editOpenClose = function(h1Index){
 		var oldOpen = $scope.epicrise.epicriseGroups[h1Index].open;
+		$scope.dt = $scope.epicrise.epicriseGroups[h1Index].value.historyTreatmentAnalysisDatetime;
 		closeAllGroupEditors();
 		$scope.epicrise.epicriseGroups[h1Index].open = !oldOpen;
-		if(!$scope.epicrise.epicriseGroups[h1Index].open )
-		{
+		if(!$scope.epicrise.epicriseGroups[h1Index].open ){
 			for(k in $scope.epicrise.epicriseGroups[h1Index].value.laborValues)
 				if($scope.epicrise.epicriseGroups[h1Index].value.laborValues[k].value == "")
 					delete $scope.epicrise.epicriseGroups[h1Index].value.laborValues[k];
