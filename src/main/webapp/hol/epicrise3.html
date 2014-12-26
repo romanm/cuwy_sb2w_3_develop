@@ -8,7 +8,8 @@
 <link rel='stylesheet prefetch' href='/css/font-awesome.min.css'>
 <link rel="stylesheet" href="/css/epicrise3.css"></link>
 </head>
-<body>
+
+<body data-key-cuwytrap="">
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-5" style="text-align: right;">
@@ -33,149 +34,167 @@
 		</div>
 	</div>
 	<div class="container">
-		<h2 class="centered">Виписка</h2>
-		<div class="">
-			<span
-				data-ng-show="patientHistory.patientHolDb.patientGender == 0">
-				Хвора </span> <span
-				data-ng-show="patientHistory.patientHolDb.patientGender == 1">
-				Хворий </span> <b>
-				{{patientHistory.patientHolDb.patientSurname}}
-				{{patientHistory.patientHolDb.patientPersonalName}}
-				{{patientHistory.patientHolDb.patientPatronymic}} </b> віком <b> <span
-				data-ng-bind="calculateAge(patientHistory.patientHolDb.patientDob)"></span>
-				р.,
-			</b> що проживає за адресою <b> <span
-				data-ng-if="patientHistory.patientHolDb.patientStreet">
-					вул.{{patientHistory.patientHolDb.patientStreet}},
-					буд.{{patientHistory.patientHolDb.patientHouse}},
-					кв.{{patientHistory.patientHolDb.patientFlat}} </span>
-			</b> <span data-ng-if="!patientHistory.patientHolDb.patientStreet">?</span>
-			поступив <b>
-				{{patientHistory.patientDepartmentMovements[0].departmentHistoryIn |
-				date:'dd.MM.yyyy'}} </b> виписаний <b>
-				{{epicrise.departmentHistoryOut | date:'dd.MM.yyyy'}} </b> провів
-			ліжкоднів: <b> {{beetDays()}} </b>
-		</div>
-		<hr/>
-		<div>
-			<div class="epicriseElement"
-				data-ng-repeat-start="h1 in epicrise.epicriseGroups"
-				data-ng-init="h1Index = $index"
-				data-ng-class="{'no-print navbar-right':h1.type == 'isOnDemand'}"
-				data-ng-click="editOpenClose(h1Index)">
-				<!-- 
-				<span class="no-print"> {{h1Index}} </span> 
-				 -->
-				<span class="mouseover">
-					<b> <span data-ng-show="h1.type == 'isOnDemand'">+</span>
-						{{h1.name}}
-				</b> <a href="#" class="no-print"> <span
-						data-ng-if="!epicrise.epicriseGroups[h1Index].open"
-						class="glyphicon glyphicon-chevron-right"></span> <span
-						data-ng-if="epicrise.epicriseGroups[h1Index].open"
-						class="glyphicon glyphicon-chevron-down"></span>
-				</a> {{h1.value.historyTreatmentAnalysisDatetime | date:'dd.MM.yyyy'}}
-				</span>
-				<!-- dz -->
-				<span data-ng-show="h1.name == 'Діагнози'"> <span>
-						Діагноз при госпіталізації: <b
-						tooltip-html-unsafe="Дата встановлення: &lt;b>{{patientHistory.diagnosisOnAdmission.historyDiagnosDate | date:'dd.MM.yyyy HH:mm'}}&lt;/b>">
-							{{patientHistory.diagnosisOnAdmission.icdCode}},
-							{{patientHistory.diagnosisOnAdmission.icdName}} </b>
-				</span>
-				</span>
-				<!-- текстові html данні -->
-				<span ng-bind-html="h1.value.textHtml"
-					data-ng-show="!h1.value.laborValues"></span>
-				<!-- лабораторні данні -->
+			<h2 class="centered">Виписка</h2>
+			<div class="">
 				<span
-					data-ng-repeat="laborTemplate in epicriseTemplate.epicriseBlock[h1.name]">
-					<span
-					data-ng-show="h1.value.laborValues[laborTemplate.name]">
-						{{laborTemplate.name}}
-						{{epicrise[h1.name].laborValues[laborTemplate.name].value}}
-						{{h1.value.laborValues[laborTemplate.name].value}} 
-						{{laborTemplate.unit}} <span data-ng-show="!$last">,</span>
-				</span>
-				</span>
+					data-ng-show="patientHistory.patientHolDb.patientGender == 0">
+					Хвора </span> <span
+					data-ng-show="patientHistory.patientHolDb.patientGender == 1">
+					Хворий </span> <b>
+					{{patientHistory.patientHolDb.patientSurname}}
+					{{patientHistory.patientHolDb.patientPersonalName}}
+					{{patientHistory.patientHolDb.patientPatronymic}} </b> віком <b> <span
+					data-ng-bind="calculateAge(patientHistory.patientHolDb.patientDob)"></span>
+					р.,
+				</b> що проживає за адресою <b> <span
+					data-ng-if="patientHistory.patientHolDb.patientStreet">
+						вул.{{patientHistory.patientHolDb.patientStreet}},
+						буд.{{patientHistory.patientHolDb.patientHouse}},
+						кв.{{patientHistory.patientHolDb.patientFlat}} </span>
+				</b> <span data-ng-if="!patientHistory.patientHolDb.patientStreet">?</span>
+				поступив <b>
+					{{patientHistory.patientDepartmentMovements[0].departmentHistoryIn |
+					date:'dd.MM.yyyy'}} </b> виписаний <b>
+					{{epicrise.departmentHistoryOut | date:'dd.MM.yyyy'}} </b> провів
+				ліжкоднів: <b> {{beetDays()}} </b>
 			</div>
-			<!-- редактор -->
-			<div class="row well no-print" data-ng-repeat-end=""
-				data-ng-show="epicrise.epicriseGroups[h1Index].open">
-				<hr data-ng-show="h1.type == 'isOnDemand'" />
-				<div class="col-xs-9">
-					<!-- данні текстового формату - редактор -->
-					<div text-angular ng-model="h1.value.textHtml"
-						data-ng-show="h1.type == 'isTextHtml'"></div>
-					<!-- додати групу - редактор -->
-					<div data-ng-show="h1.type == 'isOnDemand'">
-						<div class="input-group">
-							<span class="input-group-addon">Пошук:</span> <input
-								data-ng-model="seekGroup" type="text" class="form-control"
-								auto-focus="" placeholder=" пошук групи " auto-focus="" />
-						</div>
+			<hr/>
+			<div class="no-print navbar-right">
+				<small> <b>Тіп:</b> Використовуйти праву кнопку миші. </small>
+			</div>
+			<div>
+				<div class="epicriseElement"
+					data-ng-repeat-start="h1 in epicrise.epicriseGroups"
+					data-ng-init="h1Index = $index"
+					data-ng-class="{'no-print navbar-right':h1.type == 'isOnDemand'}"
+					data-ng-click="editOpenClose(h1Index)">
+					<!-- 
+					<span class="no-print"> {{h1Index}} </span> 
+					 -->
+					<span class="mouseover"
+						data-ng-context-menu="menuEpicriseGroup"
+					>
+						<b> <span data-ng-show="h1.type == 'isOnDemand'">+</span>
+							{{h1.name}}
+					</b> <a href="#" class="no-print"> <span
+							data-ng-if="!epicrise.epicriseGroups[h1Index].open"
+							class="glyphicon glyphicon-chevron-right"></span> <span
+							data-ng-if="epicrise.epicriseGroups[h1Index].open"
+							class="glyphicon glyphicon-chevron-down"></span>
+					</a> 
+					<span data-ng-show="h1.value.withDate">
+					{{h1.value.historyTreatmentAnalysisDatetime | date:'dd.MM.yyyy'}}
+					</span>
+					</span>
+					<!-- dz -->
+					<span data-ng-show="h1.name == 'Діагнози'"> <span>
+							Діагноз при госпіталізації: <b
+							tooltip-html-unsafe="Дата встановлення: &lt;b>{{patientHistory.diagnosisOnAdmission.historyDiagnosDate | date:'dd.MM.yyyy HH:mm'}}&lt;/b>">
+								{{patientHistory.diagnosisOnAdmission.icdCode}},
+								{{patientHistory.diagnosisOnAdmission.icdName}} </b>
+					</span>
+					</span>
+					<!-- текстові html данні -->
+					<span ng-bind-html="h1.value.textHtml"
+						data-ng-show="!h1.value.laborValues"></span>
+					<!-- лабораторні данні -->
+					<span
+						data-ng-repeat="laborTemplate in epicriseTemplate.epicriseBlock[h1.name]">
 						<span
-							data-ng-repeat="tag in epicriseTemplate.head1s[h1Index].tagsGroup">
-							<span class="label"
-							data-ng-class="{'label-warning':seekTag == tag || ('все' === tag && '' === seekTag ), 'label-default':seekTag != tag}"
-							data-ng-click="setSeekTag(tag)"
-							>{{tag}}</span>
-							&nbsp;
-						</span> 
-							<span class="label"
-							data-ng-class="{'label-warning':seekTag == epicriseTemplate.head1s[h1Index].tags[0]
-							 || ('все' === epicriseTemplate.head1s[h1Index].tags[0] && '' === seekTag )
-							 , 'label-default':seekTag != epicriseTemplate.head1s[h1Index].tags[0]}"
-							data-ng-click="setSeekTag(tag)"
-							>{{epicriseTemplate.head1s[h1Index].tags[0]}}</span>
-						<br/>
-						<span data-ng-repeat="h2 in epicriseTemplate.head1s[h1Index].addGroup | filter : seekTag | filter : seekGroup">
-							<a data-ng-click="addGroup(h2)"> {{h2.name}} </a> |
-						</span>
-					</div>
-					<!-- лабораторні данні редактор -->
-					<div data-ng-show="h1.type == 'isLabor'">
-						<div class="input-group">
-							<span class="input-group-addon">Пошук:</span> <input
-								data-ng-model="seekLabor" type="text" class="form-control"
-								auto-focus="" placeholder=" пошук групи " auto-focus="" />
+						data-ng-show="h1.value.laborValues[laborTemplate.name]">
+							{{laborTemplate.name}}
+							{{epicrise[h1.name].laborValues[laborTemplate.name].value}}
+							{{h1.value.laborValues[laborTemplate.name].value}} 
+							{{laborTemplate.unit}} <span data-ng-show="!$last">,</span>
+					</span>
+					</span>
+				</div>
+				<!-- редактор -->
+				<div class="row well no-print" data-ng-repeat-end=""
+					data-ng-show="epicrise.epicriseGroups[h1Index].open">
+					<hr data-ng-show="h1.type == 'isOnDemand'" />
+					<div class="col-xs-9">
+						<!-- данні текстового формату - редактор -->
+						<div text-angular ng-model="h1.value.textHtml"
+							data-ng-show="h1.type == 'isTextHtml'"></div>
+						<!-- додати групу - редактор -->
+						<div data-ng-show="h1.type == 'isOnDemand'">
+							<div class="input-group">
+								<span class="input-group-addon">Пошук:</span> <input
+									data-ng-model="seekGroup" type="text" class="form-control"
+									auto-focus="" placeholder=" пошук групи " auto-focus="" />
+							</div>
+							<span
+								data-ng-repeat="tag in epicriseTemplate.head1s[h1Index].tagsGroup">
+								<span class="label"
+								data-ng-class="{'label-warning':seekTag == tag || ('все' === tag && '' === seekTag ), 'label-default':seekTag != tag}"
+								data-ng-click="setSeekTag(tag)"
+								>{{tag}}</span>
+								&nbsp;
+							</span> 
+								<span class="label"
+								data-ng-class="{'label-warning':seekTag == epicriseTemplate.head1s[h1Index].tags[0]
+								 || ('все' === epicriseTemplate.head1s[h1Index].tags[0] && '' === seekTag )
+								 , 'label-default':seekTag != epicriseTemplate.head1s[h1Index].tags[0]}"
+								data-ng-click="setSeekTag(tag)"
+								>{{epicriseTemplate.head1s[h1Index].tags[0]}}</span>
+							<br/>
+							<span data-ng-repeat="h2 in epicriseTemplate.head1s[h1Index].addGroup | filter : seekTag | filter : seekGroup">
+								<a data-ng-click="addGroup(h2)"> {{h2.name}} </a> |
+							</span>
 						</div>
-						<span
-							data-ng-repeat="laborTemplate in epicriseTemplate.epicriseBlock[h1.name] | filter : seekLabor">
-							<a
-							data-ng-show="laborTemplate.name != h1.laborOpenToEdit"
-							data-ng-click="openLaborToEdit(h1, laborTemplate.name)">
-								{{laborTemplate.name}}
-								{{h1.value.laborValues[laborTemplate.name].value}} 
-								<span
-								data-ng-show="!h1.value.laborValues[laborTemplate.name].value">
-									_________ </span> {{laborTemplate.unit}}
-						</a>
-							<form class="form-inline" role="form"
-								data-ng-show="laborTemplate.name == h1.laborOpenToEdit">
-								<div class="form-group">
-									<div class="input-group">
-										<div class="input-group-addon">{{laborTemplate.name}}</div>
-										<input id="{{laborTemplate.name}}"
-											ng-model="h1.value.laborValues[laborTemplate.name].value"
-											class="form-control" type="text" />
-										<div class="input-group-addon">{{laborTemplate.unit}}</div>
+						<!-- лабораторні данні редактор -->
+						<div data-ng-show="h1.type == 'isLabor'">
+							<div class="input-group">
+								<span class="input-group-addon">Пошук:</span> <input
+									data-ng-model="seekLabor" type="text" class="form-control"
+									auto-focus="" placeholder=" пошук групи " auto-focus="" />
+							</div>
+							<span
+								data-ng-repeat="laborTemplate in epicriseTemplate.epicriseBlock[h1.name] | filter : seekLabor">
+								<a
+								data-ng-show="laborTemplate.name != h1.laborOpenToEdit"
+								data-ng-click="openLaborToEdit(h1, laborTemplate.name)">
+									{{laborTemplate.name}}
+									{{h1.value.laborValues[laborTemplate.name].value}} 
+									<span
+									data-ng-show="!h1.value.laborValues[laborTemplate.name].value">
+										_________ </span> {{laborTemplate.unit}}
+							</a>
+								<form class="form-inline" role="form"
+									data-ng-show="laborTemplate.name == h1.laborOpenToEdit">
+									<div class="form-group">
+										<div class="input-group">
+											<div class="input-group-addon">{{laborTemplate.name}}</div>
+											<input id="{{laborTemplate.name}}"
+												ng-model="h1.value.laborValues[laborTemplate.name].value"
+												class="form-control" type="text" />
+											<div class="input-group-addon">{{laborTemplate.unit}}</div>
+										</div>
 									</div>
-								</div>
-							</form> <span data-ng-show="!$last">,</span>
-						</span>
+								</form> <span data-ng-show="!$last">,</span>
+							</span>
+						</div>
+					</div>
+				<div class="col-xs-3">
+					<div>
+						<label> Додати дату <input type="checkbox"
+							data-ng-model="h1.value.withDate" />
+						</label>
+					</div>
+					<div data-ng-show="h1.value.withDate">
+						<a data-ng-click="changeBlockDate(dt, h1Index)"> Поновити дату
+							розділу виписки {{dt | date:'dd.MM.yyyy'}} </a>
+						<datepicker
+							data-ng-model="h1.value.historyTreatmentAnalysisDatetime"
+							min-date="minDate" show-weeks="true" class="well well-sm"></datepicker>
 					</div>
 				</div>
-				<div class="col-xs-3">
-					<a data-ng-click="changeBlockDate(dt, h1Index)"> Поновити дату
-						розділу виписки {{dt | date:'dd.MM.yyyy'}} </a>
-					<datepicker ng-model="h1.value.historyTreatmentAnalysisDatetime" min-date="minDate" show-weeks="true"
-						class="well well-sm"></datepicker>
-				</div>
+			</div>
 			</div>
 		</div>
-	</div>
+
+</body>
 
 	<script src="/js/jquery-2.1.1.min.js"></script>
 	<script src="/js/rangy-core.js"></script>
@@ -191,6 +210,4 @@
 	<script src="/js/cuwy1.controller.js"></script>
 	<script src="/js/epicriseTemplate.json.js"></script>
 	<script src="/js/epicrise3.js"></script>
-
-</body>
 </html>

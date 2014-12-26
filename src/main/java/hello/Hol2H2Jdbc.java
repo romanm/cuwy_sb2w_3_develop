@@ -110,7 +110,7 @@ public class Hol2H2Jdbc {
 	}
 
 	public void insertEpicrise(Integer hid, Map<String, Object> epicrise) {
-		final String sql = "INSERT INTO epicrise1 (epicrise_hol1_hid, epicrise_self) VALUES (?, ?)";
+		final String sql = "INSERT INTO epicrise1 (epicrise_self, epicrise_hol1_hid) VALUES (?, ?)";
 		changeDb(hid, epicrise, sql);
 	}
 
@@ -133,8 +133,10 @@ public class Hol2H2Jdbc {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		final String string = out.toString();
+		final SqlLobValue sqlLobValue = new SqlLobValue(string, lobHandler);
 		jdbcTemplate.update( sql,
-			new Object[] {new SqlLobValue(out.toString(), lobHandler), hid },
+			new Object[] {sqlLobValue, hid },
 			new int[] {Types.CLOB, Types.INTEGER}
 		);
 	}

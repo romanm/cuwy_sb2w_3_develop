@@ -9,7 +9,7 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 	$scope.seekTag = "";
 	$scope.epicrise = {};
 	$scope.dt = new Date();
-	console.log($scope.epicriseTemplate);
+//	console.log($scope.epicriseTemplate);
 
 	initDeclareController($scope, $http, $sce, $filter);
 
@@ -192,4 +192,53 @@ cuwyApp.controller('EpicriseCtrl', [ '$scope', '$http', '$filter', '$sce', funct
 		});
 	};
 
+	//--------------sort array--------------------------------------------------
+
+	moveTo = function(arrayToSort, indexFrom, indexTo){
+		var el = arrayToSort.splice(indexFrom, 1);
+		arrayToSort.splice(indexTo, 0, el[0]);
+	}
+
+	moveUp = function(arrayToSort, index){
+		moveTo(arrayToSort, index, index-1);
+	}
+
+	movePlus = function(arrayToSort, index){
+		if(index < arrayToSort.length){
+			moveUp(arrayToSort, index);
+		}else{
+			moveTo(arrayToSort, index-1,0);
+		}
+	}
+
+	moveMinus = function(arrayToSort, index){
+		if(index > 0){
+			moveUp(arrayToSort, index);
+		}else{
+			moveTo(arrayToSort, 0, arrayToSort.length-1);
+		}
+	}
+
+	moveEpicriseGroupDown = function($itemScope){
+		console.log($itemScope.$index);
+		movePlus($scope.epicrise.epicriseGroups, $itemScope.$index);
+		console.log($scope.epicrise.epicriseGroups);
+	}
+	moveEpicriseGroupUp = function($itemScope){
+		console.log($itemScope.$index);
+		moveMinus($scope.epicrise.epicriseGroups, $itemScope.$index);
+		console.log($scope.epicrise.epicriseGroups);
+	}
+	//--------------sort array-----------------------------------------------END
+
+	//-----------------context menu---------------------------------------------
+	$scope.menuEpicriseGroup = [
+		['<span class="glyphicon glyphicon-arrow-up"></span> Догори ', function ($itemScope) {
+			moveEpicriseGroupUp($itemScope);
+		}],
+		['<span class="glyphicon glyphicon-arrow-down"></span> Донизу ', function ($itemScope) {
+			moveEpicriseGroupDown($itemScope);
+		}]
+	];
+	//-----------------context menu------------------------------------------END
 } ]);
