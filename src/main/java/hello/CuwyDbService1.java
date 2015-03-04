@@ -649,6 +649,7 @@ public class CuwyDbService1 {
 	}
 
 	public void updatePatientHolDb(final PatientHolDb patientHolDb) {
+		logger.info("\n"+patientHolDb);
 		String sql = "UPDATE patient SET "
 				+ " patient_surname = ?, patient_name = ?, patient_patronnymic = ?, patient_gender = ?, patient_dob = ? "
 				+ ", country_id = ?, district_id = ?, region_id = ?, locality_id = ?, patient_street = ?, patient_house = ?, patient_job = ? "
@@ -710,6 +711,11 @@ public class CuwyDbService1 {
 		@Override
 		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
 			PatientHolDb patientHolDb = new PatientHolDb();
+			patientHolDb.setCountryId(rs.getInt("country_id"));
+			patientHolDb.setDistrictId(rs.getInt("district_id"));
+			patientHolDb.setRegionId(rs.getInt("region_id"));
+			patientHolDb.setLocalityId(rs.getInt("locality_id"));
+			
 			patientHolDb.setPatientId(rs.getInt("patient_id"));
 			patientHolDb.setPatientSurname(rs.getString("patient_surname"));
 			patientHolDb.setPatientPersonalName(rs.getString("patient_name"));

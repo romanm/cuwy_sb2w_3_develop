@@ -25,7 +25,7 @@
 			<div class="col-xs-5">
 				+380 382 72-07-42, incoming@med.km.ua <br />
 				http://hol.khmelnitskiy.ua/ <span class="navbar-right no-print">
-					<a data-ng-click="saveWorkDoc()" href="#"
+					<a data-ng-click="savePatientHistory()" href="#"
 					title="Запис {{numberOfChange}} незбережених змін"> Запис <span
 						class="glyphicon glyphicon-floppy-disk"></span>{{numberOfChange}}
 				</a>
@@ -43,29 +43,145 @@
 					class="glyphicon glyphicon-chevron-right"></span> <span
 					data-ng-if="gr.open" class="glyphicon glyphicon-chevron-down"></span>
 			</a>
-			<span  data-ng-show="g == 'fib'"> <b>Прізвище</b> <span>{{patientHolDb.patientSurname}}</span>
-				<b>Ім’я</b> <span>{{patientHolDb.patientPersonalName}}</span>
+			<span  data-ng-show="g == 'pip'"> <b>Прізвище</b> <span>{{patientHistory.patientHolDb.patientSurname}}</span>
+				<b>Ім’я</b> <span>{{patientHistory.patientHolDb.patientPersonalName}}</span>
 			</span>
 			</span> 
 			<div class="row well no-print"
 				data-ng-show="gr.open">
-				open 
-
-				<div data-ng-show="g == 'fib'">
+				<div data-ng-show="g == 'adress'">
+					<form class="form-inline" role="form">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon">Область:</div>
+								<input type="text" class="form-control input-sm" id="district"
+									name="district" ng-model="patientEditing.district" required="" />
+							</div>
+							<div class="input-group">
+								<div class="input-group-addon">Район:</div>
+								<input type="text" class="form-control input-sm" id="region"
+									name="region" ng-model="patientEditing.region" />
+							</div>
+							<div class="input-group">
+								<label class="radio"> <input type="radio"
+									name="localityType" ng-model="patientEditing.localityType"
+									value="1" /> місто
+								</label> <label class="radio"> <input type="radio"
+									name="localityType" ng-model="patientEditing.localityType"
+									value="0" /> село
+								</label>
+							</div>
+							<div class="input-group">
+								<div class="input-group-addon">місто/село</div>
+								<input type="text" class="form-control input-sm"
+									id="localityName" name="localityName"
+									ng-model="patientEditing.localityName" required="" />
+							</div>
+							<div class="input-group">
+								<div class="input-group-addon">Вулиця</div>
+								<input type="text" class="form-control input-sm"
+									placeholder="вулиця" id="patientStreet" name="patientStreet"
+									ng-model="patientHistory.patientHolDb.patientStreet" />
+							</div>
+							<div class="input-group">
+								<div class="input-group-addon">Будинок</div>
+								<input type="text" class="form-control input-sm"
+									id="patientHouse" name="patientHouse"
+									ng-model="patientHistory.patientHolDb.patientHouse" />
+							</div>
+							<div class="input-group">
+								<div class="input-group-addon">Квартира</div>
+								<input type="text" class="form-control input-sm"
+									id="patientFlat" name="patientFlat"
+									ng-model="patientHistory.patientHolDb.patientFlat" />
+							</div>
+							<br/>
+							<div class="input-group">
+								<div class="input-group-addon">
+									<span class="glyphicon glyphicon-earphone"></span>
+								</div>
+								<input type="text" class="form-control input-sm"
+									placeholder="домашній" id="patientPhoneHome"
+									name="patientPhoneHome"
+									ng-model="patientHistory.patientHolDb.patientPhoneHome" />
+							</div>
+							<div class="input-group">
+								<div class="input-group-addon">
+									<span class="glyphicon glyphicon-phone"></span>
+								</div>
+								<input type="text" class="form-control input-sm"
+									placeholder="мобільний" id="patientPhoneMobil"
+									name="patientPhoneMobil"
+									ng-model="patientHistory.patientHolDb.patientPhoneMobil" />
+							</div>
+							<br/>
+							<div class="input-group">
+								<div class="input-group-addon">Місце роботи:</div>
+								<input type="text" class="form-control" id="patientJob"
+									name="patientJob"
+									ng-model="patientHistory.patientHolDb.patientJob" />
+							</div>
+							<div class="input-group">
+								<div class="input-group-addon">Пільги:</div>
+								<input type="text" class="form-control" id="pilgy"
+									name="pilgy" ng-model="patientEditing.pilgy" required="" />
+								<div class="input-group-btn">
+									<button type="button" class="btn btn-default dropdown-toggle"
+										data-toggle="dropdown">
+										<span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu dropdown-menu-right" role="menu">
+										<li data-ng-repeat="b in benefits"><a href="#"
+											ng-click="patientEditing.pilgy=b">{{b}}</a></li>
+									</ul>
+								</div>
+							</div></form>
+				</div>
+				<div data-ng-show="g == 'pip'">
 					<form class="form-inline" role="form"
-						data-ng-show="laborTemplate.name == h1.laborOpenToEdit">
+						>
 						<div class="form-group">
 							<div class="input-group">
 								<div class="input-group-addon">Прізвище</div>
-								<input id="{{laborTemplate.name}}"
-									ng-model="patientHolDb.patientSurname"
+								<input id="patientSurname"
+									ng-model="patientHistory.patientHolDb.patientSurname"
 									class="form-control" type="text" />
 							</div>
 							<div class="input-group">
 								<div class="input-group-addon">Ім’я</div>
-								<input id="{{laborTemplate.name}}"
-									ng-model="patientHolDb.patientPersonalName"
+								<input id="patientPersonalName"
+									ng-model="patientHistory.patientHolDb.patientPersonalName"
 									class="form-control" type="text" />
+							</div>
+							<div class="input-group">
+								<label class="radio-inline"> <input type="radio"
+									name="patientGender"
+									ng-model="patientHistory.patientHolDb.patientGender" value="1" />
+									Чол
+								</label> <label class="radio-inline"> <input type="radio"
+									name="patientGender"
+									ng-model="patientHistory.patientHolDb.patientGender" value="0" />
+									Жін
+								</label>
+							</div>
+							<div class="input-group">
+								<div class="input-group-addon">По батькові</div>
+								<input type="text" class="form-control input-sm"
+									placeholder="По батькові" id="patientPatronymic"
+									name="patientPatronymic"
+									ng-model="patientHistory.patientHolDb.patientPatronymic"
+									/>
+							</div>
+							<div class="input-group">
+								<div class="input-group-addon">д.н.</div>
+								<input
+									id="patientDob" name="patientDob"
+									ng-model="patientHistory.patientHolDb.patientDob" 
+									class="form-control input-sm" type="text"
+									placeholder="(дд-мм-рррр)" ng-click="open($event)"
+									datepicker-popup="dd-MM-yyyy" is-open="opened"
+									datepicker-options="dateOptions" ng-required="true" />
+
 							</div>
 						</div>
 					</form>
@@ -77,11 +193,12 @@
 	<hr/>
 	<div class="container">addPatient</div>
 </body>
-<script src="/js/jquery-2.1.1.min.js"></script>
+	<script src="/js/jquery-2.1.1.min.js"></script>
 	<script src="/js/rangy-core.js"></script>
 	<script src="/js/angular.min.js"></script>
 	<script src="/js/angular-sanitize.min.js"></script>
 	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
 	<script src="/js/bootstrap-datepicker.js"></script>
 	<script src='/js/textAngular-sanitize.js'></script>
 	<script src='/js/textAngular.js'></script>

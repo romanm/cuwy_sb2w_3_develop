@@ -12,8 +12,6 @@ cuwyApp.controller('HistoryCtrl', [ '$scope', '$http', '$filter', '$sce', functi
 		patientHistory: null
 	};
 
-	initDeclareController($scope, $http, $sce, $filter);
-
 	console.log(window.location.pathname);
 	console.log(historyFile);
 	
