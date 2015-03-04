@@ -14,6 +14,9 @@ cuwyApp.controller('HistoryCtrl', [ '$scope', '$http', '$filter', '$sce', functi
 
 	initDeclareController($scope, $http, $sce, $filter);
 
+	console.log(window.location.pathname);
+	console.log(historyFile);
+	
 	$http({
 		method : 'GET',
 		url : historyFile

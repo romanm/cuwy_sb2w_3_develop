@@ -37,6 +37,7 @@ public class Hol2Service {
 
 	public Map<String, Object> readEpicrise(Integer historyId) {
 		final Map<String, Object> epicriseFromDb = hol2H2Jdbc.getEpicrise(historyId);
+		logger.debug(""+epicriseFromDb);
 		String epicriseSelf = (String) epicriseFromDb.get("EPICRISE_SELF");
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> epicrise = null;// = new HashMap<String, Object>();

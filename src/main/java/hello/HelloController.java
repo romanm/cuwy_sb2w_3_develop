@@ -290,7 +290,9 @@ public class HelloController {
 
 	private HistoryHolDb getShortPatientHistoryById(int historyId) {
 		HistoryHolDb historyHolDb = cuwyDbService1.getHistoryHolDbById(historyId);
+		logger.debug(""+historyHolDb);
 		addShortPatientHistory(historyHolDb);
+		logger.debug(""+historyHolDb);
 		return historyHolDb;
 	}
 
@@ -301,13 +303,10 @@ public class HelloController {
 	}
 
 	private void addShortPatientHistory(HistoryHolDb historyHolDb) {
-		System.out.println(1);
+		System.out.println("---------addShortPatientHistory-----------");
 		int historyId = historyHolDb.getHistoryId();
-		System.out.println(historyId);
 		List<PatientDepartmentMovement> patientDepartmentMovements
-			= cuwyDbService1.getPatientDepartmentMovements(historyId);
-		System.out.println(patientDepartmentMovements);
-		System.out.println(2);
+		= cuwyDbService1.getPatientDepartmentMovements(historyId);
 		historyHolDb.setPatientDepartmentMovements(patientDepartmentMovements);
 		List<HistoryTreatmentAnalysis> historyTreatmentAnalysises
 		= cuwyDbService1.getHistoryTreatmentAnalysises(historyId);
@@ -316,8 +315,8 @@ public class HelloController {
 		= cuwyDbService1.getDiagnosisOnAdmission(historyId);
 		historyHolDb.setDiagnosisOnAdmission(diagnosisOnAdmission);
 		PatientHolDb patientHolDb = cuwyDbService1.getPatientHolDb(historyHolDb.getPatientId());
-		System.out.println(patientHolDb);
 		historyHolDb.setPatientHolDb(patientHolDb);
+		logger.debug(""+historyHolDb);
 	}
 
 	private PatientHistory getShortPatientHistory_old(int history_no) {
@@ -412,6 +411,7 @@ public class HelloController {
 	public @ResponseBody Map<String, Object> getHol2PatientHistoryById(@PathVariable Integer historyId) throws IOException {
 		logger.info("\n Start /hol2/history_id_"+historyId);
 		Map<String, Object> epicrise = hol2Service.readEpicrise(historyId);
+		logger.debug(""+epicrise);
 		return epicrise;
 	}
 	@RequestMapping(value = "/hol/history_id_{historyId}", method = RequestMethod.GET)

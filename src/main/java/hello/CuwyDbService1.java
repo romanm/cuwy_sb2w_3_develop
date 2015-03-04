@@ -48,6 +48,7 @@ public class CuwyDbService1 {
 	public JdbcTemplate getJdbcTemplate() { return jdbcTemplate; }
 
 	public CuwyDbService1(){
+		
 		SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
 		dataSource.setDriverClass(com.mysql.jdbc.Driver.class);
 		dataSource.setUrl("jdbc:mysql://localhost/hol?useUnicode=true&characterEncoding=utf-8");
@@ -616,6 +617,9 @@ public class CuwyDbService1 {
 		historyHolDb.setHistoryAgeYear(historyHolDb.getPatientHolDb().patientAge());
 		historyHolDb.setHistoryAgeMonth(historyHolDb.getPatientHolDb().patientMonth());
 		historyHolDb.setHistoryAgeDay(historyHolDb.getPatientHolDb().patientDay());
+		System.out.println("---------------------------------------");
+		logger.debug(sqlInsertHistory);
+		System.out.println("---------------------------------------");
 		jdbcTemplate.update(sqlInsertHistory, new HistoryHolDbPSSetter(historyHolDb));
 	}
 
@@ -639,7 +643,8 @@ public class CuwyDbService1 {
 				+ ", ?,?,?"
 				+ ", ?,?,?,?"
 				+ ") ";
-		logger.info("\n"+sql+patientHolDb.getPatientId());
+		logger.info("\n"+sql+"\n"+patientHolDb);
+		logger.info("\n"+sql+"\n"+patientHolDb.getPatientId());
 		jdbcTemplate.update(sql, new PatientHolDbPSSetter(patientHolDb));
 	}
 

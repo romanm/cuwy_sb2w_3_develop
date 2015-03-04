@@ -1,4 +1,5 @@
-var historyFile = "/hol/history_id_"+parameters.hid;
+//var historyFile = "/hol/history_id_"+parameters.hid;
+var historyFile = "/hol/history_id_"+parameters.hno;
 
 console.log("historyFile = "+historyFile);
 
@@ -16,7 +17,8 @@ cuwyApp.controller('AdmissionPatientCtrl', [ '$scope', '$http', function ($scope
 	};
 	$scope.patientHistory = {};
 
-	if(parameters.hid){
+//	if(parameters.hid){
+	if(parameters.hno){
 		$http({
 			method : 'GET',
 			url : historyFile
