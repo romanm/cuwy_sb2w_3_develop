@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html ng-app="cuwyApp" ng-controller="addPatientCtrl">
+<head>
+<title>Нова історія хвороби - {{patientHistory.patientHolDb.patientSurname}}</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="/css/bootstrap.css"></link>
+<link rel="stylesheet" href="/css/datepicker.css"></link>
+<link rel='stylesheet prefetch' href='/css/font-awesome.min.css'>
+<link rel="stylesheet" href="/css/epicrise3.css"></link>
+</head>
+
+<body data-key-cuwytrap="">
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-5" style="text-align: right;">
+				Хмельницька Обласна Лікарня<br> м.Хмельницький, вул.Пілотська,
+				1 <span class="navbar-left no-print"> <a href="history_45815">
+						назад до <u> ЕІХ </u>
+				</a>
+				</span>
+			</div>
+			<div class="col-xs-1" style="text-align: center;">
+				<img alt="trizub" src="/img/gerb_small.png">
+			</div>
+			<div class="col-xs-5">
+				+380 382 72-07-42, incoming@med.km.ua <br />
+				http://hol.khmelnitskiy.ua/ <span class="navbar-right no-print">
+					<a data-ng-click="saveWorkDoc()" href="#"
+					title="Запис {{numberOfChange}} незбережених змін"> Запис <span
+						class="glyphicon glyphicon-floppy-disk"></span>{{numberOfChange}}
+				</a>
+				</span>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<h2 class="centered">Нова історія хвороби</h2>
+		<div data-ng-repeat="g in newHistoryTemplate.groups"
+			data-ng-init="gr = newHistoryTemplate[g]"
+			>
+			<span data-ng-click="editOpenClose(gr)"> <b> {{gr.name}} </b>
+				<a href="#" class="no-print"> <span data-ng-if="!gr.open"
+					class="glyphicon glyphicon-chevron-right"></span> <span
+					data-ng-if="gr.open" class="glyphicon glyphicon-chevron-down"></span>
+			</a>
+			<span  data-ng-show="g == 'fib'"> <b>Прізвище</b> <span>{{patientHolDb.patientSurname}}</span>
+				<b>Ім’я</b> <span>{{patientHolDb.patientPersonalName}}</span>
+			</span>
+			</span> 
+			<div class="row well no-print"
+				data-ng-show="gr.open">
+				open 
+
+				<div data-ng-show="g == 'fib'">
+					<form class="form-inline" role="form"
+						data-ng-show="laborTemplate.name == h1.laborOpenToEdit">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon">Прізвище</div>
+								<input id="{{laborTemplate.name}}"
+									ng-model="patientHolDb.patientSurname"
+									class="form-control" type="text" />
+							</div>
+							<div class="input-group">
+								<div class="input-group-addon">Ім’я</div>
+								<input id="{{laborTemplate.name}}"
+									ng-model="patientHolDb.patientPersonalName"
+									class="form-control" type="text" />
+							</div>
+						</div>
+					</form>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr/>
+	<div class="container">addPatient</div>
+</body>
+<script src="/js/jquery-2.1.1.min.js"></script>
+	<script src="/js/rangy-core.js"></script>
+	<script src="/js/angular.min.js"></script>
+	<script src="/js/angular-sanitize.min.js"></script>
+	<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
+	<script src="/js/bootstrap-datepicker.js"></script>
+	<script src='/js/textAngular-sanitize.js'></script>
+	<script src='/js/textAngular.js'></script>
+	<script src="/db/config.json.js"></script>
+	<script src="/db/operationTree.json.js"></script>
+	<script src="/js/cuwy1.directives.js"></script>
+	<script src="/js/cuwy1.controller.js"></script>
+	<script src="/js/addPatient.js"></script>
+</html>
