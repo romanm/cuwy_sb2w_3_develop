@@ -46,16 +46,103 @@
 			<span  data-ng-show="g == 'pip'"> <b>Прізвище</b> <span>{{patientHistory.patientHolDb.patientSurname}}</span>
 				<b>Ім’я</b> <span>{{patientHistory.patientHolDb.patientPersonalName}}</span>
 			</span>
-			</span> 
+			</span>
+			
 			<div class="row well no-print"
 				data-ng-show="gr.open">
+				<div data-ng-show="g == 'pip'">
+					<form class="form-inline" role="form"
+						>
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon">Прізвище</div>
+								<input id="patientSurname"
+									ng-model="patientHistory.patientHolDb.patientSurname"
+									class="form-control" type="text" />
+							</div>
+							<div class="input-group">
+								<div class="input-group-addon">Ім’я</div>
+								<input id="patientPersonalName"
+									ng-model="patientHistory.patientHolDb.patientPersonalName"
+									class="form-control" type="text" />
+							</div>
+							<div class="input-group">
+								<label class="radio-inline"> <input type="radio"
+									name="patientGender"
+									ng-model="patientHistory.patientHolDb.patientGender" value="1" />
+									Чол
+								</label> <label class="radio-inline"> <input type="radio"
+									name="patientGender"
+									ng-model="patientHistory.patientHolDb.patientGender" value="0" />
+									Жін
+								</label>
+							</div>
+							<div class="input-group">
+								<div class="input-group-addon">По батькові</div>
+								<input type="text" class="form-control input-sm"
+									placeholder="По батькові" id="patientPatronymic"
+									name="patientPatronymic"
+									ng-model="patientHistory.patientHolDb.patientPatronymic"
+									/>
+							</div>
+							<div class="input-group">
+								<div class="input-group-addon">д.н.</div>
+								<input
+									id="patientDob" name="patientDob"
+									ng-model="patientHistory.patientHolDb.patientDob" 
+									class="form-control input-sm" type="text"
+									placeholder="(дд-мм-рррр)" ng-click="open($event)"
+									datepicker-popup="dd-MM-yyyy" is-open="opened"
+									datepicker-options="dateOptions" ng-required="true" />
+							</div>
+						</div>
+					</form>
+				</div>
+				
 				<div data-ng-show="g == 'adress'">
 					<form class="form-inline" role="form">
 						<div class="form-group">
 							<div class="input-group">
 								<div class="input-group-addon">Область:</div>
-								<input type="text" class="form-control input-sm" id="district"
+								<input type="text" class="form-control" id="district"
 									name="district" ng-model="patientEditing.district" required="" />
+								<div class="input-group-btn">
+									<button type="button" class="btn btn-default dropdown-toggle"
+										data-ng-click="getCountryDistricts()"
+										data-toggle="dropdown">
+										<span class="caret"></span>
+									</button>
+									<div class="dropdown-menu dropdown-menu-right" role="menu">
+										<table>
+											<tr>
+												<td>
+													<ul>
+														<li ng-repeat="district in districts"
+															ng-if="districts.length/3 >= $index"><a
+															ng-click="setDistrict(district)">{{district.districtName}}</a>
+														</li>
+													</ul>
+												</td>
+												<td>
+													<ul>
+														<li ng-repeat="district in districts"
+															ng-if="isDistrict2of3($index, districts)"><a
+															ng-click="setDistrict(district)">{{district.districtName}}</a>
+														</li>
+													</ul>
+												</td>
+												<td>
+													<ul>
+														<li ng-repeat="district in districts"
+															ng-if="$index > districts.length/3*2"><a
+															ng-click="setDistrict(district)">{{district.districtName}}</a>
+														</li>
+													</ul>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</div>
 							</div>
 							<div class="input-group">
 								<div class="input-group-addon">Район:</div>
@@ -77,6 +164,15 @@
 									id="localityName" name="localityName"
 									ng-model="patientEditing.localityName" required="" />
 							</div>
+						</div>
+					</form>
+					<!-- 
+					<div>
+					dd
+					</div>
+					 -->
+					<form class="form-inline" role="form">
+						<div class="form-group">
 							<div class="input-group">
 								<div class="input-group-addon">Вулиця</div>
 								<input type="text" class="form-control input-sm"
@@ -137,56 +233,7 @@
 								</div>
 							</div></form>
 				</div>
-				<div data-ng-show="g == 'pip'">
-					<form class="form-inline" role="form"
-						>
-						<div class="form-group">
-							<div class="input-group">
-								<div class="input-group-addon">Прізвище</div>
-								<input id="patientSurname"
-									ng-model="patientHistory.patientHolDb.patientSurname"
-									class="form-control" type="text" />
-							</div>
-							<div class="input-group">
-								<div class="input-group-addon">Ім’я</div>
-								<input id="patientPersonalName"
-									ng-model="patientHistory.patientHolDb.patientPersonalName"
-									class="form-control" type="text" />
-							</div>
-							<div class="input-group">
-								<label class="radio-inline"> <input type="radio"
-									name="patientGender"
-									ng-model="patientHistory.patientHolDb.patientGender" value="1" />
-									Чол
-								</label> <label class="radio-inline"> <input type="radio"
-									name="patientGender"
-									ng-model="patientHistory.patientHolDb.patientGender" value="0" />
-									Жін
-								</label>
-							</div>
-							<div class="input-group">
-								<div class="input-group-addon">По батькові</div>
-								<input type="text" class="form-control input-sm"
-									placeholder="По батькові" id="patientPatronymic"
-									name="patientPatronymic"
-									ng-model="patientHistory.patientHolDb.patientPatronymic"
-									/>
-							</div>
-							<div class="input-group">
-								<div class="input-group-addon">д.н.</div>
-								<input
-									id="patientDob" name="patientDob"
-									ng-model="patientHistory.patientHolDb.patientDob" 
-									class="form-control input-sm" type="text"
-									placeholder="(дд-мм-рррр)" ng-click="open($event)"
-									datepicker-popup="dd-MM-yyyy" is-open="opened"
-									datepicker-options="dateOptions" ng-required="true" />
 
-							</div>
-						</div>
-					</form>
-
-				</div>
 			</div>
 		</div>
 	</div>

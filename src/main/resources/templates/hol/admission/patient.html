@@ -205,31 +205,34 @@
 					<table>
 						<tr>
 							<td>
-							<ul>
-							<li ng-repeat="district in districts" ng-if="districts.length/3 >= $index">
-								<a ng-click="setDistrict(district)">{{district.districtName}}</a>
-							</li>
-							</ul>
+								<ul>
+									<li ng-repeat="district in districts"
+										ng-if="districts.length/3 >= $index"><a
+										ng-click="setDistrict(district)">{{district.districtName}}</a>
+									</li>
+								</ul>
 							</td>
 							<td>
-							<ul>
-							<li ng-repeat="district in districts" ng-if="isDistrict2of3($index, districts)">
-								<a ng-click="setDistrict(district)">{{district.districtName}}</a>
-							</li>
-							</ul>
+								<ul>
+									<li ng-repeat="district in districts"
+										ng-if="isDistrict2of3($index, districts)"><a
+										ng-click="setDistrict(district)">{{district.districtName}}</a>
+									</li>
+								</ul>
 							</td>
 							<td>
-							<ul>
-							<li ng-repeat="district in districts" ng-if="$index > districts.length/3*2">
-								<a ng-click="setDistrict(district)">{{district.districtName}}</a>
-							</li>
-							</ul>
+								<ul>
+									<li ng-repeat="district in districts"
+										ng-if="$index > districts.length/3*2"><a
+										ng-click="setDistrict(district)">{{district.districtName}}</a>
+									</li>
+								</ul>
 							</td>
 						</tr>
 					</table>
-				{{districts.length}}ng-controlle
+					{{districts.length}}ng-controlle
 				</div>
-			</div>
+							</div>
 			</div>
 			<div class="col-xs-1 text-right">Район:</div>
 			<div class="col-xs-3">

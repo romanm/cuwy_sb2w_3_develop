@@ -1,6 +1,8 @@
 
 cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', function ($scope, $http, $filter, $sce) {
 	console.log("addPatientCtrl");
+	$scope.configHol = configHol;
+	console.log($scope.configHol);
 	$scope.patientEditing = {};
 	$scope.benefits = ["Чорнобилець І категорії"
 	                   ,"Чорнобилець ІІ категорії"
@@ -32,12 +34,26 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 			url : historyFile
 		}).success(function(data, status, headers, config) {
 			$scope.patientHistory = data;
-			console.log($scope.patientHistory.patientHolDb);
 			console.log($scope.patientHistory);
 		}).error(function(data, status, headers, config) {
 		});
 	}
-	
+	//----------------adress---------------------------------------------------
+	$scope.getCountryDistricts = function(){
+		console.log("getCountryDistricts");
+		if($scope.patientHistory.patientHolDb === undefined) {
+			console.log("нема пацієнта");
+		}else{
+			$($scope.configHol.countries).each(function () {
+				if(this.countryId == $scope.patientHistory.patientHolDb.countryId){
+					console.log(this);
+					$scope.districts = this.districtsHol;
+					console.log($scope.districts);
+				}
+			});
+		}
+	}
+	//----------------adress-------------------------------------------------END
 	$scope.savePatientHistory = function(){
 		$http({
 			method : 'POST',
@@ -50,6 +66,8 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		});
 		return true;
 	}
+	
+
 	
 	$scope.editOpenClose = function(gr){
 		var open = !gr.open;
