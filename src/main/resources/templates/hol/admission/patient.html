@@ -263,39 +263,39 @@
 					<span class="caret"></span>
 				</button>
 				<div class="dropdown-menu dropdown-menu-right" role="menu">
-					<table>
-						<tr>
-							<td>
-							<ul>
-							<li ng-repeat="region in regions" ng-if="$index &lt; regions.length/4">
-								<a ng-click="setRegion(region)">{{region.regionName}}</a>
-							</li>
-							</ul>
-							</td>
-							<td>
-							<ul>
-							<li ng-repeat="region in regions" ng-if="isRegion2of4($index, regions)">
-								<a ng-click="setRegion(region)">{{region.regionName}}</a>
-							</li>
-							</ul>
-							</td>
-							<td>
-							<ul>
-							<li ng-repeat="region in regions" ng-if="isRegion3of4($index, regions)">
-								<a ng-click="setRegion(region)">{{region.regionName}}</a>
-							</li>
-							</ul>
-							</td>
-							<td>
-							<ul>
-							<li ng-repeat="region in regions" ng-if="$index > regions.length/4*3">
-								<a ng-click="setRegion(region)">{{region.regionName}}</a>
-							</li>
-							</ul>
-							</td>
-						</tr>
-					</table>
-					{{regions.length}}
+									<table>
+										<tr>
+											<td>
+												<ul>
+													<li ng-repeat="region in regions"
+														ng-if="$index &lt; regions.length/4"><a
+														ng-click="setRegion(region)">{{region.regionName}}</a></li>
+												</ul>
+											</td>
+											<td>
+												<ul>
+													<li ng-repeat="region in regions"
+														ng-if="isRegion2of4($index, regions)"><a
+														ng-click="setRegion(region)">{{region.regionName}}</a></li>
+												</ul>
+											</td>
+											<td>
+												<ul>
+													<li ng-repeat="region in regions"
+														ng-if="isRegion3of4($index, regions)"><a
+														ng-click="setRegion(region)">{{region.regionName}}</a></li>
+												</ul>
+											</td>
+											<td>
+												<ul>
+													<li ng-repeat="region in regions"
+														ng-if="$index > regions.length/4*3"><a
+														ng-click="setRegion(region)">{{region.regionName}}</a></li>
+												</ul>
+											</td>
+										</tr>
+									</table>
+									{{regions.length}}
 				</div>
 			</div>
 			</div>

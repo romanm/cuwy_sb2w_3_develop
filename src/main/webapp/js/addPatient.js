@@ -3,7 +3,6 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	console.log("addPatientCtrl");
 	$scope.configHol = configHol;
 	console.log($scope.configHol);
-	$scope.patientEditing = {};
 	$scope.benefits = ["Чорнобилець І категорії"
 	                   ,"Чорнобилець ІІ категорії"
 	                   ,"Чорнобилець ІІІ категорії"
@@ -23,6 +22,7 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	$scope.newHistoryTemplate["adress"].open = true;
 
 	$scope.patientHistory = {};
+	$scope.patientEditing = {};
 	
 	console.log(parameters.hno);
 	var historyFile = "/hol/history_id_"+parameters.hno;
@@ -35,25 +35,87 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		}).success(function(data, status, headers, config) {
 			$scope.patientHistory = data;
 			console.log($scope.patientHistory);
+			initPatientEdit();
 		}).error(function(data, status, headers, config) {
 		});
 	}
+	initPatientEdit = function(){
+		$scope.patientHistory.patientHolDb.countryId;
+		console.log($scope.patientHistory.patientHolDb);
+		console.log($scope.patientHistory.patientHolDb.countryId);
+		$($scope.configHol.countries).each(function (k1,country) {
+			if(country.countryId == $scope.patientHistory.patientHolDb.countryId){
+				console.log(country);
+				$scope.hCountry = country;
+				$scope.patientEditing.countryName = country.countryName;
+				console.log($scope.patientHistory.patientHolDb.countryId);
+				$scope.districts = country.districtsHol;
+				$($scope.districts).each(function (k2,district) {
+					if(district.districtId == $scope.patientHistory.patientHolDb.districtId){
+						$scope.patientEditing.districtName = district.districtName;
+						$scope.regions = district.regionsHol;
+						$($scope.regions).each(function (k3,region) {
+							if(region.regionId == $scope.patientHistory.patientHolDb.regionId){
+								console.log(region);
+								$scope.localitys = region.localitysHol;
+								console.log($scope.localitys);
+								$scope.patientEditing.regionName = region.regionName;
+							}
+						});
+					}
+				});
+			}
+		});
+	};
 	//----------------adress---------------------------------------------------
 	$scope.getCountryDistricts = function(){
 		console.log("getCountryDistricts");
 		if($scope.patientHistory.patientHolDb === undefined) {
 			console.log("нема пацієнта");
 		}else{
+			console.log($scope.districts);
+			/*
 			$($scope.configHol.countries).each(function () {
 				if(this.countryId == $scope.patientHistory.patientHolDb.countryId){
-					console.log(this);
 					$scope.districts = this.districtsHol;
 					console.log($scope.districts);
 				}
 			});
+			 * */
 		}
 	}
+	$scope.supportDistrictField = function(){
+		var collapseDistrictListe = true;
+		if($scope.patientEditing.district){
+			collapseDistrictListe = !($scope.patientEditing.district.length > 0);
+			if(!$scope.districts){
+				//seek all districts
+			}else{
+				$($scope.districts).each(function(){
+					if(this.districtName == $scope.patientEditing.district){
+						collapseDistrictListe = true;
+					}
+				});
+			}
+		}
+		return collapseDistrictListe;
+	}
+	$scope.setDistrict = function(district){
+		$scope.patientEditing.district = district.districtName;
+		$scope.patientHistory.patientHolDb.districtId = district.districtId;
+	}
 	//----------------adress-------------------------------------------------END
+	
+
+	$scope.isRegion2of4 = function($index, regions){
+		return $index > regions.length/4 && $index < regions.length/4*2;
+	}
+
+	$scope.isRegion3of4 = function($index, regions){
+		return $index > regions.length/4*2 && $index < regions.length/4*3;
+	}
+
+	
 	$scope.savePatientHistory = function(){
 		$http({
 			method : 'POST',

@@ -18,6 +18,7 @@ import org.cuwy1.hol.model.DepartmentHol;
 import org.cuwy1.hol.model.DiagnosisOnAdmission;
 import org.cuwy1.hol.model.DistrictHol;
 import org.cuwy1.hol.model.HistoryTreatmentAnalysis;
+import org.cuwy1.hol.model.LocalityHol;
 import org.cuwy1.hol.model.PatientDepartmentMovement;
 import org.cuwy1.hol.model.PatientDiagnosisHol;
 import org.cuwy1.hol.model.PatientHistory;
@@ -775,33 +776,61 @@ public class CuwyDbService1 {
 	}
 
 	public List<CountryHol> readCountries() {
-		logger.info("\n"+sqlCountry);
+//		logger.info("\n"+sqlCountry);
 		Map<Integer, CountryHol> mapCountryHol = new HashMap<Integer, CountryHol>();
+		Map<Integer, DistrictHol> mapDistrictHol = new HashMap<Integer, DistrictHol>();
+		Map<Integer, RegionHol> mapRegionHol = new HashMap<Integer, RegionHol>();
 		List<CountryHol> countries = jdbcTemplate.query(
 				sqlCountry, new Object[] {}, 
 				new CountryRowMapper(mapCountryHol)
 				);
-		Map<Integer, DistrictHol> mapDistrictHol = new HashMap<Integer, DistrictHol>();
+//		logger.info("\n"+sqlDistrict);
 		jdbcTemplate.query(
 				sqlDistrict, new Object[] {}, 
 				new DestrictRowMapper(mapCountryHol, mapDistrictHol)
 				);
 		jdbcTemplate.query(
 				sqlRegion, new Object[] {}, 
-				new RegionRowMapper(mapDistrictHol)
+				new RegionRowMapper(mapDistrictHol, mapRegionHol)
 				);
-		logger.info("\n"+sqlDistrict);
+		jdbcTemplate.query(
+				sqlLocality, new Object[] {}, 
+				new LocalityRowMapper(mapRegionHol)
+				);
 		return countries;
 	}
 
 	String sqlCountry	= "SELECT * FROM country";
-	String sqlDistrict	= "SELECT * FROM district";
-	String sqlRegion	= "SELECT * FROM region WHERE region_active ORDER BY region_name";
+	String sqlDistrict	= "SELECT * FROM district ORDER BY district_name";
+	String sqlRegion	= "SELECT * FROM region ORDER BY region_name";
+	String sqlLocality	= "SELECT * FROM locality ORDER BY locality_name";
+	//	String sqlRegion	= "SELECT * FROM region WHERE region_active ORDER BY region_name";
 
+	private class LocalityRowMapper<T> implements RowMapper<T>{
+		private Map<Integer, RegionHol> mapRegionHol;
+		public LocalityRowMapper(Map<Integer, RegionHol> mapRegionHol) {
+			this.mapRegionHol = mapRegionHol;
+		}
+		@Override
+		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+			final LocalityHol localityHol = new LocalityHol();
+			localityHol.setLocalityId(rs.getInt("locality_id"));
+			localityHol.setLocalityType(rs.getInt("locality_type"));
+			localityHol.setLocalityName(rs.getString("locality_name"));
+			localityHol.setRegionId(rs.getInt("region_id"));
+			final RegionHol regionHol = mapRegionHol.get(localityHol.getRegionId());
+			if(regionHol.getLocalitysHol() == null)
+				regionHol.setLocalitysHol(new ArrayList<LocalityHol>());
+			regionHol.getLocalitysHol().add(localityHol);
+			return (T) localityHol;
+		}
+	}
 	private class RegionRowMapper<T> implements RowMapper<T>{
 		private Map<Integer, DistrictHol> mapDistrictHol;
-		public RegionRowMapper(Map<Integer, DistrictHol> mapDistrictHol) {
+		private Map<Integer, RegionHol> mapRegionHol;
+		public RegionRowMapper(Map<Integer, DistrictHol> mapDistrictHol, Map<Integer, RegionHol> mapRegionHol) {
 			this.mapDistrictHol = mapDistrictHol;
+			this.mapRegionHol = mapRegionHol;
 		}
 		@Override
 		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -809,6 +838,7 @@ public class CuwyDbService1 {
 			regionHol.setRegionId(rs.getInt("region_id"));
 			regionHol.setDistrictId(rs.getInt("district_id"));
 			regionHol.setRegionName(rs.getString("region_name"));
+			mapRegionHol.put(regionHol.getRegionId(), regionHol);
 			DistrictHol districtHol = mapDistrictHol.get(regionHol.getDistrictId());
 			if(districtHol.getRegionsHol() == null)
 				districtHol.setRegionsHol(new ArrayList<RegionHol>());

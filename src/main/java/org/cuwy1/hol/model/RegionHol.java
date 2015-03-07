@@ -1,9 +1,12 @@
 package org.cuwy1.hol.model;
 
+import java.util.ArrayList;
+
 public class RegionHol {
 	private int regionId;
 	private int districtId;
 	private String regionName;
+	private ArrayList<LocalityHol> arrayList;
 	public int getDistrictId() {
 		return districtId;
 	}
@@ -26,5 +29,13 @@ public class RegionHol {
 
 	public void setRegionName(String regionName) {
 		this.regionName = regionName;
+	}
+
+	public ArrayList<LocalityHol> getLocalitysHol() {
+		return arrayList;
+	}
+
+	public void setLocalitysHol(ArrayList<LocalityHol> arrayList) {
+		this.arrayList = arrayList;
 	}
 }

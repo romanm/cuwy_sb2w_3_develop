@@ -1,6 +1,7 @@
 package hello;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -606,7 +607,7 @@ public class HelloController {
 		configHol.setDirects(directsHol);
 		configHol.setTreatmentAnalysis(treatmentAnalysis);
 //		writeToJsonDbFile(readCountries, addressesJsonFileName);
-		writeToJsDbFile("var configHol = ", configHol, configJsFileName);
+		writeToPrettyJsDbFile("var configHol = ", configHol, configJsFileName);
 		return configHol;
 	}
 
@@ -626,6 +627,18 @@ public class HelloController {
 		return department;
 	}
 
+	private void writeToPrettyJsDbFile(String variable, Object objectForJson, String fileName) {
+		File file = new File(applicationFolderPfad + innerDbFolderPfad + fileName);
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectWriter writerWithDefaultPrettyPrinter = mapper.writerWithDefaultPrettyPrinter();
+		try {
+			FileOutputStream fileOutputStream = new FileOutputStream(file);
+//			writerWithDefaultPrettyPrinter.writeValueAsBytes(variable.getBytes());
+			writerWithDefaultPrettyPrinter.writeValue(fileOutputStream, objectForJson);
+		} catch ( IOException e) {
+			e.printStackTrace();
+		}
+	}
 	private void writeToJsDbFile(String variable, Object objectForJson, String fileName) {
 		File file = new File(applicationFolderPfad + innerDbFolderPfad + fileName);
 		ObjectMapper mapper = new ObjectMapper();
