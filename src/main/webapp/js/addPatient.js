@@ -61,6 +61,12 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		});
 	};
 	//----------------adress---------------------------------------------------
+	$scope.setLocality = function(locality){
+		console.log("setLocality");
+		$scope.patientEditing.localityName = locality.localityName;
+		$scope.patientHistory.patientHolDb.localityId = locality.localityId;
+		$scope.collapseLocalityListe = true;
+	}
 	$scope.setRegion = function(region){
 		console.log("setRegion");
 		$scope.patientEditing.regionName = region.regionName;

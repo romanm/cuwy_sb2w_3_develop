@@ -170,9 +170,11 @@
 													<ul>
 														<li ng-repeat="locality in localitys"
 															ng-if="$index &lt; localitys.length/4"><a
-															ng-click="setRegion(region)">
+															ng-click="setLocality(locality)">
 															{{$index}}
 															{{locality.localityName}}
+															-
+															{{locality.localityId}}
 															</a></li>
 													</ul>
 												</td>
@@ -180,24 +182,24 @@
 													<ul>
 														<li ng-repeat="locality in localitys"
 															ng-if="isRegion2of4($index, localitys)"><a
-															ng-click="setRegion(locality)">{{locality.localityName}}</a></li>
+															ng-click="setLocality(locality)">{{locality.localityName}}</a></li>
 													</ul>
 												</td>
-												<!-- 
 												<td>
 													<ul>
 														<li ng-repeat="locality in localitys"
 															ng-if="isRegion3of4($index, localitys)"><a
-															ng-click="setRegion(locality)">{{locality.localityName}}</a></li>
+															ng-click="setLocality(locality)">{{locality.localityName}}</a></li>
 													</ul>
 												</td>
 												<td>
 													<ul>
 														<li ng-repeat="locality in regions"
 															ng-if="$index > localitys.length/4*3"><a
-															ng-click="setRegion(locality)">{{locality.localityName}}</a></li>
+															ng-click="setLocality(locality)">{{locality.localityName}}</a></li>
 													</ul>
 												</td>
+												<!-- 
 												 -->
 											</tr>
 										</table>
