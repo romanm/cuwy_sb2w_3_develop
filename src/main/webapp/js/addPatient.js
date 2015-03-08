@@ -43,16 +43,18 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		$scope.patientHistory.patientHolDb.countryId;
 		$($scope.configHol.countries).each(function (k1,country) {
 			if(country.countryId == $scope.patientHistory.patientHolDb.countryId){
-				$scope.hCountry = country;
-				$scope.patientEditing.countryName = country.countryName;
-				$scope.districts = country.districtsHol;
+				$scope.setCountry(country);
 				$($scope.districts).each(function (k2,district) {
 					if(district.districtId == $scope.patientHistory.patientHolDb.districtId){
-						$scope.patientEditing.districtName = district.districtName;
-						$scope.regions = district.regionsHol;
+						$scope.setDistrict(district);
 						$($scope.regions).each(function (k3,region) {
 							if(region.regionId == $scope.patientHistory.patientHolDb.regionId){
 								$scope.setRegion(region);
+								$($scope.localitys).each(function (k3,locality) {
+									if(locality.localityId == $scope.patientHistory.patientHolDb.localityId){
+										$scope.setLocality(locality);
+									}
+								});
 							}
 						});
 					}
@@ -61,35 +63,48 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		});
 	};
 	//----------------adress---------------------------------------------------
-	$scope.setLocality = function(locality){
-		console.log("setLocality");
-		$scope.patientEditing.localityName = locality.localityName;
-		$scope.patientHistory.patientHolDb.localityId = locality.localityId;
-		$scope.collapseLocalityListe = true;
+	$scope.changeLocalityName = function(){
+		console.log("changeLocalityName");
+		if($scope.patientEditing.localityName){
+			$scope.collapseLocalityListe = !($scope.patientEditing.localityName.length > 0);
+		}
+	}
+	$scope.changeRegionName = function(){
+		if($scope.patientEditing.districtName){
+			$scope.collapseRegionListe = !($scope.patientEditing.regionName.length > 0);
+		}
+	}
+	$scope.changeDistrictName = function(){
+		if($scope.patientEditing.districtName){
+			$scope.collapseDistrictListe = !($scope.patientEditing.districtName.length > 0);
+		}
+	}
+	$scope.setDistrict= function(district){
+		$scope.patientEditing.districtName = district.districtName;
+		$scope.patientHistory.patientHolDb.districtId = district.districtId;
+		$scope.collapseDistrictListe = true;
+		$scope.regions = district.regionsHol;
 	}
 	$scope.setRegion = function(region){
-		console.log("setRegion");
 		$scope.patientEditing.regionName = region.regionName;
 		$scope.patientHistory.patientHolDb.regionId = region.regionId;
 		$scope.collapseRegionListe = true;
 		$scope.localitys = region.localitysHol;
 	}
-
-	$scope.getCountryDistricts = function(){
-		console.log("getCountryDistricts");
-		if($scope.patientHistory.patientHolDb === undefined) {
-			console.log("нема пацієнта");
-		}else{
-			console.log($scope.districts);
-			/*
-			$($scope.configHol.countries).each(function () {
-				if(this.countryId == $scope.patientHistory.patientHolDb.countryId){
-					$scope.districts = this.districtsHol;
-					console.log($scope.districts);
-				}
-			});
-			 * */
-		}
+	$scope.setCountry = function(country){
+		$scope.patientEditing.countryName = country.countryName;
+		$scope.patientHistory.patientHolDb.countryId = country.countryId;
+		$scope.collapseDistrictListe = true;
+		$scope.districts = country.districtsHol;
+	}
+	$scope.getLocalityName = function(locality){
+		return (locality.localityType == 1 ? "м.":"с.") + " " + locality.localityName;
+	}
+	$scope.setLocality = function(locality){
+		$scope.patientEditing.localityName = locality.localityName;
+		$scope.patientEditing.localityType = locality.localityType;
+		$scope.patientHistory.patientHolDb.localityId = locality.localityId;
+		$scope.collapseLocalityListe = true;
 	}
 	$scope.supportDistrictField = function(){
 		var collapseDistrictListe = true;
@@ -106,10 +121,6 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 			}
 		}
 		return collapseDistrictListe;
-	}
-	$scope.setDistrict = function(district){
-		$scope.patientEditing.district = district.districtName;
-		$scope.patientHistory.patientHolDb.districtId = district.districtId;
 	}
 	//----------------adress-------------------------------------------------END
 	

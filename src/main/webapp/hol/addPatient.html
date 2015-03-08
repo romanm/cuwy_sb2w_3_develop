@@ -55,13 +55,17 @@
 							<div class="input-group">
 								<div class="input-group-addon">Область:</div>
 								<input type="text" class="form-control" id="district"
-									name="district" ng-model="patientEditing.districtName" />
+									data-ng-change="changeDistrictName()"
+									name="district" data-ng-model="patientEditing.districtName" />
 								<div class="input-group-btn">
 									<button type="button" class="btn btn-default dropdown-toggle"
-										data-ng-click="getCountryDistricts()" data-toggle="dropdown">
+										data-toggle="dropdown">
 										<span class="caret"></span>
 									</button>
+									<!-- 
 									<div class="dropdown-menu dropdown-menu-right" role="menu">
+									 -->
+									<div class="dropdown-menu  dropdown-menu-right-hol" role="menu">
 										<table>
 											<tr>
 												<td>
@@ -97,13 +101,14 @@
 							<div class="input-group">
 								<div class="input-group-addon">Район:</div>
 								<input type="text" class="form-control" id="region"
+										data-ng-change="changeRegionName()"
 									name="region" ng-model="patientEditing.regionName" />
 								<div class="input-group-btn">
 									<button type="button" class="btn btn-default dropdown-toggle"
 										data-ng-click="getDistrictRegions()" data-toggle="dropdown">
 										<span class="caret"></span>
 									</button>
-									<div class="dropdown-menu dropdown-menu-right" role="menu">
+									<div class="dropdown-menu dropdown-menu-right-hol" role="menu">
 										<table>
 											<tr>
 												<td>
@@ -155,6 +160,7 @@
 								<div class="input-group-addon">місто/село</div>
 								<input type="text" class="form-control"
 									id="localityName" name="localityName"
+									data-ng-change="changeLocalityName()"
 									ng-model="patientEditing.localityName" />
 								<div class="input-group-btn">
 									<button type="button" class="btn btn-default dropdown-toggle"
@@ -162,7 +168,6 @@
 										<span class="caret"></span>
 									</button>
 									<div class="dropdown-menu dropdown-menu-right" role="menu">
-										{localitys.length}
 										{{localitys.length}}
 										<table>
 											<tr>
@@ -171,10 +176,7 @@
 														<li ng-repeat="locality in localitys"
 															ng-if="$index &lt; localitys.length/4"><a
 															ng-click="setLocality(locality)">
-															{{$index}}
-															{{locality.localityName}}
-															-
-															{{locality.localityId}}
+															{{getLocalityName(locality)}}
 															</a></li>
 													</ul>
 												</td>
@@ -182,33 +184,65 @@
 													<ul>
 														<li ng-repeat="locality in localitys"
 															ng-if="isRegion2of4($index, localitys)"><a
-															ng-click="setLocality(locality)">{{locality.localityName}}</a></li>
+															ng-click="setLocality(locality)">{{getLocalityName(locality)}}</a></li>
 													</ul>
 												</td>
 												<td>
 													<ul>
 														<li ng-repeat="locality in localitys"
 															ng-if="isRegion3of4($index, localitys)"><a
-															ng-click="setLocality(locality)">{{locality.localityName}}</a></li>
+															ng-click="setLocality(locality)">{{getLocalityName(locality)}}</a></li>
 													</ul>
 												</td>
 												<td>
 													<ul>
-														<li ng-repeat="locality in regions"
+														<li ng-repeat="locality in localitys"
 															ng-if="$index > localitys.length/4*3"><a
-															ng-click="setLocality(locality)">{{locality.localityName}}</a></li>
+															ng-click="setLocality(locality)">{{getLocalityName(locality)}}</a></li>
 													</ul>
 												</td>
-												<!-- 
-												 -->
 											</tr>
 										</table>
 									</div>
 								</div>
 							</div>
-							
 						</div>
 					</form>
+					<div class="row">
+						<div class="col-xs-4">
+							<div collapse="collapseDistrictListe">
+								<b>Пошук області</b>:
+								<ul>
+									<li
+										ng-repeat="district in districts | filter:patientEditing.districtName">
+										<a ng-click="setDistrict(district)">{{district.districtName}}</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-xs-4">
+							<div collapse="collapseRegionListe">
+								<b>Пошук району</b>:
+								<ul>
+									<li
+										ng-repeat="region in regions | filter:patientEditing.regionName">
+										<a ng-click="setRegion(region)">{{region.regionName}}</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-xs-4">
+							<div collapse="collapseLocalityListe">
+								<b>Пошук міста/села</b>:
+								<ul>
+									<li
+										ng-repeat="locality in localitys | filter:patientEditing.localityName">
+										<a ng-click="setLocality(locality)">{{getLocalityName(locality)}}</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
 					
 					<form class="form-inline" role="form">
 						<div class="form-group">
