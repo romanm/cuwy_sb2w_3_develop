@@ -15,14 +15,25 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	$scope.newHistoryTemplate = {
 		"groups":["pip","adress","diagnos","medinfo"],
 		"pip":{"name":"ПІП"},
-		"adress":{"name":"Адреса"},
+		"adress":{"name":"Адреса, робота"},
 		"diagnos":{"name":"Діагноз/Направлення"},
 		"medinfo":{"name":"Медична інформація"}
 	};
+	$scope.newHistoryTemplate["pip"].open = true;
 	$scope.newHistoryTemplate["adress"].open = true;
 
 	$scope.patientHistory = {};
 	$scope.patientEditing = {};
+	$scope.requiredFields = {
+		"patientSurname":{"group":"pip"}
+		,"patientPersonalName":{"group":"pip"}
+		,"patientPatronymic":{"group":"pip"}
+		,"patientDob":{"group":"pip"}
+		,"districtName":{"group":"adress"}
+		,"regionName":{"group":"adress"}
+		,"localityName":{"group":"adress"}
+		,"patientJob":{"group":"adress"}
+	};
 	
 	console.log(parameters.hno);
 	var historyFile = "/hol/history_id_"+parameters.hno;
@@ -47,6 +58,7 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		}
 	}
 	$scope.setDistrict= function(district){
+		console.log(district);
 		$scope.patientEditing.districtName = district.districtName;
 		$scope.patientHistory.patientHolDb.districtId = district.districtId;
 		$scope.collapseDistrictListe = true;
@@ -73,39 +85,8 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		$scope.patientHistory.patientHolDb.localityId = locality.localityId;
 		$scope.collapseLocalityListe = true;
 	}
-	$scope.supportDistrictField = function(){
-		var collapseDistrictListe = true;
-		if($scope.patientEditing.district){
-			collapseDistrictListe = !($scope.patientEditing.district.length > 0);
-			if(!$scope.districts){
-				//seek all districts
-			}else{
-				$($scope.districts).each(function(){
-					if(this.districtName == $scope.patientEditing.district){
-						collapseDistrictListe = true;
-					}
-				});
-			}
-		}
-		return collapseDistrictListe;
-	}
 	//----------------adress-------------------------------------------------END
 	//----------------on start--------------------------------------------------
-	if(parameters.hno){
-		$http({
-			method : 'GET',
-			url : historyFile
-		}).success(function(data, status, headers, config) {
-			$scope.patientHistory = data;
-			console.log($scope.patientHistory);
-			initPatientEdit();
-		}).error(function(data, status, headers, config) {
-		});
-	}else{
-		$scope.patientHistory.patientHolDb = {};
-		console.log($scope.patientHistory.patientHolDb.countryId);
-		$scope.setCountry($scope.configHol.countries[0]);
-	}
 	initPatientEdit = function(){
 		$($scope.configHol.countries).each(function (k1,country) {
 			if(country.countryId == $scope.patientHistory.patientHolDb.countryId){
@@ -128,8 +109,26 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 			}
 		});
 	};
-	//----------------on start-----------------------------------------------END
+	if(parameters.hno){
+		$http({
+			method : 'GET',
+			url : historyFile
+		}).success(function(data, status, headers, config) {
+			$scope.patientHistory = data;
+			console.log($scope.patientHistory);
+			initPatientEdit();
+		}).error(function(data, status, headers, config) {
+		});
+	}else{
+		$scope.patientHistory.patientHolDb = {};
+		console.log($scope.patientHistory.patientHolDb.countryId);
+		$scope.setCountry($scope.configHol.countries[0]);
+		$scope.patientHistory.patientHolDb.districtId = 1;
+		$scope.patientHistory.patientHolDb.regionId = 1;
+		initPatientEdit();
+	}
 	
+	//----------------on start-----------------------------------------------END
 
 	$scope.isRegion2of4 = function($index, regions){
 		return $index > regions.length/4 && $index < regions.length/4*2;
@@ -139,8 +138,9 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		return $index > regions.length/4*2 && $index < regions.length/4*3;
 	}
 
-	
 	$scope.savePatientHistory = function(){
+		if(!checkeRequiredFields())
+			return true;
 		$http({
 			method : 'POST',
 			data : $scope.patientHistory,
@@ -153,8 +153,33 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		return true;
 	}
 	
-
-	
+	checkeRequiredFields = function(){
+		console.log("checkeRequiredFields");
+		console.log($scope.patientEditing);
+		console.log($scope.patientHistory.patientHolDb);
+		console.log($scope.patientHistory.patientHolDb.patientSurname);
+		console.log($scope.patientHistory.patientHolDb.patientPersonalName);
+		Object.keys($scope.requiredFields).forEach(function(key) {
+			if(typeof $scope.patientHistory.patientHolDb[key] === 'undefined'){
+				$scope.requiredFields[key].isFull = false;
+			}else{
+				$scope.requiredFields[key].isFull = true;
+			}
+		});
+		console.log($scope.requiredFields);
+		return false
+	}
+	$scope.requiredFieldsNoFull = function(gr){
+		var rfNames = [];
+		Object.keys($scope.requiredFields).forEach(function(key) {
+			if($scope.requiredFields[key].group === gr){
+				if($scope.requiredFields[key].isFull === false){
+					rfNames.push(key);
+				}
+			}
+		});
+		return rfNames;
+	}
 	$scope.editOpenClose = function(gr){
 		var open = !gr.open;
 		$scope.newHistoryTemplate.groups.forEach(function(g) {
