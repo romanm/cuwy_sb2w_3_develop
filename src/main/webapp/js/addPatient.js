@@ -28,40 +28,7 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	var historyFile = "/hol/history_id_"+parameters.hno;
 	console.log(historyFile);
 
-	if(parameters.hno){
-		$http({
-			method : 'GET',
-			url : historyFile
-		}).success(function(data, status, headers, config) {
-			$scope.patientHistory = data;
-			console.log($scope.patientHistory);
-			initPatientEdit();
-		}).error(function(data, status, headers, config) {
-		});
-	}
-	initPatientEdit = function(){
-		$scope.patientHistory.patientHolDb.countryId;
-		$($scope.configHol.countries).each(function (k1,country) {
-			if(country.countryId == $scope.patientHistory.patientHolDb.countryId){
-				$scope.setCountry(country);
-				$($scope.districts).each(function (k2,district) {
-					if(district.districtId == $scope.patientHistory.patientHolDb.districtId){
-						$scope.setDistrict(district);
-						$($scope.regions).each(function (k3,region) {
-							if(region.regionId == $scope.patientHistory.patientHolDb.regionId){
-								$scope.setRegion(region);
-								$($scope.localitys).each(function (k3,locality) {
-									if(locality.localityId == $scope.patientHistory.patientHolDb.localityId){
-										$scope.setLocality(locality);
-									}
-								});
-							}
-						});
-					}
-				});
-			}
-		});
-	};
+	
 	//----------------adress---------------------------------------------------
 	$scope.changeLocalityName = function(){
 		console.log("changeLocalityName");
@@ -123,6 +90,45 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		return collapseDistrictListe;
 	}
 	//----------------adress-------------------------------------------------END
+	//----------------on start--------------------------------------------------
+	if(parameters.hno){
+		$http({
+			method : 'GET',
+			url : historyFile
+		}).success(function(data, status, headers, config) {
+			$scope.patientHistory = data;
+			console.log($scope.patientHistory);
+			initPatientEdit();
+		}).error(function(data, status, headers, config) {
+		});
+	}else{
+		$scope.patientHistory.patientHolDb = {};
+		console.log($scope.patientHistory.patientHolDb.countryId);
+		$scope.setCountry($scope.configHol.countries[0]);
+	}
+	initPatientEdit = function(){
+		$($scope.configHol.countries).each(function (k1,country) {
+			if(country.countryId == $scope.patientHistory.patientHolDb.countryId){
+				$scope.setCountry(country);
+				$($scope.districts).each(function (k2,district) {
+					if(district.districtId == $scope.patientHistory.patientHolDb.districtId){
+						$scope.setDistrict(district);
+						$($scope.regions).each(function (k3,region) {
+							if(region.regionId == $scope.patientHistory.patientHolDb.regionId){
+								$scope.setRegion(region);
+								$($scope.localitys).each(function (k3,locality) {
+									if(locality.localityId == $scope.patientHistory.patientHolDb.localityId){
+										$scope.setLocality(locality);
+									}
+								});
+							}
+						});
+					}
+				});
+			}
+		});
+	};
+	//----------------on start-----------------------------------------------END
 	
 
 	$scope.isRegion2of4 = function($index, regions){
