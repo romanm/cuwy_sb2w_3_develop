@@ -19,20 +19,22 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		"diagnos":{"name":"Діагноз/Направлення"},
 		"medinfo":{"name":"Медична інформація"}
 	};
-	$scope.newHistoryTemplate["pip"].open = true;
 	$scope.newHistoryTemplate["adress"].open = true;
+	$scope.newHistoryTemplate["diagnos"].open = true;
 
 	$scope.patientHistory = {};
 	$scope.patientEditing = {};
 	$scope.requiredFields = {
-		"patientSurname":{"group":"pip"}
-		,"patientPersonalName":{"group":"pip"}
-		,"patientPatronymic":{"group":"pip"}
-		,"patientDob":{"group":"pip"}
-		,"districtName":{"group":"adress"}
-		,"regionName":{"group":"adress"}
-		,"localityName":{"group":"adress"}
-		,"patientJob":{"group":"adress"}
+		"patientSurname":{"group":"pip","name":"Прізвище"}
+		,"patientPersonalName":{"group":"pip","name":"Ім’я"}
+		,"patientPatronymic":{"group":"pip","name":"По батькові"}
+		,"patientDob":{"group":"pip","name":"д.н."}
+		,"countryId":{"group":"adress","name":"Країна"}
+		,"districtId":{"group":"adress","name":"Область"}
+		,"regionId":{"group":"adress","name":"Район"}
+		,"localityId":{"group":"adress","name":"місто/село"}
+		,"patientJob":{"group":"adress","name":"Місце роботи"}
+		,"directId":{"group":"adress","name":"Направлення"}
 	};
 	
 	console.log(parameters.hno);
@@ -47,6 +49,11 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 			$scope.collapseLocalityListe = !($scope.patientEditing.localityName.length > 0);
 		}
 	}
+	$scope.changeDirectName = function(){
+		if($scope.patientEditing.directName){
+			$scope.collapseDirectListe = !($scope.patientEditing.directName.length > 0);
+		}
+	}
 	$scope.changeRegionName = function(){
 		if($scope.patientEditing.districtName){
 			$scope.collapseRegionListe = !($scope.patientEditing.regionName.length > 0);
@@ -58,11 +65,16 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		}
 	}
 	$scope.setDistrict= function(district){
-		console.log(district);
 		$scope.patientEditing.districtName = district.districtName;
 		$scope.patientHistory.patientHolDb.districtId = district.districtId;
 		$scope.collapseDistrictListe = true;
 		$scope.regions = district.regionsHol;
+	}
+	$scope.setDirect = function(region){
+		console.log(region);
+		$scope.patientEditing.directName = region.direct_name;
+		$scope.patientHistory.patientHolDb.directId = region.direct_id;
+		$scope.collapseDirectListe = true;
 	}
 	$scope.setRegion = function(region){
 		$scope.patientEditing.regionName = region.regionName;
@@ -87,7 +99,9 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	}
 	//----------------adress-------------------------------------------------END
 	//----------------on start--------------------------------------------------
+	initDeclareController($scope, $http, $sce, $filter);
 	initPatientEdit = function(){
+		console.log($scope.configHol.directs);
 		$($scope.configHol.countries).each(function (k1,country) {
 			if(country.countryId == $scope.patientHistory.patientHolDb.countryId){
 				$scope.setCountry(country);
@@ -155,19 +169,36 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	
 	checkeRequiredFields = function(){
 		console.log("checkeRequiredFields");
-		console.log($scope.patientEditing);
-		console.log($scope.patientHistory.patientHolDb);
-		console.log($scope.patientHistory.patientHolDb.patientSurname);
-		console.log($scope.patientHistory.patientHolDb.patientPersonalName);
+		var r = true;
+		if(typeof $scope.patientHistory.patientHolDb.patientDob === 'undefined')
+		{
+			$scope.patientHistory.patientHolDb.patientDob = new Date();
+//			$scope.patientHistory.patientHolDb.patientDob
+//			.setMonth($scope.patientHistory.patientHolDb.patientDob.getMonth()-1)
+			$scope.patientHistory.patientHolDb.patientDob.setDate($scope.patientHistory.patientHolDb.patientDob.getDate()-5);
+		}
+		var pDob = $scope.patientHistory.patientHolDb.patientDob;
+		var todayDate = new Date();
+		var age = $scope.calculateAge(pDob, todayDate);
+		console.log("year "+age);
+		var pDob2 = pDob;
+		pDob2.setFullYear(pDob.getFullYear()+age);
+		var month = $scope.calculateMonth(pDob2, todayDate);
+		console.log("month "+month);
+		pDob2.setMonth(pDob2.getMonth()+month);
+		var day = $scope.calculateDay(pDob2, todayDate);
+		console.log("day "+day);
 		Object.keys($scope.requiredFields).forEach(function(key) {
-			if(typeof $scope.patientHistory.patientHolDb[key] === 'undefined'){
+			if(typeof $scope.patientHistory.patientHolDb[key] === 'undefined' 
+			&& typeof $scope.patientHistory[key] === 'undefined'){
 				$scope.requiredFields[key].isFull = false;
+				r = false;
 			}else{
 				$scope.requiredFields[key].isFull = true;
 			}
 		});
 		console.log($scope.requiredFields);
-		return false
+		return r;
 	}
 	$scope.requiredFieldsNoFull = function(gr){
 		var rfNames = [];

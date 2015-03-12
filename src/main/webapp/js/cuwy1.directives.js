@@ -96,19 +96,51 @@ initDeclareController = function($scope, $http, $sce, $filter){
 		});
 	}
 
-	$scope.calculateAge = function(birthDateStr) {
+	$scope.calculateDay = function(birthDateStr, todayDate) {
 		if(!birthDateStr)
 			return 0;
+		if(!todayDate)
+			todayDate = new Date();
+		var birthDate = new Date(birthDateStr),
+		birthDay = birthDate.getDate(),
+		todayDay = todayDate.getDate();
+		var day = todayDay - birthDay;
+		return day;
+	}
+	$scope.calculateMonth = function(birthDateStr, todayDate) {
+		if(!birthDateStr)
+			return 0;
+		if(!todayDate)
+			todayDate = new Date();
+		var birthDate = new Date(birthDateStr),
+			birthMonth = birthDate.getMonth(),
+			birthDay = birthDate.getDate();
+			todayMonth = todayDate.getMonth(),
+			todayDay = todayDate.getDate();
+		var month = todayMonth - birthMonth;
+//		console.log(todayMonth +"-" + birthMonth +"="+month);
+		if (todayDay < birthDay)
+		{
+			month--;
+		}
+		if(month < 0)
+			month = 12 + month;
+		return month;
+	}
+	$scope.calculateAge = function(birthDateStr, todayDate) {
+		if(!birthDateStr)
+			return 0;
+		if(!todayDate)
+			todayDate = new Date();
 		var birthDate = new Date(birthDateStr)
 			birthYear = birthDate.getFullYear(),
 			birthMonth = birthDate.getMonth(),
 			birthDay = birthDate.getDate();
-		var todayDate = new Date(),
 			todayYear = todayDate.getFullYear(),
 			todayMonth = todayDate.getMonth(),
-			todayDay = todayDate.getDate(),
-			age = todayYear - birthYear;
-
+			todayDay = todayDate.getDate();
+		var age = todayYear - birthYear;
+//console.log(todayYear+"-" + birthYear+"="+age);
 		if (todayMonth < birthMonth)
 		{
 			age--;

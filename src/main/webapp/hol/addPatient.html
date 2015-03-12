@@ -44,9 +44,11 @@
 			</a> <span data-ng-show="g == 'pip'"> <b>Прізвище</b> <span>{{patientHistory.patientHolDb.patientSurname}}</span>
 					<b>Ім’я</b> <span>{{patientHistory.patientHolDb.patientPersonalName}}</span>
 			</span>
-			</span> 
-			<span data-ng-repeat="rf in requiredFieldsNoFull(g)">
-			{{rf}} </span>
+			</span> <span data-ng-repeat="rf in requiredFieldsNoFull(g)">
+				<span data-ng-show="$index == 0"> <i class="btn-danger">Заповніть
+						обов’язкові поля</i>:
+			</span> <span class="btn-danger"> {{requiredFields[rf].name}}</span>{{$last?".":","}}
+			</span>
 			<div class="row well no-print" data-ng-show="gr.open">
 				<div data-ng-show="g == 'pip'">
 					<form class="form-inline" role="form">
@@ -91,8 +93,68 @@
 									datepicker-options="dateOptions" ng-required="true" />
 							</div>
 						</div>
-					</form>
-				</div>
+				 	</form>
+			</div>
+			<div data-ng-show="g == 'diagnos'">
+				diagnos
+				<form class="form-inline" role="form">
+					<div class="form-group">
+						<div class="input-group required-simple">
+							<div class="input-group-addon">{{requiredFields.directId.name}}:</div>
+							<input type="text" class="form-control" id="direct"
+								data-ng-change="changeDirectName()" name="direct"
+								data-ng-model="patientEditing.directName" />
+								<div class="input-group-btn">
+									<button type="button" class="btn btn-default dropdown-toggle"
+										data-toggle="dropdown">
+										<span class="caret"></span>
+									</button>
+									<div class="dropdown-menu  dropdown-menu-right-700" role="menu">
+										{{configHol.directs.length}}
+										<table>
+											<tr>
+												<td>
+													<ul>
+														<li ng-repeat="region in configHol.directs"
+															ng-if="$index &lt; configHol.directs.length/4"><a
+															ng-click="setDirect(region)">{{region.direct_name}}</a></li>
+													</ul>
+												</td>
+												<td>
+													<ul>
+														<li ng-repeat="region in configHol.directs"
+															ng-if="isRegion2of4($index, configHol.directs)"><a
+															ng-click="setDirect(region)">{{region.direct_name}}</a></li>
+													</ul>
+												</td>
+												<td>
+													<ul>
+														<li ng-repeat="region in configHol.directs"
+															ng-if="isRegion3of4($index, configHol.directs)"><a
+															ng-click="setDirect(region)">{{region.direct_name}}</a></li>
+													</ul>
+												</td>
+												<td>
+													<ul>
+														<li ng-repeat="region in configHol.directs"
+															ng-if="$index > configHol.directs.length/4*3"><a
+															ng-click="setRegion(region)">{{region.direct_name}}</a></li>
+													</ul>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</div>
+							</div>
+					</div>
+				</form>
+				<div collapse="collapseDirectListe">
+						<b>Пошук направляючого закладу</b>: <span
+							ng-repeat="region in configHol.directs | filter:{direct_name:patientEditing.directName} | limitTo:10">
+							<a ng-click="setDirect(region)">{{region.direct_name}}</a>,
+						</span>
+					</div>
+			</div>
 				<div data-ng-show="g == 'adress'">
 					<div>{{patientEditing.countryName}}</div>
 					
@@ -314,7 +376,7 @@
 									ng-model="patientHistory.patientHolDb.patientPhoneMobil" />
 							</div>
 							<br/>
-							<div class="input-group">
+							<div class="input-group required-simple">
 								<div class="input-group-addon">Місце роботи:</div>
 								<input type="text" class="form-control" id="patientJob"
 									name="patientJob"
