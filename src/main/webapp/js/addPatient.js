@@ -1,4 +1,3 @@
-
 cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', function ($scope, $http, $filter, $sce) {
 	console.log("addPatientCtrl");
 	$scope.configHol = configHol;
@@ -35,6 +34,7 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		,"localityId":{"group":"adress","name":"місто/село"}
 		,"patientJob":{"group":"adress","name":"Місце роботи"}
 		,"directId":{"group":"adress","name":"Направлення"}
+		,"icd10":{"group":"adress","name":"Діагноз МКБ"}
 	};
 	
 	console.log(parameters.hno);
@@ -98,10 +98,16 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		$scope.collapseLocalityListe = true;
 	}
 	//----------------adress-------------------------------------------------END
+	//----------------ds-------------------------------------------------
+	$scope.openIcd10TreeDialog = function(){
+		$scope.collapseIcd10Liste = !$scope.collapseIcd10Liste;
+		console.log($scope.collapseIcd10Liste);
+	}
+	//----------------ds-------------------------------------------------END
 	//----------------on start--------------------------------------------------
 	initDeclareController($scope, $http, $sce, $filter);
 	initPatientEdit = function(){
-		console.log($scope.configHol.directs);
+		$scope.collapseIcd10Liste = true;
 		$($scope.configHol.countries).each(function (k1,country) {
 			if(country.countryId == $scope.patientHistory.patientHolDb.countryId){
 				$scope.setCountry(country);
