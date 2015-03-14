@@ -83,27 +83,32 @@ public class CuwyDbService1 {
 		jdbcTemplate.query( sqlOperation, new OperationMapper(operationSubGroupMap));
 		return operationGroups;
 	}
+	public List<Map<String,Object>> icd10UaAllToFile() {
+		String sql = "select * from icd";
+		logger.info("\n"+sql);
+		List<Map<String, Object>> countPatientsProMonth 
+		= jdbcTemplate.queryForList(sql);
+		return countPatientsProMonth;
+	}
 	public Icd10UaClass getIcd10UaGroups() {
-		Icd10UaClass icd10UaRoot = new Icd10UaClass();
-		String sql = "SELECT * FROM icd i1 WHERE i1.icd_code not like '%.%'";
+		String sql = "SELECT * FROM icd";
+//		String sql = "SELECT * FROM icd i1 WHERE i1.icd_code not like '%.%'";
 //		String sql = "SELECT * FROM icd i1 WHERE i1.icd_code like '%-%' ";
 		logger.info("\n "+sql);
+		Icd10UaClass icd10UaRoot = new Icd10UaClass();
 		List<Icd10UaClass> icd10Classes = jdbcTemplate.query(
 				sql,
 				new Icd2TreeMapper(icd10UaRoot));
 		return icd10UaRoot;
 	}
 	class OperationSubGroupMapper<T> implements RowMapper<T>{
-
 		private Map<Integer, OperationGroup> operationGroupMap;
 		private Map<Integer, OperationSubGroup> operationSubGroupMap;
-
 		public OperationSubGroupMapper(Map<Integer, OperationGroup> operationGroupMap,
 				Map<Integer, OperationSubGroup> operationSubGroupMap) {
 			this.operationSubGroupMap = operationSubGroupMap;
 			this.operationGroupMap = operationGroupMap;
 		}
-
 		@Override
 		public T mapRow(ResultSet rs, int arg1) throws SQLException {
 			OperationSubGroup operationSubGroup = new OperationSubGroup();
@@ -161,18 +166,8 @@ public class CuwyDbService1 {
 		}
 		
 	}
-	class Icd2TreeMapper<T> implements RowMapper<T>{
-
-		private Icd10UaClass icd10UaRoot;
-		private List<Icd10UaClass> icd10UaPfad;
-		public Icd2TreeMapper(Icd10UaClass icd10UaRoot) {
-			this.icd10UaRoot = icd10UaRoot;
-			this.icd10UaPfad = new ArrayList<Icd10UaClass>();
-			icd10UaPfad.add(icd10UaRoot);
-		}
-
-		@Override
-		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+	class Icd2TreeMapperBasic<T> {
+		protected Icd10UaClass createIcd10UaClass(ResultSet rs) throws SQLException {
 			Icd10UaClass icd10UaClass = new Icd10UaClass();
 			icd10UaClass.setIcdId(rs.getInt("icd_id"));
 			icd10UaClass.setIcdLeftKey(rs.getInt("icd_left_key"));
@@ -181,6 +176,22 @@ public class CuwyDbService1 {
 			icd10UaClass.setIcdEnd(rs.getInt("icd_end"));
 			icd10UaClass.setIcdCode(rs.getString("icd_code"));
 			icd10UaClass.setIcdName(rs.getString("icd_name"));
+			return icd10UaClass;
+		}
+	}
+	
+	class Icd2TreeMapper<T> extends Icd2TreeMapperBasic<T> implements RowMapper<T>{
+		private Icd10UaClass icd10UaRoot;
+		private List<Icd10UaClass> icd10UaPfad;
+		public Icd2TreeMapper(Icd10UaClass icd10UaRoot) {
+			this.icd10UaRoot = icd10UaRoot;
+			this.icd10UaPfad = new ArrayList<Icd10UaClass>();
+			icd10UaPfad.add(icd10UaRoot);
+			logger.debug("-----------------------");
+		}
+		@Override
+		public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Icd10UaClass icd10UaClass = createIcd10UaClass(rs);
 			int i = icd10UaPfad.size()-1;
 			for (; i>0; i--) 
 				if(icd10UaClass.getIcdEnd() <= icd10UaPfad.get(i).getIcdEnd())
@@ -191,7 +202,6 @@ public class CuwyDbService1 {
 			icd10UaPfad.add(icd10UaClass);
 			return (T) icd10UaClass;
 		}
-		
 	}
 	public List<Icd10UaClass> getIcd10UaChilds() {
 		int icdLeftKey = 1;
@@ -1012,21 +1022,37 @@ public class CuwyDbService1 {
 		return countPatientsProMonth;
 	}
 
+	public Icd10UaClass seekIcd10UaGroups(String query) {
+		String sql = "SELECT * FROM icd i1 WHERE CONCAT(i1.icd_code, ' ',i1.icd_name ) LIKE '%?%' LIMIT 50";
+		String sql2 = sql.replaceFirst("\\?", query);
+		logger.debug(sql2);
+		Icd10UaClass icd10UaRoot = new Icd10UaClass();
+		List<Icd10UaClass> icd10Classes = jdbcTemplate.query(
+				sql2,
+				new Icd2TreeMapper(icd10UaRoot));
+		logger.debug(""+icd10UaRoot);
+		return icd10UaRoot;
+	}
 	public List<Map<String, Object>> seekIcd10Db(String query) {
 		String sql = "SELECT * FROM icd i1 WHERE CONCAT(i1.icd_code, ' ',i1.icd_name ) LIKE '%?%'";
 		String sql2 = sql.replaceFirst("\\?", query);
 		logger.info("\n"+sql2);
-		List<Map<String, Object>> countPatientsProMonth 
+		List<Map<String, Object>> seekIcd10 
 		= jdbcTemplate.queryForList(sql2);
-		return countPatientsProMonth;
-	}
-
-	public List<Map<String,Object>> icd10UaAllToFile() {
-		String sql = "select * from icd";
-		logger.info("\n"+sql);
-		List<Map<String, Object>> countPatientsProMonth 
-		= jdbcTemplate.queryForList(sql);
-		return countPatientsProMonth;
+		List<Map<String, Object>> icdTree = new ArrayList<Map<String,Object>>();
+		if(seekIcd10.size()>0){
+			icdTree.add(seekIcd10.get(0));
+			for (int i = 1; i < seekIcd10.size(); i++) {
+				final String icdCodeL = (String) icdTree.get(icdTree.size()-1).get("icd_code");
+				final String icdCode = (String) seekIcd10.get(i).get("icd_code");
+				if(icdCode.contains(icdCodeL))
+				{
+					
+				}
+			}
+		}
+		return seekIcd10;
+//		return icdTree;
 	}
 
 	String sqlNextPatientId = "SELECT patient_id+1 nextId FROM patient ORDER BY patient_id DESC LIMIT 1";

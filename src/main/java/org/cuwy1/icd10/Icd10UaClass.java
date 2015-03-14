@@ -19,8 +19,8 @@ public class Icd10UaClass implements Serializable{
 	@Override
 	public String toString() {
 		return String.format(
-				"Icd10UaClass{icd_id=%d, icd_start=%d, icd_end=%d, icd_code='%s', icd_name='%s'}",
-				getIcdId(), getIcdStart(), getIcdEnd(), icdCode, icdName);
+				"Icd10UaClass{icd_id=%d, icd_start=%d, icd_end=%d, icd_code='%s', icd_name='%s', icd10Childs:['%s']}",
+				getIcdId(), getIcdStart(), getIcdEnd(), icdCode, icdName, icd10Childs);
 	}
 
 	public Icd10UaClass() {

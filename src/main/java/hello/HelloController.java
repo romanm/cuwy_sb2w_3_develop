@@ -1,7 +1,6 @@
 package hello;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -189,15 +188,32 @@ public class HelloController {
 		logger.warn("\n article = "+article);
 		return article;
 	}
-
 	@RequestMapping(value = "/seekIcd10Db/{query}", method = RequestMethod.GET)
 	public @ResponseBody List<Map<String, Object>> seekIcd10Db(@PathVariable String query) {
-		logger.warn("\n /seekIcd10Db/{query} query = "+query);
+		logger.warn(" /seekIcd10Db/{query} query = "+query);
 		List<Map<String, Object>> seekIcd10Db = cuwyDbService1.seekIcd10Db(query);
-		logger.warn("\n /seekIcd10Db/"+query+" = "+seekIcd10Db.size());
+		logger.warn(" /seekIcd10Db/"+query+" = "+seekIcd10Db.size());
 		return seekIcd10Db;
 	}
-
+	@RequestMapping(value = "/seekIcd10Tree/{query}", method = RequestMethod.GET)
+	public @ResponseBody Icd10UaClass seekIcd10Tree(@PathVariable String query) {
+		logger.warn(" /seekIcd10Db/{query} query = "+query);
+		Icd10UaClass icd10UaGroups = cuwyDbService1.seekIcd10UaGroups(query);
+		return icd10UaGroups;
+	}
+	@RequestMapping(value = "/icd10uaGroups/toFile", method = RequestMethod.GET)
+	public @ResponseBody Icd10UaClass getIcd10UaGroupsToFile() {
+		Icd10UaClass icd10UaGroups = cuwyDbService1.getIcd10UaGroups();
+//		writeToJsDbFile("var icd10uaGroups = ", icd10UaGroups, icd10uaGroupsFileName);
+		writeToPrettyJsDbFile("", icd10UaGroups, icd10uaGroupsFileName);
+		return icd10UaGroups;
+	}
+	@RequestMapping(value = "/readIcd10Childs", method = RequestMethod.POST)
+	public @ResponseBody Icd10UaClass readIcd10Childs(@RequestBody Icd10UaClass icd10Class) {
+		logger.warn("\n /readIcd10Childs= "+icd10Class);
+		icd10Class = cuwyDbService1.getIcd10UaChilds(icd10Class);
+		return icd10Class;
+	}
 	@RequestMapping(value = "/icd10ua/allToFile", method = RequestMethod.GET)
 	public @ResponseBody List<Map<String, Object>> icd10UaAllToFile() {
 		List<Map<String, Object>> icd10UaAllToFile = cuwyDbService1.icd10UaAllToFile();
@@ -210,25 +226,12 @@ public class HelloController {
 		writeToJsDbFile("var operationTree = ", operationTree, operationTreeFileName);
 		return operationTree;
 	}
-	@RequestMapping(value = "/icd10uaGroups/toFile", method = RequestMethod.GET)
-	public @ResponseBody Icd10UaClass getIcd10UaGroupsToFile() {
-		Icd10UaClass icd10UaGroups = cuwyDbService1.getIcd10UaGroups();
-		writeToJsDbFile("var icd10uaGroups = ", icd10UaGroups, icd10uaGroupsFileName);
-		return icd10UaGroups;
-	}
-
 	@RequestMapping(value = "/icd10ua/groups", method = RequestMethod.GET)
 	public @ResponseBody Icd10UaClass getDummyIcd10Ua2() {
 		Icd10UaClass icd10UaGroups = cuwyDbService1.getIcd10UaGroups();
 		return icd10UaGroups;
 	}
 
-	@RequestMapping(value = "/readIcd10Childs", method = RequestMethod.POST)
-	public @ResponseBody Icd10UaClass readIcd10Childs(@RequestBody Icd10UaClass icd10Class) {
-		logger.warn("\n /readIcd10Childs= "+icd10Class);
-		icd10Class = cuwyDbService1.getIcd10UaChilds(icd10Class);
-		return icd10Class;
-	}
 
 	@RequestMapping(value = "/icd10ua/dummy", method = RequestMethod.GET)
 	public @ResponseBody Icd10UaClass getDummyIcd10Ua() {

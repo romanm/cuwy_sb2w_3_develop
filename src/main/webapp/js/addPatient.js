@@ -42,7 +42,29 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	console.log(historyFile);
 
 	
+	seekIcd10Tree = function(){
+		console.log("seekIcd10Tree");
+		console.log($scope.patientHistory.diagnosisOnAdmission.icdName);
+		var seerIcd10TreeUrl = "/seekIcd10Tree/"+$scope.patientHistory.diagnosisOnAdmission.icdName;
+		$http({
+			method : 'GET',
+			url : seerIcd10TreeUrl
+		}).success(function(data, status, headers, config) {
+			$scope.icd10Root = data;
+			console.log($scope.icd10Root);
+		}).error(function(data, status, headers, config) {
+		});
+	};
 	//----------------adress---------------------------------------------------
+	$scope.changeIcd10Name = function(){
+		console.log("changeIcd10Name");
+		if($scope.patientEditing.localityName){
+			$scope.collapseIcd10Liste = !($scope.patientHistory.diagnosisOnAdmission.icdName.length > 0);
+		}
+		if(!$scope.collapseIcd10Liste){
+			seekIcd10Tree();
+		}
+	}
 	$scope.changeLocalityName = function(){
 		console.log("changeLocalityName");
 		if($scope.patientEditing.localityName){
