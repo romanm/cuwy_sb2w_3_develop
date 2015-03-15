@@ -58,7 +58,7 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	//----------------adress---------------------------------------------------
 	$scope.changeIcd10Name = function(){
 		console.log("changeIcd10Name");
-		if($scope.patientEditing.localityName){
+		if($scope.patientHistory.diagnosisOnAdmission.icdName){
 			$scope.collapseIcd10Liste = !($scope.patientHistory.diagnosisOnAdmission.icdName.length > 0);
 		}
 		if(!$scope.collapseIcd10Liste){
@@ -85,6 +85,16 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		if($scope.patientEditing.districtName){
 			$scope.collapseDistrictListe = !($scope.patientEditing.districtName.length > 0);
 		}
+	}
+	$scope.setIcd10= function(icd10){
+		console.log($scope.patientHistory.diagnosisOnAdmission);
+		console.log($scope.patientHistory.diagnosisOnAdmission.icdName);
+		console.log(icd10);
+		$scope.patientHistory.diagnosisOnAdmission.icdCode = icd10.icdCode;
+		$scope.patientHistory.diagnosisOnAdmission.icdEnd = icd10.icdEnd;
+		$scope.patientHistory.diagnosisOnAdmission.icdId = icd10.icdId;
+		$scope.patientHistory.diagnosisOnAdmission.icdName = icd10.icdName;
+		$scope.patientHistory.diagnosisOnAdmission.icdStart = icd10.icdStart;
 	}
 	$scope.setDistrict= function(district){
 		$scope.patientEditing.districtName = district.districtName;

@@ -176,20 +176,38 @@
 							<ul>
 								<li
 									data-ng-repeat="icd10Class1 in icd10Root.icd10Childs | filter:patientHistory.diagnosisOnAdmission.icdName">
-									{{icd10Class1.icdCode }}, {{icd10Class1.icdName}}
+									<span data-ng-show="{{icd10Class1.icdCode.contains('-') }}">
+										{{icd10Class1.icdCode }}, {{icd10Class1.icdName}} </span> <a
+									data-ng-show="{{!icd10Class1.icdCode.contains('-') }}"
+									data-ng-click="setIcd10(icd10Class1)">
+										{{icd10Class1.icdCode }}, {{icd10Class1.icdName}} </a>
 									<ul
 										data-ng-show="patientHistory.diagnosisOnAdmission.icdName.length > 2">
 										<li
 											data-ng-repeat="icd10Class2 in icd10Class1.icd10Childs | filter:patientHistory.diagnosisOnAdmission.icdName">
-											{{icd10Class2.icdCode }}, {{icd10Class2.icdName}}
+											<span data-ng-show="{{icd10Class2.icdCode.contains('-') }}">
+												{{icd10Class2.icdCode }}, {{icd10Class2.icdName}} </span> <a
+											data-ng-show="{{!icd10Class2.icdCode.contains('-') }}"
+											data-ng-click="setIcd10(icd10Class2)">
+												{{icd10Class2.icdCode }}, {{icd10Class2.icdName}} </a>
 											<ul>
 												<li
 													data-ng-repeat="icd10Class3 in icd10Class2.icd10Childs | filter:patientHistory.diagnosisOnAdmission.icdName">
-													{{icd10Class3.icdCode }}, {{icd10Class3.icdName}}
+													<span data-ng-show="{{icd10Class3.icdCode.contains('-') }}">
+														{{icd10Class3.icdCode }}, {{icd10Class3.icdName}} </span> <a
+													data-ng-show="{{!icd10Class3.icdCode.contains('-') }}"
+													data-ng-click="setIcd10(icd10Class3)">
+														{{icd10Class3.icdCode }}, {{icd10Class3.icdName}} </a>
 													<ul>
 														<li
 															data-ng-repeat="icd10Class4 in icd10Class3.icd10Childs | filter:patientHistory.diagnosisOnAdmission.icdName">
-															{{icd10Class4.icdCode }}, {{icd10Class4.icdName}}</li>
+															{{icd10Class4.icdCode }}, {{icd10Class4.icdName}} <span
+															data-ng-show="{{icd10Class4.icdCode.contains('-') }}">
+																{{icd10Class4.icdCode }}, {{icd10Class4.icdName}} </span> <a
+															data-ng-show="{{!icd10Class4.icdCode.contains('-') }}"
+															data-ng-click="setIcd10(icd10Class4)">
+																{{icd10Class4.icdCode }}, {{icd10Class4.icdName}} </a>
+														</li>
 													</ul>
 												</li>
 											</ul>

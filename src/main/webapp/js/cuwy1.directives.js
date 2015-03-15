@@ -11,6 +11,8 @@ function isMiddleWeek(index, countPatientsProWeeks){
 	return index !=0 && !(index == countPatientsProWeeks.length - 1);
 }
 
+String.prototype.contains = function(it) { return this.indexOf(it) != -1; };
+
 Date.prototype.getMonthUa = function (month){
 	var monthsUa = ["Січень", "Лютий"
 		, "Березень", "Квітень", "Травень"
