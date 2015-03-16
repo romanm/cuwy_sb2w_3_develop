@@ -138,7 +138,7 @@
 													<ul>
 														<li ng-repeat="region in configHol.directs"
 															ng-if="$index > configHol.directs.length/4*3"><a
-															ng-click="setRegion(region)">{{region.direct_name}}</a></li>
+															ng-click="setDirect(region)">{{region.direct_name}}</a></li>
 													</ul>
 												</td>
 											</tr>
@@ -146,18 +146,71 @@
 									</div>
 								</div>
 							</div>
-					</div>
-				</form>
+							<div class="input-group required-simple">
+								<div class="input-group-addon">{{requiredFields.departmentId.name}}:</div>
+								<input type="text" class="form-control" id="department"
+									data-ng-change="changeDepartmentName()" name="department"
+									data-ng-model="patientHistory.patientDepartmentMovements[0].departmentName" />
+								<div class="input-group-btn">
+									<button type="button" class="btn btn-default dropdown-toggle"
+										data-toggle="dropdown">
+										<span class="caret"></span>
+									</button>
+									<div class="dropdown-menu dropdown-menu-right-hol" role="menu">
+										{{configHol.departments.length}}
+										<table>
+											<tr>
+												<td>
+													<ul>
+														<li ng-repeat="region in configHol.departments"
+															ng-if="$index &lt; configHol.departments.length/4"><a
+															ng-click="setDepartment(region)">{{region.department_name}}</a></li>
+													</ul>
+												</td>
+												<td>
+													<ul>
+														<li ng-repeat="region in configHol.departments"
+															ng-if="isRegion2of4($index, configHol.departments)"><a
+															ng-click="setDepartment(region)">{{region.department_name}}</a></li>
+													</ul>
+												</td>
+												<td>
+													<ul>
+														<li ng-repeat="region in configHol.departments"
+															ng-if="isRegion3of4($index, configHol.departments)"><a
+															ng-click="setDepartment(region)">{{region.department_name}}</a></li>
+													</ul>
+												</td>
+												<td>
+													<ul>
+														<li ng-repeat="region in configHol.departments"
+															ng-if="$index > configHol.departments.length/4*3"><a
+															ng-click="setDepartment(region)">{{region.department_name}}</a></li>
+													</ul>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</div>
+							</div>
+							</div>
+							</form>
 				<div collapse="collapseDirectListe">
 					<b>Пошук направляючого закладу</b>: <span
 						ng-repeat="region in configHol.directs | filter:{direct_name:patientEditing.directName} | limitTo:10">
 						<a ng-click="setDirect(region)">{{region.direct_name}}</a>,
 					</span>
 				</div>
+				<div collapse="collapseDepartmentListe">
+					<b>Пошук відділення госпіталізації</b>: <span
+						ng-repeat="region in configHol.departments | filter:{department_name:patientEditing.departmentName} | limitTo:10">
+						<a ng-click="setDepartment(region)">{{region.department_name}}</a>,
+					</span>
+				</div>
 				<form class="form-inline" role="form">
 					<div class="form-group">
 						<div class="input-group required-simple">
-							<div class="input-group-addon">{{requiredFields.icd10.name}}:</div>
+							<div class="input-group-addon">{{requiredFields.icdId.name}}:</div>
 							<input type="text" class="form-control" id="icd10"
 								data-ng-change="changeIcd10Name()" name="icd10"
 								data-ng-model="patientHistory.diagnosisOnAdmission.icdName" />

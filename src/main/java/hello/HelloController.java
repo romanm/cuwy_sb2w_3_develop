@@ -311,6 +311,7 @@ public class HelloController {
 		int historyId = historyHolDb.getHistoryId();
 		List<PatientDepartmentMovement> patientDepartmentMovements
 		= cuwyDbService1.getPatientDepartmentMovements(historyId);
+		logger.debug(""+patientDepartmentMovements);
 		historyHolDb.setPatientDepartmentMovements(patientDepartmentMovements);
 		List<HistoryTreatmentAnalysis> historyTreatmentAnalysises
 		= cuwyDbService1.getHistoryTreatmentAnalysises(historyId);
