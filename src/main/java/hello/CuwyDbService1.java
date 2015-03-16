@@ -620,7 +620,8 @@ public class CuwyDbService1 {
 			+ ", history_age_year, history_age_month, history_age_day "
 			+ ", history_id "
 			+ ") VALUES "
-			+ "( NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			+ "( NOW(), ?, ?, ?, ?"
+			+ ", ?, ?, ?, ?, ?, ?)";
 //		+ "( now(),'15025',0,32111,1,1,66,0,0)";
 	public void insertHistoryHolDb(final HistoryHolDb historyHolDb) {
 		int nextHistoryId = getAutoIncrement("history");

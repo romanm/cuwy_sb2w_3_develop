@@ -111,7 +111,8 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	$scope.setDepartment = function(region){
 		console.log(region);
 		$scope.patientHistory.patientDepartmentMovements[0].departmentName = region.department_name;
-		$scope.patientHistory.patientDepartmentMovements[0].historyDepartmentIn = region.department_id;
+		$scope.patientHistory.patientDepartmentMovements[0].departmentId = region.department_id;
+		$scope.patientHistory.historyDepartmentIn = region.department_id;
 		$scope.collapseDepartmentListe = true;
 	}
 	$scope.setDirect = function(region){
@@ -258,6 +259,27 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 			$scope.requiredFields[key].isFull 
 			= !(typeof $scope.patientHistory.patientHolDb[key] === 'undefined')
 			&& $scope.patientHistory.patientHolDb[key] > 0;
+		});
+		["directId"].forEach(function(key) {
+			console.log(key);
+			console.log($scope.patientHistory[key]);
+			$scope.requiredFields[key].isFull 
+			= !(typeof $scope.patientHistory[key] === 'undefined')
+			&& $scope.patientHistory[key] > 0;
+		});
+		["departmentId"].forEach(function(key) {
+			console.log(key);
+			console.log($scope.patientHistory.patientDepartmentMovements[0]);
+			$scope.requiredFields[key].isFull 
+			= !(typeof $scope.patientHistory.patientDepartmentMovements[0][key] === 'undefined')
+			&& $scope.patientHistory.patientDepartmentMovements[0][key] > 0;
+		});
+		["icdId"].forEach(function(key) {
+			console.log(key);
+			console.log($scope.patientHistory[key]);
+			$scope.requiredFields[key].isFull 
+			= !(typeof $scope.patientHistory.diagnosisOnAdmission[key] === 'undefined')
+			&& $scope.patientHistory.diagnosisOnAdmission[key] > 0;
 		});
 		
 		Object.keys($scope.requiredFields).forEach(function(key) {
