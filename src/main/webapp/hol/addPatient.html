@@ -41,13 +41,15 @@
 				<a href="#" class="no-print"> <span data-ng-if="!gr.open"
 					class="glyphicon glyphicon-chevron-right"></span> <span
 					data-ng-if="gr.open" class="glyphicon glyphicon-chevron-down"></span>
-			</a> <span data-ng-show="g == 'pip'"> <b>Прізвище</b> <span>{{patientHistory.patientHolDb.patientSurname}}</span>
-					<b>Ім’я</b> <span>{{patientHistory.patientHolDb.patientPersonalName}}</span>
+			</a> <span data-ng-show="g == 'pip'"> <b>ПІП</b> <span>{{patientHistory.patientHolDb.patientSurname}}</span>
+					 <span>{{patientHistory.patientHolDb.patientPersonalName}}</span>
+					 <span>{{patientHistory.patientHolDb.patientPatronymic}}</span>
 			</span>
 			</span> <span data-ng-repeat="rf in requiredFieldsNoFull(g)">
 				<span data-ng-show="$index == 0"> <i class="btn-danger">Заповніть
 						обов’язкові поля</i>:
-			</span> <span class="btn-danger"> {{requiredFields[rf].name}}</span>{{$last?".":","}}
+			</span> <span class="btn-danger" data-ng-click="gotoField(rf)">
+					{{requiredFields[rf].name}} </span>{{$last?".":","}}
 			</span>
 			<div class="row well no-print" data-ng-show="gr.open">
 				<div data-ng-show="g == 'pip'">
@@ -56,13 +58,15 @@
 							<div class="input-group required-simple">
 								<div class="input-group-addon">Прізвище</div>
 								<input id="patientSurname"
-									ng-model="patientHistory.patientHolDb.patientSurname"
+									data-ng-model="patientHistory.patientHolDb.patientSurname"
+									data-ng-change="changePatientName('patientSurname')"
 									class="form-control" type="text" />
 							</div>
 							<div class="input-group required-simple">
 								<div class="input-group-addon">Ім’я</div>
 								<input id="patientPersonalName"
-									ng-model="patientHistory.patientHolDb.patientPersonalName"
+									data-ng-model="patientHistory.patientHolDb.patientPersonalName"
+									data-ng-change="changePatientName('patientPersonalName')"
 									class="form-control" type="text" />
 							</div>
 							<div class="input-group">
@@ -81,6 +85,7 @@
 								<input type="text" class="form-control input-sm"
 									placeholder="По батькові" id="patientPatronymic"
 									name="patientPatronymic"
+									data-ng-change="changePatientName('patientPatronymic')"
 									ng-model="patientHistory.patientHolDb.patientPatronymic" />
 							</div>
 							<div class="input-group required-simple">
@@ -101,8 +106,8 @@
 					<div class="form-group">
 						<div class="input-group required-simple">
 							<div class="input-group-addon">{{requiredFields.directId.name}}:</div>
-							<input type="text" class="form-control" id="direct"
-								data-ng-change="changeDirectName()" name="direct"
+							<input type="text" class="form-control" id="directId"
+								data-ng-change="changeDirectName()" name="directId"
 								data-ng-model="patientEditing.directName" />
 								<div class="input-group-btn">
 									<button type="button" class="btn btn-default dropdown-toggle"
@@ -148,8 +153,8 @@
 							</div>
 							<div class="input-group required-simple">
 								<div class="input-group-addon">{{requiredFields.departmentId.name}}:</div>
-								<input type="text" class="form-control" id="department"
-									data-ng-change="changeDepartmentName()" name="department"
+								<input type="text" class="form-control" id="departmentId"
+									data-ng-change="changeDepartmentName()" name="departmentId"
 									data-ng-model="patientHistory.patientDepartmentMovements[0].departmentName" />
 								<div class="input-group-btn">
 									<button type="button" class="btn btn-default dropdown-toggle"
@@ -203,7 +208,7 @@
 				</div>
 				<div collapse="collapseDepartmentListe">
 					<b>Пошук відділення госпіталізації</b>: <span
-						ng-repeat="region in configHol.departments | filter:{department_name:patientEditing.departmentName} | limitTo:10">
+						ng-repeat="region in configHol.departments | filter:{department_name:patientHistory.patientDepartmentMovements[0].departmentName} | limitTo:10">
 						<a ng-click="setDepartment(region)">{{region.department_name}}</a>,
 					</span>
 				</div>
@@ -384,7 +389,7 @@
 							<div class="input-group required-simple">
 								<div class="input-group-addon">місто/село</div>
 								<input type="text" class="form-control"
-									id="localityName" name="localityName"
+									id="localityId" name="localityId"
 									data-ng-change="changeLocalityName()"
 									ng-model="patientEditing.localityName" />
 								<div class="input-group-btn">
@@ -490,14 +495,14 @@
 								<input type="text" class="form-control input-sm"
 									placeholder="мобільний" id="patientPhoneMobil"
 									name="patientPhoneMobil"
-									ng-model="patientHistory.patientHolDb.patientPhoneMobil" />
+									data-ng-model="patientHistory.patientHolDb.patientPhoneMobil" />
 							</div>
 							<br/>
 							<div class="input-group required-simple">
 								<div class="input-group-addon">Місце роботи:</div>
 								<input type="text" class="form-control" id="patientJob"
 									name="patientJob"
-									ng-model="patientHistory.patientHolDb.patientJob" />
+									data-ng-model="patientHistory.patientHolDb.patientJob" />
 							</div>
 							<div class="input-group">
 								<div class="input-group-addon">Пільги:</div>
