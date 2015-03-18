@@ -613,6 +613,11 @@ public class CuwyDbService1 {
 		System.out.println(diagnosisOnAdmission);
 		jdbcTemplate.update(sqlinsertHistoryDiagnos, new DiagnosisOnAdmissionPSSetter(diagnosisOnAdmission));
 	}
+	String sqlinsertDepartmentHistory = "";
+	public void insertDepartmentHistory(final DiagnosisOnAdmission diagnosisOnAdmission) {
+		System.out.println(diagnosisOnAdmission);
+		jdbcTemplate.update(sqlinsertDepartmentHistory, new DiagnosisOnAdmissionPSSetter(diagnosisOnAdmission));
+	}
 	String sqlInsertHistory = "INSERT INTO history "
 			+ "( history_in, history_no, history_urgent, patient_id, direct_id"
 			+ ", history_department_in "

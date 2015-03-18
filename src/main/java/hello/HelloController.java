@@ -450,7 +450,7 @@ public class HelloController {
 	public @ResponseBody DepartmentHol getHolDepartment(@PathVariable Integer departmentId) throws IOException {
 		logger.info("\n Start /hol/department_"+departmentId);
 		DepartmentHol departmentHol = cuwyDbService1.getDepartmentsHol(departmentId);
-		List<PatientDiagnosisHol> departmentsHolPatientsDiagnose 
+		List<PatientDiagnosisHol> departmentsHolPatientsDiagnose
 		= cuwyDbService1.getDepartmentsHolPatientsDiagnose(departmentId);
 		System.out.println(departmentsHolPatientsDiagnose);
 		departmentHol.setPatientesDiagnosisHol(departmentsHolPatientsDiagnose);
