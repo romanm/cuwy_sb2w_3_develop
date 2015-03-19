@@ -173,6 +173,11 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	//----------------on start--------------------------------------------------
 	initDeclareController($scope, $http, $sce, $filter);
 	initPatientEdit = function(){
+		console.log("------------------------------");
+		var f1 = $filter('filter')($scope.configHol.directs, {direct_id:$scope.patientHistory.directId}, true);
+		$scope.setDirect(f1[0])
+		$scope.collapseDepartmentListe = true;
+		console.log("------------------------------");
 		$scope.collapseIcd10Liste = true;
 		$($scope.configHol.countries).each(function (k1,country) {
 			if(country.countryId == $scope.patientHistory.patientHolDb.countryId){
