@@ -7,13 +7,17 @@ import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.cuwy1.hol.model.CountryHol;
+import org.cuwy1.hol.model.DepartmentHistory;
 import org.cuwy1.hol.model.DepartmentHol;
 import org.cuwy1.hol.model.DiagnosisOnAdmission;
 import org.cuwy1.hol.model.DistrictHol;
@@ -360,6 +364,66 @@ public class CuwyDbService1 {
 	}
 	 * */
 
+	private class DepartmentHistoryMapSet<T> implements RowMapper<T>,PreparedStatementSetter{
+		public static final String selectDepartmentHistory = "select * from department_history where history_id = ?";
+		public static final String insertPatientDepartmentMovement = "insert into department_history "
+				+ "(history_id, department_id, personal_department_id_in, personal_department_id_out"
+				+ ", department_history_in, department_history_out"
+				+ ") values (?,?,?,?"
+				+ ",?,?)";
+		public static final String insertDepartmentHistory = "insert into department_history "
+				+ "(history_id, department_id, personal_department_id_in, personal_department_id_out"
+				+ ", department_history_bed_day, department_history_in, department_history_out"
+				+ ") values (?,?,?,?"
+				+ ",?,?,?)";
+		public DepartmentHistoryMapSet() {
+		}
+		private DepartmentHistory departmentHistory;
+		public DepartmentHistoryMapSet(DepartmentHistory departmentHistory) {
+			this.departmentHistory = departmentHistory;
+		}
+		private PatientDepartmentMovement patientDepartmentMovement;
+		public DepartmentHistoryMapSet(
+				PatientDepartmentMovement patientDepartmentMovement) {
+			this.patientDepartmentMovement = patientDepartmentMovement;
+		}
+		@Override
+		public void setValues(PreparedStatement ps) throws SQLException {
+			System.out.println("------------------------");
+			System.out.println(patientDepartmentMovement);
+			if(patientDepartmentMovement != null){
+				ps.setInt(1, patientDepartmentMovement.getHistoryId());
+				ps.setInt(2, patientDepartmentMovement.getDepartmentId());
+//				ps.setInt(3, patientDepartmentMovement.getPersonalDepartmentIdIn());
+				ps.setInt(3, 126);
+				ps.setNull(4, Types.INTEGER);
+				ps.setTimestamp(5, patientDepartmentMovement.getDepartmentHistoryIn());
+				ps.setTimestamp(6, patientDepartmentMovement.getDepartmentHistoryOut());
+			}else{
+				ps.setInt(1, departmentHistory.getHistoryId());
+				ps.setInt(2, departmentHistory.getDepartmentId());
+				ps.setInt(3, departmentHistory.getPersonalDepartmentIdIn());
+				ps.setInt(4, departmentHistory.getPersonalDepartmentIdOut());
+				ps.setInt(5, departmentHistory.getDepartmentHistoryBedDay());
+				ps.setTimestamp(6, departmentHistory.getDepartmentHistoryIn());
+				ps.setTimestamp(7, departmentHistory.getDepartmentHistoryOut());
+			}
+		}
+		@Override
+		public T mapRow(ResultSet rs, int idx) throws SQLException {
+			final DepartmentHistory departmentHistory = new DepartmentHistory();
+			departmentHistory.setHistoryId(rs.getInt("history_id"));
+			departmentHistory.setDepartmentId(rs.getInt("department_id"));
+			departmentHistory.setDepartmentHistoryId(rs.getInt("department_history_id"));
+			departmentHistory.setPersonalDepartmentIdIn(rs.getInt("personal_department_id_in"));
+			departmentHistory.setPersonalDepartmentIdOut(rs.getInt("personal_department_id_out"));
+			departmentHistory.setDepartmentHistoryBedDay(rs.getInt("department_history_bed_day"));
+			departmentHistory.setDepartmentHistoryIn(rs.getTimestamp("department_history_in"));
+			departmentHistory.setDepartmentHistoryOut(rs.getTimestamp("department_history_out"));
+			return null;
+		}
+	}
+
 	class DiagnosisOnAdmissionPSSetter implements PreparedStatementSetter{
 
 		private DiagnosisOnAdmission diagnosisOnAdmission;
@@ -372,7 +436,6 @@ public class CuwyDbService1 {
 		@Override
 		public void setValues(PreparedStatement ps) throws SQLException {
 			logger.info(diagnosisOnAdmission.toString());
-			logger.warn(diagnosisOnAdmission.toString());
 			ps.setInt(1, diagnosisOnAdmission.getHistoryId());
 			ps.setInt(2, diagnosisOnAdmission.getDiagnosId());
 			ps.setInt(3, diagnosisOnAdmission.getPersonalDepartmentId());
@@ -481,6 +544,14 @@ public class CuwyDbService1 {
 			});
 	}
 
+	
+	public List<DepartmentHistory> getDepartmentHistorys(int historyId) {
+		logger.info("\n"+DepartmentHistoryMapSet.selectDepartmentHistory.replaceFirst("\\?", ""+historyId));
+		return jdbcTemplate.query(
+				DepartmentHistoryMapSet.selectDepartmentHistory, new Object[] { historyId }, 
+				new DepartmentHistoryMapSet()
+			);
+	}
 	String sqlPatientDepartmentMovement ="SELECT * FROM "
 			+ "( SELECT "
 			+ " h.patient_id, dh.history_id, d.department_id, d.department_name,"
@@ -505,13 +576,14 @@ public class CuwyDbService1 {
 				new PatientDepartmentMovementRowMapper()
 			);
 	}
+
 	private class PatientDepartmentMovementRowMapper<T> implements RowMapper<T>{
 		private Map<Integer, HistoryHolDb> mapHistoryOfPatient;
 		public PatientDepartmentMovementRowMapper(
 				Map<Integer, HistoryHolDb> mapHistoryOfPatient) {
 			this.mapHistoryOfPatient = mapHistoryOfPatient;
 		}
-
+		
 		public PatientDepartmentMovementRowMapper() { }
 
 		@Override
@@ -535,6 +607,7 @@ public class CuwyDbService1 {
 			}
 			return (T) patientDepartmentMovement;
 		}
+
 	}
 
 	public List<HistoryTreatmentAnalysis> getHistoryTreatmentAnalysises(int historyId) {
@@ -614,9 +687,14 @@ public class CuwyDbService1 {
 		jdbcTemplate.update(sqlinsertHistoryDiagnos, new DiagnosisOnAdmissionPSSetter(diagnosisOnAdmission));
 	}
 	String sqlinsertDepartmentHistory = "";
-	public void insertDepartmentHistory(final DiagnosisOnAdmission diagnosisOnAdmission) {
-		System.out.println(diagnosisOnAdmission);
-		jdbcTemplate.update(sqlinsertDepartmentHistory, new DiagnosisOnAdmissionPSSetter(diagnosisOnAdmission));
+	public void insertDepartmentHistory(final DepartmentHistory departmentHistory) {
+		System.out.println(departmentHistory);
+		jdbcTemplate.update(sqlinsertDepartmentHistory, new DepartmentHistoryMapSet(departmentHistory));
+	}
+	public void insertDepartmentHistory(
+			final PatientDepartmentMovement patientDepartmentMovement) {
+		jdbcTemplate.update(DepartmentHistoryMapSet.insertPatientDepartmentMovement
+				, new DepartmentHistoryMapSet(patientDepartmentMovement));
 	}
 	String sqlInsertHistory = "INSERT INTO history "
 			+ "( history_in, history_no, history_urgent, patient_id, direct_id"
@@ -631,6 +709,7 @@ public class CuwyDbService1 {
 	public void insertHistoryHolDb(final HistoryHolDb historyHolDb) {
 		int nextHistoryId = getAutoIncrement("history");
 		historyHolDb.setHistoryId(nextHistoryId);
+		logger.debug(" = "+historyHolDb.getPatientHolDb().getPatientDob());
 		historyHolDb.setHistoryAgeYear(historyHolDb.getPatientHolDb().patientAge());
 		historyHolDb.setHistoryAgeMonth(historyHolDb.getPatientHolDb().patientMonth());
 		historyHolDb.setHistoryAgeDay(historyHolDb.getPatientHolDb().patientDay());
@@ -1142,4 +1221,6 @@ public class CuwyDbService1 {
 			e.printStackTrace();
 		}
 	}
+
+	
 }

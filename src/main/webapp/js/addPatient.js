@@ -356,8 +356,10 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	};
 	
 	$scope.open = function($event) {
+		/*
 		$event.preventDefault();
 		$event.stopPropagation();
+		 * */
 		$scope.opened = true;
 	};
 

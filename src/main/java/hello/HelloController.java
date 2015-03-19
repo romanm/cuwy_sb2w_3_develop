@@ -3,6 +3,7 @@ package hello;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -389,6 +390,12 @@ public class HelloController {
 			cuwyDbService1.insertDiagnosisOnAdmission(diagnosisOnAdmission);
 			diagnosisOnAdmission.setDiagnosId(2);
 			cuwyDbService1.insertDiagnosisOnAdmission(diagnosisOnAdmission);
+			final List<PatientDepartmentMovement> patientDepartmentMovements = historyHolDb.getPatientDepartmentMovements();
+			final PatientDepartmentMovement patientDepartmentMovement = patientDepartmentMovements.get(0);
+			patientDepartmentMovement.setHistoryId(historyHolDb.getHistoryId());
+			patientDepartmentMovement.setPatientId(historyHolDb.getPatientId());
+			patientDepartmentMovement.setDepartmentHistoryIn(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+			cuwyDbService1.insertDepartmentHistory(patientDepartmentMovement);
 		}else{
 			cuwyDbService1.updatePatientHolDb(historyHolDb.getPatientHolDb());
 		}

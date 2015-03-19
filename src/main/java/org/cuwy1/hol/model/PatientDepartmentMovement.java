@@ -10,6 +10,20 @@ public class PatientDepartmentMovement {
 	private String personalPatronymic;
 	private Timestamp departmentHistoryIn;
 	private Timestamp departmentHistoryOut;
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return String.format(
+				"\n PatientDepartmentMovement: {"
+				+ "historyId = '%s', patientId = '%s', departmentId = '%s', departmentName = '%s'"
+				+ "\n, personalSurname = '%s', personalName = '%s', personalPatronymic = '%s', departmentHistoryIn = '%s'"
+				+ ", departmentHistoryOut = '%s'"
+				+ "}",
+				historyId, patientId, departmentId, departmentName
+				, personalSurname, personalName, personalPatronymic
+				, departmentHistoryIn, departmentHistoryOut
+				);
+	}
 	public String getDepartmentName() {
 		return departmentName;
 	}

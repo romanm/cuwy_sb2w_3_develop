@@ -3,7 +3,8 @@ package org.cuwy1.hol.model;
 import java.sql.Timestamp;
 
 public class DepartmentHistory {
-	private int historyId, departmentId, departmentHistoryId, personalDepartmentIdIn, personalDepartmentIdOut
+	private int historyId, departmentId, departmentHistoryId
+	, personalDepartmentIdIn, personalDepartmentIdOut
 	, departmentHistoryBedDay;
 	private Timestamp departmentHistoryIn, departmentHistoryOut;
 	@Override
