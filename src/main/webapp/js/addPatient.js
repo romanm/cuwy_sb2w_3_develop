@@ -58,13 +58,12 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	};
 	$scope.gotoField = function(rf){
 		var g = $scope.requiredFields[rf].group;
-		console.log(g);
 		$scope.newHistoryTemplate[g].open = true;
-		console.log(rf);
-		console.log(document.getElementById(rf));
 		$('#'+rf).focus();
 //		document.getElementById(rf).focus();
 	}
+	
+
 	//----------------adress---------------------------------------------------
 	$scope.changeIcd10Name = function(){
 		console.log("changeIcd10Name");
@@ -75,8 +74,11 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 			seekIcd10Tree();
 		}
 	}
+	$scope.changePatientJob = function(){
+		console.log("changePatientJob");
+		checkRequiredFieldPIP();
+	}
 	$scope.changeLocalityName = function(){
-		console.log($scope.patientEditing.localityName);
 		if($scope.patientEditing.localityName){
 			$scope.collapseLocalityListe = !($scope.patientEditing.localityName.length > 0);
 		}
@@ -117,7 +119,6 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		$scope.regions = district.regionsHol;
 	}
 	$scope.setDirect = function(region){
-		console.log(region);
 		$scope.patientEditing.directName = region.direct_name;
 		$scope.patientHistory.directId = region.direct_id;
 		$scope.collapseDirectListe = true;
@@ -162,6 +163,7 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		$scope.patientEditing.localityType = locality.localityType;
 		$scope.patientHistory.patientHolDb.localityId = locality.localityId;
 		$scope.collapseLocalityListe = true;
+		checkRequiredFieldAdress();
 	}
 	//----------------adress-------------------------------------------------END
 	//----------------ds-------------------------------------------------
@@ -174,8 +176,10 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	initDeclareController($scope, $http, $sce, $filter);
 	initPatientEdit = function(){
 		console.log("------------------------------");
-		var f1 = $filter('filter')($scope.configHol.directs, {direct_id:$scope.patientHistory.directId}, true);
-		$scope.setDirect(f1[0])
+		if($scope.patientHistory.directId){
+			var f1 = $filter('filter')($scope.configHol.directs, {direct_id:$scope.patientHistory.directId}, true);
+			$scope.setDirect(f1[0])
+		}
 		$scope.collapseDepartmentListe = true;
 		console.log("------------------------------");
 		$scope.collapseIcd10Liste = true;
@@ -248,35 +252,30 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 
 	checkRequiredFieldDiagnos = function(){
 		["directId"].forEach(function(key) {
-			console.log(key);
-			console.log($scope.patientHistory[key]);
 			$scope.requiredFields[key].isFull 
 			= !(typeof $scope.patientHistory[key] === 'undefined')
 			&& $scope.patientHistory[key] > 0;
 		});
 		["departmentId"].forEach(function(key) {
-			console.log(key);
-			console.log($scope.patientHistory.patientDepartmentMovements[0]);
 			$scope.requiredFields[key].isFull 
 			= !(typeof $scope.patientHistory.patientDepartmentMovements[0][key] === 'undefined')
 			&& $scope.patientHistory.patientDepartmentMovements[0][key] > 0;
 		});
 		["icdId"].forEach(function(key) {
-			console.log(key);
-			console.log($scope.patientHistory[key]);
 			$scope.requiredFields[key].isFull 
 			= !(typeof $scope.patientHistory.diagnosisOnAdmission[key] === 'undefined')
 			&& $scope.patientHistory.diagnosisOnAdmission[key] > 0;
 		});
+		requiredFullProcent();
 	}
 
 	checkRequiredFieldAdress = function(){
 		["countryId","districtId","regionId","localityId"].forEach(function(key) {
-		console.log(key);
 			$scope.requiredFields[key].isFull
 			= !(typeof $scope.patientHistory.patientHolDb[key] === 'undefined')
 			&& $scope.patientHistory.patientHolDb[key] > 0;
 		});
+		requiredFullProcent();
 	}
 
 	checkRequiredFieldPIP = function(){
@@ -290,11 +289,10 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 			= !(typeof $scope.patientHistory.patientHolDb[key] === 'undefined')
 			&& $scope.patientHistory.patientHolDb[key].getFullYear() > 1;
 		});
+		requiredFullProcent();
 	}
 
 	checkRequiredFields = function(){
-		console.log("checkRequiredFields");
-		var r = true;
 		if(typeof $scope.patientHistory.patientHolDb.patientDob === 'undefined')
 		{
 			$scope.patientHistory.patientHolDb.patientDob = new Date();
@@ -305,36 +303,30 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		var pDob = $scope.patientHistory.patientHolDb.patientDob;
 		var todayDate = new Date();
 		var age = $scope.calculateAge(pDob, todayDate);
-		console.log("year "+age);
 		var pDob2 = pDob;
 		pDob2.setFullYear(pDob.getFullYear()+age);
 		var month = $scope.calculateMonth(pDob2, todayDate);
-		console.log("month "+month);
 		pDob2.setMonth(pDob2.getMonth()+month);
 		var day = $scope.calculateDay(pDob2, todayDate);
-		console.log("day "+day);
+		console.log("year "+age + ", month "+month+", day "+day);
 
 		checkRequiredFieldPIP();
 		checkRequiredFieldAdress();
 		checkRequiredFieldDiagnos();
-		
+	
+		return requiredFullProcent();
+	}
+	requiredFullProcent = function(){
+		var r = true;
+		var requiredNotOk = 0;
 		Object.keys($scope.requiredFields).forEach(function(key) {
 			if(!$scope.requiredFields[key].isFull){
 				r = false;
+				requiredNotOk++;
 			}
-			/*
-			if(typeof $scope.patientHistory.patientHolDb[key] === 'undefined' 
-			&& typeof $scope.patientHistory[key] === 'undefined'
-			&& typeof $scope.patientHistory.diagnosisOnAdmission[key] === 'undefined'
-			){
-				$scope.requiredFields[key].isFull = false;
-				r = false;
-			}else{
-				$scope.requiredFields[key].isFull = true;
-			}
-			 * */
 		});
-		console.log($scope.requiredFields);
+		var cntReq = Object.keys($scope.requiredFields).length;
+		$scope.requiredFullProcent = Math.round((cntReq-requiredNotOk)/cntReq*100);
 		return r;
 	}
 	$scope.requiredFieldsNoFull = function(gr){

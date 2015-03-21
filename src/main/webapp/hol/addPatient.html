@@ -29,6 +29,10 @@
 					title="Запис {{numberOfChange}} незбережених змін"> Запис <span
 						class="glyphicon glyphicon-floppy-disk"></span>{{numberOfChange}}
 				</a>
+				<div data-ng-show="requiredFullProcent > 0">
+				Заповненість
+				{{requiredFullProcent}}%
+				</div>
 				</span>
 			</div>
 		</div>
@@ -41,9 +45,22 @@
 				<a href="#" class="no-print"> <span data-ng-if="!gr.open"
 					class="glyphicon glyphicon-chevron-right"></span> <span
 					data-ng-if="gr.open" class="glyphicon glyphicon-chevron-down"></span>
-			</a> <span data-ng-show="g == 'pip'"> <b>ПІП</b> <span>{{patientHistory.patientHolDb.patientSurname}}</span>
-					 <span>{{patientHistory.patientHolDb.patientPersonalName}}</span>
-					 <span>{{patientHistory.patientHolDb.patientPatronymic}}</span>
+			</a> 
+			<span data-ng-show="g == 'pip'"> <b>ПІП</b> <span>{{patientHistory.patientHolDb.patientSurname}}</span>
+					<span>{{patientHistory.patientHolDb.patientPersonalName}}</span>
+					<span>{{patientHistory.patientHolDb.patientPatronymic}}</span>
+			</span>
+			<span data-ng-show="g == 'adress'"> <span>{{patientEditing.districtName}}</span>
+					обл., <span>{{patientEditing.regionName}}</span> р-н., <span>{{patientEditing.localityType
+						== 1 ? "м.":"с."}}</span> <span>{{patientEditing.localityName}}</span> <b>
+						Місце роботи: </b> <span>{{patientHistory.patientHolDb.patientJob}}</span>
+			</span> <span data-ng-show="g == 'diagnos'"> <span> <b>{{requiredFields.directId.name}}</b>
+						:{{patientEditing.directName}}
+				</span> <span> <b>{{requiredFields.departmentId.name}}</b>
+						:{{patientHistory.patientDepartmentMovements[0].departmentName}}
+				</span> <span> <b>{{requiredFields.icdId.name}}</b>
+						:{{patientHistory.diagnosisOnAdmission.icdName}}
+				</span>
 			</span>
 			</span> <span data-ng-repeat="rf in requiredFieldsNoFull(g)">
 				<span data-ng-show="$index == 0"> <i class="btn-danger">Заповніть
@@ -502,6 +519,7 @@
 								<div class="input-group-addon">Місце роботи:</div>
 								<input type="text" class="form-control" id="patientJob"
 									name="patientJob"
+									data-ng-change="changePatientJob()"
 									data-ng-model="patientHistory.patientHolDb.patientJob" />
 							</div>
 							<div class="input-group">
