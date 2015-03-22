@@ -38,7 +38,6 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		,"icdId":{"group":"diagnos","name":"Діагноз МКБ"}
 	};
 	
-	console.log(parameters.hno);
 	var historyFile = "/hol/history_id_"+parameters.hno;
 	console.log(historyFile);
 
@@ -175,13 +174,11 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	//----------------on start--------------------------------------------------
 	initDeclareController($scope, $http, $sce, $filter);
 	initPatientEdit = function(){
-		console.log("------------------------------");
 		if($scope.patientHistory.directId){
 			var f1 = $filter('filter')($scope.configHol.directs, {direct_id:$scope.patientHistory.directId}, true);
 			$scope.setDirect(f1[0])
 		}
 		$scope.collapseDepartmentListe = true;
-		console.log("------------------------------");
 		$scope.collapseIcd10Liste = true;
 		$($scope.configHol.countries).each(function (k1,country) {
 			if(country.countryId == $scope.patientHistory.patientHolDb.countryId){
@@ -203,7 +200,14 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 				});
 			}
 		});
+
+		checkRequiredFieldPIP();
+		checkRequiredFieldAdress();
+		checkRequiredFieldDiagnos();
+	
+		requiredFullProcent();
 	};
+
 	if(parameters.hno){
 		$http({
 			method : 'GET',
@@ -212,6 +216,7 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 			$scope.patientHistory = data;
 			console.log($scope.patientHistory);
 			initPatientEdit();
+			console.log("--------------");
 		}).error(function(data, status, headers, config) {
 		});
 	}else{
@@ -285,9 +290,13 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 			&& $scope.patientHistory.patientHolDb[key].length > 1;
 		});
 		["patientDob"].forEach(function(key) {
+			console.log($scope.patientHistory.patientHolDb[key]);
+			console.log(new Date($scope.patientHistory.patientHolDb[key]));
+			console.log(new Date($scope.patientHistory.patientHolDb[key]).getFullYear());
 			$scope.requiredFields[key].isFull 
 			= !(typeof $scope.patientHistory.patientHolDb[key] === 'undefined')
-			&& $scope.patientHistory.patientHolDb[key].getFullYear() > 1;
+			&& new Date($scope.patientHistory.patientHolDb[key]).getFullYear() > 1;
+//			&& $scope.patientHistory.patientHolDb[key].getFullYear() > 1;
 		});
 		requiredFullProcent();
 	}
@@ -317,6 +326,7 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 		return requiredFullProcent();
 	}
 	requiredFullProcent = function(){
+		console.log("requiredFullProcent");
 		var r = true;
 		var requiredNotOk = 0;
 		Object.keys($scope.requiredFields).forEach(function(key) {
