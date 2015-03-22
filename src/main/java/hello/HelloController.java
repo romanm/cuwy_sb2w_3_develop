@@ -369,6 +369,12 @@ public class HelloController {
 				+"\n PatientId = "+historyHolDb.getPatientId()
 				+"\n HistoryNo = "+historyHolDb.getHistoryNo());
 		if(0==historyId) {
+			final int requiredFieldFullProcent = historyHolDb.getRequiredFieldFullProcent();
+			logger.debug("requiredFieldFullProcent = "+requiredFieldFullProcent);
+			if(requiredFieldFullProcent < 100) {
+				historyHolDb = hol2Service.saveHistory(historyHolDb);
+				return historyHolDb;
+			}
 			logger.info("\n HistoryId = "+historyId
 					+"\n PatientId = "+historyHolDb.getPatientId()
 					+"\n HistoryNo = "+historyHolDb.getHistoryNo());

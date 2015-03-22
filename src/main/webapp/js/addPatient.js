@@ -183,7 +183,7 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 			}
 		});
 		var cntReq = Object.keys($scope.requiredFields).length;
-		$scope.requiredFullProcent = Math.round((cntReq-requiredNotOk)/cntReq*100);
+		$scope.patientHistory.requiredFieldFullProcent = Math.round((cntReq-requiredNotOk)/cntReq*100);
 		return r;
 	}
 	checkRequiredFieldDiagnos = function(){
@@ -215,7 +215,9 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	checkRequiredFieldPIP = function(){
 		["patientSurname","patientPersonalName","patientPatronymic","patientJob"].forEach(function(key) {
 			$scope.requiredFields[key].isFull 
-			= !(typeof $scope.patientHistory.patientHolDb[key] === 'undefined')
+			= !(typeof $scope.patientHistory.patientHolDb[key] === 'undefined'
+				|| $scope.patientHistory.patientHolDb[key] == null
+			)
 			&& $scope.patientHistory.patientHolDb[key].length > 1;
 		});
 		["patientDob"].forEach(function(key) {
@@ -299,8 +301,8 @@ cuwyApp.controller('addPatientCtrl', [ '$scope', '$http', '$filter', '$sce', fun
 	}
 
 	$scope.savePatientHistory = function(){
-		if(!checkRequiredFields())
-			return true;
+//		if(!checkRequiredFields())
+//			return true;
 		$http({
 			method : 'POST',
 			data : $scope.patientHistory,

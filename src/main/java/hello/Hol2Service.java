@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
+import org.cuwy1.holDb.model.HistoryHolDb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,19 @@ public class Hol2Service {
 	private static final Logger logger = LoggerFactory.getLogger(Hol2Service.class);
 	@Autowired private Hol2H2Jdbc hol2H2Jdbc;
 	
+	public HistoryHolDb saveHistory(HistoryHolDb historyHolDb) {
+		Integer tmpId = historyHolDb.getTmpId();
+		final Map<String, Object> history = hol2H2Jdbc.getHistory(tmpId);
+		if(history == null){
+			tmpId = hol2H2Jdbc.nextDbId();
+			historyHolDb.setTmpId(tmpId);
+			hol2H2Jdbc.insertHistory(tmpId, historyHolDb);
+		}else{
+			logger.debug("-------------update--------------");
+			hol2H2Jdbc.updateHistory(tmpId,historyHolDb);
+		}
+		return historyHolDb;
+	}
 	//-------------------epicrise-----------------------------------------------
 	public Map<String, Object> saveEpicrise(Map<String, Object> epicrise) {
 		final Date savedDate = new Date();
@@ -53,4 +67,6 @@ public class Hol2Service {
 		return epicrise;
 	}
 	//-------------------epicrise--------------------------------------------END
+
+	
 }

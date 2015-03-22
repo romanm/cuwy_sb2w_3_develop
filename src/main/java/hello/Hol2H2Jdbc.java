@@ -7,6 +7,7 @@ import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
+import org.cuwy1.holDb.model.HistoryHolDb;
 import org.h2.Driver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,14 +102,33 @@ public class Hol2H2Jdbc {
 		return readJsonDbFile2map;
 	}
 
+	public Integer nextDbId() {
+		return jdbcTemplate.queryForObject("select nextval('dbid')", Integer.class);
+	}
+
+	public Map<String, Object> getHistory(Integer hid) {
+		String sql = "SELECT history_id FROM history1 WHERE history_id = ?";
+		List<Map<String, Object>> r = jdbcTemplate.queryForList(sql,hid);
+		if(r.isEmpty())
+			return null;
+		return r.get(0);
+	}
 	public Map<String, Object> getEpicrise(Integer hid) {
-		String sql = "select * from epicrise1 where epicrise_hol1_hid = ?";
+		String sql = "SELECT epicrise_hol1_hid FROM epicrise1 WHERE epicrise_hol1_hid = ?";
 		List<Map<String, Object>> r = jdbcTemplate.queryForList(sql,hid);
 		if(r.isEmpty())
 			return null;
 		return r.get(0);
 	}
 
+	public void insertHistory( Integer nextDbId, Object obj2json) {
+		final String sql = "INSERT INTO history1 (history_self, history_id) VALUES (?, ?)";
+		changeDb(nextDbId, obj2json, sql);
+	}
+	public void updateHistory(Integer tmpId, Object obj2json) {
+		final String sql = "UPDATE history1 SET history_self = ? WHERE history_id = ?";
+		changeDb(tmpId, obj2json, sql);
+	}
 	public void insertEpicrise(Integer hid, Map<String, Object> epicrise) {
 		final String sql = "INSERT INTO epicrise1 (epicrise_self, epicrise_hol1_hid) VALUES (?, ?)";
 		changeDb(hid, epicrise, sql);
@@ -119,6 +139,27 @@ public class Hol2H2Jdbc {
 		changeDb(hid, epicrise, sql);
 	}
 
+	private void changeDb(Integer hid, Object historyHolDb,
+			final String sql) {
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectWriter writerWithDefaultPrettyPrinter = mapper.writerWithDefaultPrettyPrinter();
+		StringWriter out = new StringWriter();
+		try {
+			writerWithDefaultPrettyPrinter.writeValue(out, historyHolDb);
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		final String string = out.toString();
+		final SqlLobValue sqlLobValue = new SqlLobValue(string, lobHandler);
+		jdbcTemplate.update( sql,
+				new Object[] {sqlLobValue, hid },
+				new int[] {Types.CLOB, Types.INTEGER}
+				);
+	}
 	private void changeDb(Integer hid, Map<String, Object> epicrise,
 			final String sql) {
 		ObjectMapper mapper = new ObjectMapper();

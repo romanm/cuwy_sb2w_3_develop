@@ -9,6 +9,7 @@ import org.cuwy1.hol.model.HistoryTreatmentAnalysis;
 import org.cuwy1.hol.model.PatientDepartmentMovement;
 
 public class HistoryHolDb {
+	private int requiredFieldFullProcent;
 	private int historyId, historyNo, historyUrgent, patientId, directId, historyDepartmentIn,
 	historyDepartmentId,
 	historyAgeYear, historyAgeMonth, historyAgeDay ;
@@ -34,6 +35,12 @@ public class HistoryHolDb {
 				historyAgeYear, historyAgeMonth, historyAgeDay
 				, patientHolDb, diagnosisOnAdmission
 				);
+	}
+	public int getRequiredFieldFullProcent() {
+		return requiredFieldFullProcent;
+	}
+	public void setRequiredFieldFullProcent(int requiredFieldFullProcent) {
+		this.requiredFieldFullProcent = requiredFieldFullProcent;
 	}
 	public int getHistoryId() {
 		return historyId;
@@ -165,5 +172,12 @@ public class HistoryHolDb {
 	}
 	public void setOperationHistorys(List<Map<String, Object>> operationHistorys) {
 		this.operationHistorys = operationHistorys;
+	}
+	Integer tmpId;
+	public void setTmpId(Integer tmpId) {
+		this.tmpId = tmpId;
+	}
+	public Integer getTmpId() {
+		return tmpId;
 	}
 }

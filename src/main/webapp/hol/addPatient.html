@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="/css/datepicker.css"></link>
 <link rel='stylesheet prefetch' href='/css/font-awesome.min.css'>
 <link rel="stylesheet" href="/css/epicrise3.css"></link>
+<link href="/img/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
 </head>
 
 <body data-key-cuwytrap="">
@@ -23,16 +24,14 @@
 				<img alt="trizub" src="/img/gerb_small.png">
 			</div>
 			<div class="col-xs-5">
-				+380 382 72-07-42, incoming@med.km.ua <br />
-				http://hol.khmelnitskiy.ua/ <span class="navbar-right no-print">
-					<a data-ng-click="savePatientHistory()" href="#"
+				+380 382 72-07-42, incoming@med.km.ua <br /> http://hol.in.ua/ <span
+					class="navbar-right no-print"> <a
+					data-ng-click="savePatientHistory()" href="#"
 					title="Запис {{numberOfChange}} незбережених змін"> Запис <span
 						class="glyphicon glyphicon-floppy-disk"></span>{{numberOfChange}}
 				</a>
-				<div data-ng-show="requiredFullProcent > 0">
-				Заповненість
-				{{requiredFullProcent}}%
-				</div>
+					<div data-ng-show="patientHistory.requiredFieldFullProcent > 0">
+						Заповненість {{patientHistory.requiredFieldFullProcent}}%</div>
 				</span>
 			</div>
 		</div>
@@ -45,21 +44,21 @@
 				<a href="#" class="no-print"> <span data-ng-if="!gr.open"
 					class="glyphicon glyphicon-chevron-right"></span> <span
 					data-ng-if="gr.open" class="glyphicon glyphicon-chevron-down"></span>
-			</a> 
-			<span data-ng-show="g == 'pip'"> <b>ПІП</b> <span>{{patientHistory.patientHolDb.patientSurname}}</span>
-					<span>{{patientHistory.patientHolDb.patientPersonalName}}</span>
-					<span>{{patientHistory.patientHolDb.patientPatronymic}}</span>
-			</span>
-			<span data-ng-show="g == 'adress'"> <span>{{patientEditing.districtName}}</span>
+			</a> <span data-ng-show="g == 'pip'"> <b>ПІП</b> <span>{{patientHistory.patientHolDb.patientSurname}}</span>
+					<span>{{patientHistory.patientHolDb.patientPersonalName}}</span> <span>{{patientHistory.patientHolDb.patientPatronymic}}</span>
+					,<b> д.н. </b> <span>{{patientHistory.patientHolDb.patientDob
+						| date:"dd-MM-yyyy"}}</span>
+			</span> <span data-ng-show="g == 'adress'"> <span>{{patientEditing.districtName}}</span>
 					обл., <span>{{patientEditing.regionName}}</span> р-н., <span>{{patientEditing.localityType
 						== 1 ? "м.":"с."}}</span> <span>{{patientEditing.localityName}}</span> <b>
 						Місце роботи: </b> <span>{{patientHistory.patientHolDb.patientJob}}</span>
-			</span> <span data-ng-show="g == 'diagnos'"> <span> <b>{{requiredFields.directId.name}}</b>
-						:{{patientEditing.directName}}
-				</span> <span> <b>{{requiredFields.departmentId.name}}</b>
-						:{{patientHistory.patientDepartmentMovements[0].departmentName}}
-				</span> <span> <b>{{requiredFields.icdId.name}}</b>
-						:{{patientHistory.diagnosisOnAdmission.icdName}}
+			</span> <span data-ng-show="g == 'diagnos'"> <span> <b>{{requiredFields.directId.name}}</b>:
+						{{patientEditing.directName}}
+				</span> <span> <b>{{requiredFields.departmentId.name}}</b>:
+						{{patientHistory.patientDepartmentMovements[0].departmentName}}
+				</span> <span> <b>{{requiredFields.icdId.name}}</b>:
+						{{patientHistory.diagnosisOnAdmission.icdCode}} -
+						{{patientHistory.diagnosisOnAdmission.icdName}}
 				</span>
 			</span>
 			</span> <span data-ng-repeat="rf in requiredFieldsNoFull(g)">
@@ -105,6 +104,7 @@
 									data-ng-change="changePatientName('patientPatronymic')"
 									ng-model="patientHistory.patientHolDb.patientPatronymic" />
 							</div>
+							<!-- 
 							<div class="input-group required-simple">
 								<div class="input-group-addon">д.н.</div>
 								<input id="patientDob" name="patientDob"
@@ -113,6 +113,14 @@
 									placeholder="(дд-мм-рррр)" ng-click="open($event)"
 									datepicker-popup="dd-MM-yyyy" is-open="opened"
 									datepicker-options="dateOptions" ng-required="true" />
+							</div>
+							 -->
+							<div class="input-group required-simple">
+								<b>д.н.</b> <span>{{patientHistory.patientHolDb.patientDob
+									| date:"dd-MMM(MM)-yyyy"}}</span>
+								<datepicker
+									data-ng-model="patientHistory.patientHolDb.patientDob"
+									show-weeks="true" class="well well-sm"></datepicker>
 							</div>
 						</div>
 				 	</form>
@@ -559,5 +567,8 @@
 	<script src="/db/operationTree.json.js"></script>
 	<script src="/js/cuwy1.directives.js"></script>
 	<script src="/js/cuwy1.controller.js"></script>
+	<!-- 
+	<script src="/js/locales/bootstrap-datepicker.uk.js"></script>
+	 -->
 	<script src="/js/addPatient.js"></script>
 </html>
